@@ -1,26 +1,36 @@
+#define ONLY_FLAGS // This instruction ONLY affects flags.
+#define NO_FLAGS // This instruction does not affect flags.
+#define N_AND_Z // This instruction affects the N and Z flags.
+#define NO_V // This instruction affects N, Z, and C flags.
+#define ALL_FLAGS // This instruction affects N, V, Z, and C flags.
+#if 1
+#define RESERVED // Reserved for future expansion.
+#endif
+#define DEFINE_OP o:	opcode
+#define DEFINE_RA a:	rA
+#define DEFINE_RB b:	rB
+#define DEFINE_IMM_4BIT i:	4-bit immediate value
+#define DEFINE_IMM_5BIT i:	5-bit immediate value
+#define DEFINE_IMM_16BIT i: 16-bit immediate value
+#define DEFINE_IMM_32BIT i: 32-bit immediate value
+#if 1
+#define DEFINE_INSTRUCTIONS Instructions:
+#endif
 Three instruction encoding sizes:  16-bit, 32-bit, and 48-bit
 
-Instruction group is a 4-bit field, the 4 most significant bits of the
+The instruction group is a 4-bit field, the 4 most significant bits of the
 first 16-bits.
 
 Group 1 Instructions, for example, use 0000 as their group identifier.
 
-#define ONLY_FLAGS // This instruction ONLY affects flags.
-#define NO_FLAGS // This instruction does not affect flags.
-#define N_AND_Z // This instruction affects the N and Z flags.
-#define NO_V  // This instruction affects N, Z, and C flags.
-#define ALL_FLAGS // This instruction affects N, V, Z, and C flags.
-
-
 Group 1 Instructions
 0000 oooo aaaa bbbb
 
-	o:	opcode
-	a:	rA (destination register usually)
-	b:	rB
-
-	Instructions:
+	DEFINE_OP
+	DEFINE_RA (destination register usually)
+	DEFINE_RB
 	
+	DEFINE_INSTRUCTIONS
 		ALL_FLAGS
 		add rA, rB
 		
@@ -34,6 +44,7 @@ Group 1 Instructions
 		// Subtract with borrow (6502 style)
 		ALL_FLAGS
 		sbc rA, rB
+		
 		
 		
 		ONLY_FLAGS
@@ -50,8 +61,9 @@ Group 1 Instructions
 		// Arithmetic shift right
 		NO_V
 		asr rA, rB
-
-
+		
+		
+		
 		N_AND_Z
 		and rA, rB
 		
@@ -61,19 +73,19 @@ Group 1 Instructions
 		N_AND_Z
 		xor rA, rB
 		
+		// Copy (rA = rB)
+		NO_FLAGS
+		cpy rA, rB
+		
+		
+		
 		// Copy Negated (rA = -rB)
 		N_AND_Z
 		cpn rA, rB
 		
-		
-		
 		// Copy Complemented (rA = ~rB)
 		N_AND_Z
 		cpc rA, rB
-		
-		// Copy (rA = rB)
-		N_AND_Z
-		cpy rA, rB
 		
 		// Swap (temp = rA; rA = rB; rB = temp)
 		// Not sure how useful this is, but you can swap with the stack pointer
@@ -85,49 +97,82 @@ Group 1 Instructions
 		N_AND_Z
 		mul rA, rB
 
+
 Group 2 Instructions
 0001 oooo aaaa bbbb
 
-	o:	opcode
-	a:	rA
-	b:	rB
+	DEFINE_OP
+	DEFINE_RA
+	DEFINE_RB
 	
-	Instructions:
-		
+	DEFINE_INSTRUCTIONS
 		// Load 32-bit value from address in rB into rA
 		NO_FLAGS
 		ldr rA, rB
 		
 		// Load unsigned 16-bit value from address in rB into rA.  This zero
 		// extends the value.
+		NO_FLAGS
 		ldh rA, rB
 		
 		// Load signed 16-bit value from address in rB into rA.  This sign
 		// extends the value.
+		NO_FLAGS
 		ldsh rA, rB
 		
-		// Load unsigned 8-bit value from address in rB into rA.	This zero
+		// Load unsigned 8-bit value from address in rB into rA.
+		// This zero
 		// extends the value.
+		NO_FLAGS
 		ldb rA, rB
 		
 		
 		
 		// Load signed 8-bit value from address in rB into rA.	This sign
 		// extends the value.
+		NO_FLAGS
 		ldsb rA, rB
 		
 		// Store 32-bit value in rA to address in rB
+		NO_FLAGS
 		str rA, rB
 		
 		// Store low 16 bits of rA to address in rB
+		NO_FLAGS
 		sth rA, rB
 		
 		// Store low 8 bits of rA to address in rB
+		NO_FLAGS
 		stb rA, rB
+		
+		
+		
+		RESERVED
+		
+		RESERVED
+		
+		RESERVED
+		
+		RESERVED
+		
+		
+		
+		RESERVED
+		
+		RESERVED
+		
+		RESERVED
+		
+		RESERVED
 
 
 Group 3 Instructions
 0010 oooo aaaa bbbb iiii iiii iiii iiii
 	
-	o:	opcode
-	a:	rA
+	DEFINE_OP
+	DEFINE_RA
+	DEFINE_RB
+	DEFINE_IMM_16BIT
+	
+	DEFINE_INSTRUCTIONS
+		
