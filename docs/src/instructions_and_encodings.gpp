@@ -29,10 +29,10 @@
 #define _DESCRIBE_LOAD_US_PART_1( us, x ) // Load us x-bit value from address in
 #define _DESCRIBE_LOAD_PART_2(arg_address) arg_address into ARG_REG(A)
 #define DESCRIBE_LOAD_32(arg_address) _DESCRIBE_LOAD_PART_1(32) _DESCRIBE_LOAD_PART_2(arg_address)
-#define DESCRIBE_LOAD_16_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(unsigned,16) _DESCRIBE_LOAD_PART_2(arg_address)
-#define DESCRIBE_LOAD_16_SIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(signed,16) _DESCRIBE_LOAD_PART_2(arg_address)
-#define DESCRIBE_LOAD_8_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(unsigned,8) _DESCRIBE_LOAD_PART_2(arg_address)
-#define DESCRIBE_LOAD_8_SIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(signed,8) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_16_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(zero-extended,16) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_16_SIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(sign-extended,16) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_8_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(zero-extended,8) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_8_SIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(sign-extended,8) _DESCRIBE_LOAD_PART_2(arg_address)
 #if 0
 
 
@@ -52,8 +52,8 @@
 
 
 #endif
-#define DESCRIBE_ZERO_EXTEND // This zero extends the value.
-#define DESCRIBE_SIGN_EXTEND // This sign extends the value.
+#define DESCRIBE_ZERO_EXTEND // This zero-extends the value.
+#define DESCRIBE_SIGN_EXTEND // This sign-extends the value.
 #if 0
 
 
@@ -61,7 +61,7 @@
 #define DESCRIBE_JUMP_DESTINATION_ADDRESS(addr) // Set pc to destination address in addr.
 #define DESCRIBE_CALL_DESTINATION_ADDRESS(addr) // Subroutine call using addr as destination address. 
 #define DESCRIBE_CALL_RETURN_ADDRESS // The return address is stored in the link register (lr).
-#define DESCRIBE_BRANCH_TARGET to (pc when instruction starts) + (sign extended 16-bit immediate value)
+#define DESCRIBE_BRANCH_TARGET to (pc when instruction starts) + (sign-extended 16-bit immediate value)
 #if 0
 
 
@@ -83,6 +83,7 @@
 
 
 #endif
+#define INSTR_NO_ARGS(instr) instr
 #define INSTR_IMM( instr, immediate ) instr immediate
 #define INSTR_RA(instr) instr ARG_REG(A)
 #define INSTR_RA_IMM( instr, immediate ) INSTR_RA(instr), immediate
@@ -252,11 +253,11 @@ GROUP_HEADER(0)
 		FLAGS_NONE
 		INSTR_RA_RB(cpc)
 		
-		// Swap (temp = ARG_REG(A); ARG_REG(A) = ARG_REG(B); ARG_REG(B) = temp)
-		// Not sure how useful this is, but you can swap with the stack
-		// pointer or with the link register
-		FLAGS_NONE
-		INSTR_RA_RB(swp)
+		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
+		// and stores)
+		FLAGS_N_AND_Z
+		IGNORE_REG(B)
+		INSTR_RA(cpyfrpc)
 
 
 GROUP_HEADER(1)
@@ -275,7 +276,7 @@ GROUP_HEADER(1)
 		FLAGS_ALL
 		INSTR_RA_RB(dec)
 		
-		// ARG_REG(A):ARG_REG(B) = (64-bit zero extend of ARG_REG(A)) * (64-bit zero extend of ARG_REG(B))
+		// ARG_REG(A):ARG_REG(B) = (64-bit zero-extend of ARG_REG(A)) * (64-bit zero-extend of ARG_REG(B))
 		// 
 		// Note that ARG_REG(A) will contain the high 32 bits of the 
 		// unsigned 64-bit product
@@ -286,7 +287,7 @@ GROUP_HEADER(1)
 		FLAGS_NONE
 		INSTR_RA_RB(umull)
 		
-		// ARG_REG(A):ARG_REG(B) = (64-bit sign extend of ARG_REG(A)) * (64-bit sign extend of ARG_REG(B))
+		// ARG_REG(A):ARG_REG(B) = (64-bit sign-extend of ARG_REG(A)) * (64-bit sign-extend of ARG_REG(B))
 		// 
 		// Note that ARG_REG(A) will contain the high 32 bits of the signed 
 		// 64-bit product
@@ -322,28 +323,28 @@ GROUP_HEADER(1)
 		
 		
 		// Push register ARG_REG(A) onto the stack
+		IGNORE_REG(B)
+		FLAGS_NONE
 		INSTR_RA(pushr)
 		
 		// Pop 32-bit value off the stack into ARG_REG(A)
+		IGNORE_REG(B)
+		FLAGS_NONE
 		INSTR_RA(popr)
 		
 		// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
 		// stack (in that order)
+		FLAGS_NONE
 		INSTR_RA_RB(pushp)
 		
 		// Pop two 32-bit values off the stack, storing the first popped
 		// value into ARG_REG(B) and the second popped value into ARG_REG(A)
+		FLAGS_NONE
 		INSTR_RA_RB(popp)
 		
 		
 		
 		
-		
-		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
-		// and stores)
-		FLAGS_N_AND_Z
-		IGNORE_REG(B)
-		INSTR_RA(cpyfrpc)
 		
 		// Swap the Interrupt Return Address and ARG_REG(A)
 		FLAGS_N_AND_Z
@@ -360,16 +361,37 @@ GROUP_HEADER(1)
 		IGNORE_REG(B)
 		INSTR_RA(cpyfrf)
 		
-		
-		
 		// Copy to flags from ARG_REG(A)
 		FLAGS_ALL
 		IGNORE_REG(B)
 		INSTR_RA(cpytof)
 		
-		RESERVED
-		RESERVED
-		RESERVED
+		
+		
+		// ENable Interrupts
+		FLAGS_NONE
+		IGNORE_REG(A)
+		IGNORE_REG(B)
+		INSTR_NO_ARGS(eni)
+		
+		// DIsable Interrupts
+		FLAGS_NONE
+		IGNORE_REG(A)
+		IGNORE_REG(B)
+		INSTR_NO_ARGS(dii)
+		
+		// Set the PC to interrupt RETurn address and enable Interrupts
+		FLAGS_NONE
+		IGNORE_REG(A)
+		IGNORE_REG(B)
+		INSTR_NO_ARGS(reti)
+		
+		// Set the PC to the Interrupt Return Address, but DON'T enable
+		// interrupts
+		FLAGS_NONE
+		IGNORE_REG(A)
+		IGNORE_REG(B)
+		INSTR_NO_ARGS(jumpira)
 		
 		
 		
@@ -576,4 +598,52 @@ GROUP_HEADER(2)
 		//// ARG_REG(A) = ARG_REG(B) - IMM_SIGN_EXTENDED
 		//FLAGS_ALL
 		//INSTR_RA_RB_IMM(subsi,ARG_IMM)
+
+
+GROUP_HEADER(3)
+011o oooo aaaa bbbb cccc iiii iiii iiii
+	
+	DESCRIBE_OP
+	DESCRIBE_RA
+	DESCRIBE_RB
+	DESCRIBE_RC
+	DESCRIBE_IMM(12)
+	
+	DESCRIBE_INSTRUCTIONS
+		DESCRIBE_LOAD_32(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
+		FLAGS_NONE
+		INSTR_RA_RB_RC_IMM(ldrxx,ARG_IMM)
 		
+		DESCRIBE_LOAD_16_UNSIGNED(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
+		FLAGS_NONE
+		INSTR_RA_RB_RC_IMM(ldhxx,ARG_IMM)
+		
+		DESCRIBE_LOAD_16_SIGNED(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
+		FLAGS_NONE
+		INSTR_RA_RB_RC_IMM(ldshxx,ARG_IMM)
+		
+		DESCRIBE_LOAD_8_UNSIGNED(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
+		FLAGS_NONE
+		INSTR_RA_RB_RC_IMM(ldbxx,ARG_IMM)
+		
+		
+		
+		DESCRIBE_LOAD_8_SIGNED(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
+		FLAGS_NONE
+		INSTR_RA_RB_RC_IMM(ldsbxx,ARG_IMM)
+		
+		DESCRIBE_STORE_32(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
+		FLAGS_NONE
+		INSTR_RA_RB_RC_IMM(strxx,ARG_IMM)
+		
+		DESCRIBE_STORE_16(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
+		FLAGS_NONE
+		INSTR_RA_RB_RC_IMM(sthxx,ARG_IMM)
+		
+		DESCRIBE_STORE_8(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
+		FLAGS_NONE
+		INSTR_RA_RB_RC_IMM(stbxx,ARG_IMM)
+	
+	
+	
+	
