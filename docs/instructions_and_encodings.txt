@@ -6,7 +6,7 @@ first 16-bits.
 Group 0 Instructions, for example, use 0000 as their group identifier.
 
 Group 0 Instructions
-0000 oooo aaaa bbbb
+000o oooo aaaa bbbb
 	
 	o:  opcode
 	a:  rA (destination register usually)
@@ -78,16 +78,11 @@ Group 0 Instructions
 		// This instruction affects N, Z, and C flags.
 		// Note that rB is ignored.
 		rrc rA
-
-
-Group 1 Instructions
-0001 oooo aaaa bbbb
-	
-	o:  opcode
-	a:  rA
-	b:  rB
-	
-	Instructions:
+		
+		
+		
+		
+		
 		// Load 32-bit value from address in rB into rA
 		// This instruction does not affect flags.
 		ldr rA, rB
@@ -151,11 +146,11 @@ Group 1 Instructions
 		cpy rA, rB
 		
 		// Copy Negated (rA = -rB)
-		// This instruction affects the N and Z flags.
+		// This instruction does not affect flags.
 		cpn rA, rB
 		
 		// Copy Complemented (rA = ~rB)
-		// This instruction affects the N and Z flags.
+		// This instruction does not affect flags.
 		cpc rA, rB
 		
 		// Swap (temp = rA; rA = rB; rB = temp)
@@ -164,9 +159,88 @@ Group 1 Instructions
 		// This instruction does not affect flags.
 		swp rA, rB
 
+Group 1 Instructions
+001o oooo aaaa bbbb
+	
+	o:  opcode
+	a:  rA
+	b:  rB
+	
+	Instructions:
+		// rA = rB + 1
+		// This instruction affects N, V, Z, and C flags.
+		inc rA, rB
+		
+		// rA = rB - 1
+		// This instruction affects N, V, Z, and C flags.
+		dec rA, rB
+		
+		// rA:rB = (64-bit zero extend of rA) * (64-bit zero extend of rB)
+		// Note that rA will contain the high 32 bits of the unsigned 64-bit product
+		// Note that rB will contain the low 32 bits of the unsigned 64-bit product
+		// This instruction does not affect flags.
+		umull rA, rB
+		
+		// rA:rB = (64-bit sign extend of rA) * (64-bit sign extend of rB)
+		// Note that rA will contain the high 32 bits of the signed 64-bit product
+		// Note that rB will contain the low 32 bits of the signed 64-bit product
+		// This instruction does not affect flags.
+		smull rA, rB
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
 
 Group 2 Instructions
-0010 oooo aaaa bbbb iiii iiii iiii iiii
+010o oooo aaaa bbbb iiii iiii iiii iiii
 	
 	o:  opcode
 	a:  rA
@@ -222,7 +296,7 @@ Group 2 Instructions
 		
 		// rA = rB + (sign-extended imm)
 		// This instruction affects N, V, Z, and C flags.
-		addi rA, rB, imm
+		addsi rA, rB, imm
 		
 		// Logical shift left, by (zero-extended imm) bits
 		// This instruction affects the N and Z flags.
@@ -251,5 +325,5 @@ Group 2 Instructions
 		// Pseudo instruction:
 		//// rA = rB - (sign-extended imm)
 		//// This instruction affects N, V, Z, and C flags.
-		//subi rA, rB, imm
+		//subsi rA, rB, imm
 		
