@@ -1,178 +1,340 @@
+#define concat #1#2
+#if 0
+
+#endif
 #define ONLY_FLAGS // This instruction ONLY affects flags.
 #define NO_FLAGS // This instruction does not affect flags.
 #define N_AND_Z // This instruction affects the N and Z flags.
-#define NO_V // This instruction affects N, Z, and C flags.
+#define ONLY_Z // This instruction only affects the Z flag.
+#define N_AND_Z_AND_C // This instruction affects N, Z, and C flags.
 #define ALL_FLAGS // This instruction affects N, V, Z, and C flags.
-#if 1
-#define RESERVED // Reserved for future expansion.
+#if 0
+
+
 #endif
-#define DEFINE_OP o:	opcode
-#define DEFINE_RA a:	rA
-#define DEFINE_RB b:	rB
-#define DEFINE_IMM_4BIT i:	4-bit immediate value
-#define DEFINE_IMM_5BIT i:	5-bit immediate value
-#define DEFINE_IMM_16BIT i: 16-bit immediate value
-#define DEFINE_IMM_32BIT i: 32-bit immediate value
-#if 1
-#define DEFINE_INSTRUCTIONS Instructions:
+#define DESCRIBE_OP o:  opcode
+#define DESCRIBE_RA a:  rA
+#define DESCRIBE_RB b:  rB
+#define DESCRIBE_RC c:  rc
+#define DESCRIBE_IMM(x) i:  x-bit immediate value
+#define DESCRIBE_IMM_UNSIGNED(x) DESCRIBE_IMM(zero-extended x)
+#define DESCRIBE_IMM_SIGNED(x) DESCRIBE_IMM(sign-extended x)
+#define DESCRIBE_INSTRUCTIONS Instructions:
+#define DESCRIBE_PSEUDO_INSTRUCTION // Pseudo instruction:
+#if 0
+
+
+#endif
+#define GROUP_HEADER(x) Group x Instructions
+#if 0
+
+
+#endif
+#define ARG_REG(x) concat(r,x)
+#define ARG_IMM imm
+#define IMM_ZERO_EXTENDED (zero-extended ARG_IMM)
+#define IMM_SIGN_EXTENDED (sign-extended ARG_IMM)
+#define ARG_FOR_LDST_NON_INDEXED ARG_REG(B)
+#define ARG_FOR_LDST_IMM_INDEXED(immediate) (ARG_FOR_LDST_NON_INDEXED + immediate)
+#define ARG_FOR_LDST_GENERIC_INDEXED(immediate) (ARG_FOR_LDST_NON_INDEXED + ARG_REG(C) + immediate)
+#define IGNORE_REG(x) // ARG_REG(x) ignored
+#if 0
+
+
+#endif
+#define INSTR_RA(instr) instr ARG_REG(A)
+#define INSTR_RA_IMM( instr, immediate ) INSTR_RA(instr), immediate
+#define INSTR_RA_RB(instr) INSTR_RA(instr), ARG_REG(B)
+#define INSTR_RA_RB_IMM( instr, immediate ) INSTR_RA_RB(instr), immediate
+#define INSTR_RA_RB_RC(instr) INSTR_RA_RB(instr), ARG_REG(C)
+#define INSTR_RA_RB_RC_IMM( instr, immediate ) INSTR_RA_RB_RC(instr), immediate
+#define RESERVED // Reserved for future expansion.
+#if 0
+
+
+#endif
+#define _DESCRIBE_LOAD_PART_1(x) // Load x-bit value from address in
+#define _DESCRIBE_LOAD_US_PART_1( us, x ) // Load us x-bit value from address in
+#define _DESCRIBE_LOAD_PART_2(arg_address) arg_address into ARG_REG(A)
+#define DESCRIBE_LOAD_32(arg_address) _DESCRIBE_LOAD_PART_1(32) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_16_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(unsigned,16) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_16_SIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(signed,16) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_8_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(unsigned,8) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_8_SIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(signed,8) _DESCRIBE_LOAD_PART_2(arg_address)
+#if 0
+
+
+#endif
+#define DESCRIBE_ZERO_EXTEND // This zero extends the value.
+#define DESCRIBE_SIGN_EXTEND // This sign extends the value.
+#if 0
+
+
+#endif
+#define _DESCRIBE_STORE( x, arg_address ) // Store x ARG_REG(A) to address in arg_address
+#define DESCRIBE_STORE_32(arg_address) _DESCRIBE_STORE(32-bit value in,arg_address)
+#define DESCRIBE_STORE_16(arg_address) _DESCRIBE_STORE(low 16 bits of,arg_address)
+#define DESCRIBE_STORE_8(arg_address) _DESCRIBE_STORE(low 8 bits of,arg_address)
+#if 0
+
+You won't see this sentence in the final .txt file.
+It's nice, I guess
+
 #endif
 Three instruction encoding sizes:  16-bit, 32-bit, and 48-bit
 
 The instruction group is a 4-bit field, the 4 most significant bits of the
 first 16-bits.
 
-Group 1 Instructions, for example, use 0000 as their group identifier.
+Group 0 Instructions, for example, use 0000 as their group identifier.
 
-Group 1 Instructions
+GROUP_HEADER(0)
 0000 oooo aaaa bbbb
-
-	DEFINE_OP
-	DEFINE_RA (destination register usually)
-	DEFINE_RB
 	
-	DEFINE_INSTRUCTIONS
+	DESCRIBE_OP
+	DESCRIBE_RA (destination register usually)
+	DESCRIBE_RB
+	
+	DESCRIBE_INSTRUCTIONS
 		ALL_FLAGS
-		add rA, rB
+		INSTR_RA_RB(add)
 		
 		// Add with carry
 		ALL_FLAGS
-		adc rA, rB
+		INSTR_RA_RB(adc)
 		
 		ALL_FLAGS
-		sub rA, rB
+		INSTR_RA_RB(sub)
 		
 		// Subtract with borrow (6502 style)
 		ALL_FLAGS
-		sbc rA, rB
+		INSTR_RA_RB(sbc)
 		
 		
 		
 		ONLY_FLAGS
-		cmp rA, rB
+		INSTR_RA_RB(cmp)
 		
 		// Logical shift left
-		NO_V
-		lsl rA, rB
+		N_AND_Z
+		INSTR_RA_RB(lsl)
 		
 		// Logical shift right
-		NO_V
-		lsr rA, rB
+		N_AND_Z
+		INSTR_RA_RB(lsr)
 		
 		// Arithmetic shift right
-		NO_V
-		asr rA, rB
+		N_AND_Z
+		INSTR_RA_RB(asr)
 		
 		
 		
 		N_AND_Z
-		and rA, rB
+		INSTR_RA_RB(and)
 		
 		N_AND_Z
-		or rA, rB
+		INSTR_RA_RB(or)
 		
 		N_AND_Z
-		xor rA, rB
+		INSTR_RA_RB(xor)
 		
-		// Copy (rA = rB)
-		NO_FLAGS
-		cpy rA, rB
-		
-		
-		
-		// Copy Negated (rA = -rB)
+		// ARG_REG(A) *= ARG_REG(B)
 		N_AND_Z
-		cpn rA, rB
+		INSTR_RA_RB(mul)
 		
-		// Copy Complemented (rA = ~rB)
+		
+		
+		// Rotate ARG_REG(A) left (NOT through carry) by ARG_REG(B) bits
 		N_AND_Z
-		cpc rA, rB
+		INSTR_RA_RB(rol)
 		
-		// Swap (temp = rA; rA = rB; rB = temp)
-		// Not sure how useful this is, but you can swap with the stack pointer
-		// or with the link register
-		NO_FLAGS
-		swp rA, rB
-		
-		// rA *= rB
+		// Rotate ARG_REG(A) right (NOT through carry) by ARG_REG(B) bits
 		N_AND_Z
-		mul rA, rB
+		INSTR_RA_RB(ror)
+		
+		// Rotate ARG_REG(A) left (THROUGH carry) by 1 bit, ignoring
+		// ARG_REG(B)
+		N_AND_Z_AND_C
+		IGNORE_REG(B)
+		INSTR_RA(rlc)
+		
+		// Rotate ARG_REG(A) right (THROUGH carry) by 1 bit, ignoring
+		// ARG_REG(B)
+		N_AND_Z_AND_C
+		IGNORE_REG(B)
+		INSTR_RA(rrc)
 
 
-Group 2 Instructions
+GROUP_HEADER(1)
 0001 oooo aaaa bbbb
-
-	DEFINE_OP
-	DEFINE_RA
-	DEFINE_RB
 	
-	DEFINE_INSTRUCTIONS
-		// Load 32-bit value from address in rB into rA
+	DESCRIBE_OP
+	DESCRIBE_RA
+	DESCRIBE_RB
+	
+	DESCRIBE_INSTRUCTIONS
+		DESCRIBE_LOAD_32(ARG_FOR_LDST_NON_INDEXED)
 		NO_FLAGS
-		ldr rA, rB
+		INSTR_RA_RB(ldr)
 		
-		// Load unsigned 16-bit value from address in rB into rA.  This zero
-		// extends the value.
+		DESCRIBE_LOAD_16_UNSIGNED(ARG_FOR_LDST_NON_INDEXED)
+		DESCRIBE_ZERO_EXTEND
 		NO_FLAGS
-		ldh rA, rB
+		INSTR_RA_RB(ldh)
 		
-		// Load signed 16-bit value from address in rB into rA.  This sign
-		// extends the value.
+		DESCRIBE_LOAD_16_SIGNED(ARG_FOR_LDST_NON_INDEXED)
+		DESCRIBE_SIGN_EXTEND
 		NO_FLAGS
-		ldsh rA, rB
+		INSTR_RA_RB(ldsh)
 		
-		// Load unsigned 8-bit value from address in rB into rA.
-		// This zero
-		// extends the value.
+		DESCRIBE_LOAD_8_UNSIGNED(ARG_FOR_LDST_NON_INDEXED)
+		DESCRIBE_ZERO_EXTEND
 		NO_FLAGS
-		ldb rA, rB
+		INSTR_RA_RB(ldb)
 		
 		
 		
-		// Load signed 8-bit value from address in rB into rA.	This sign
-		// extends the value.
+		DESCRIBE_LOAD_8_SIGNED(ARG_FOR_LDST_NON_INDEXED)
+		DESCRIBE_SIGN_EXTEND
 		NO_FLAGS
-		ldsb rA, rB
+		INSTR_RA_RB(ldsb)
 		
-		// Store 32-bit value in rA to address in rB
+		DESCRIBE_STORE_32(ARG_FOR_LDST_NON_INDEXED)
 		NO_FLAGS
-		str rA, rB
+		INSTR_RA_RB(str)
 		
-		// Store low 16 bits of rA to address in rB
+		DESCRIBE_STORE_16(ARG_FOR_LDST_NON_INDEXED)
 		NO_FLAGS
-		sth rA, rB
+		INSTR_RA_RB(sth)
 		
-		// Store low 8 bits of rA to address in rB
+		DESCRIBE_STORE_8(ARG_FOR_LDST_NON_INDEXED)
 		NO_FLAGS
-		stb rA, rB
+		INSTR_RA_RB(stb)
 		
 		
 		
-		RESERVED
+		// ARG_REG(A) = Zero extend of low 8 bits in ARG_REG(B)
+		N_AND_Z
+		INSTR_RA_RB(zeb)
 		
-		RESERVED
+		// ARG_REG(A) = Sign extend of low 8 bits in ARG_REG(B)
+		N_AND_Z
+		INSTR_RA_RB(seb)
 		
-		RESERVED
+		// ARG_REG(A) = Zero extend of low 16 bits in ARG_REG(B)
+		N_AND_Z
+		INSTR_RA_RB(zeh)
 		
-		RESERVED
+		// ARG_REG(A) = Sign extend of low 16 bits in ARG_REG(B)
+		N_AND_Z
+		INSTR_RA_RB(seh)
 		
 		
 		
-		RESERVED
+		// Copy (ARG_REG(A) = ARG_REG(B))
+		NO_FLAGS
+		INSTR_RA_RB(cpy)
 		
-		RESERVED
+		// Copy Negated (ARG_REG(A) = -ARG_REG(B))
+		N_AND_Z
+		INSTR_RA_RB(cpn)
 		
-		RESERVED
+		// Copy Complemented (ARG_REG(A) = ~ARG_REG(B))
+		N_AND_Z
+		INSTR_RA_RB(cpc)
 		
-		RESERVED
+		// Swap (temp = ARG_REG(A); ARG_REG(A) = ARG_REG(B); ARG_REG(B) = temp)
+		// Not sure how useful this is, but you can swap with the stack
+		// pointer or with the link register
+		NO_FLAGS
+		INSTR_RA_RB(swp)
 
 
-Group 3 Instructions
+GROUP_HEADER(2)
 0010 oooo aaaa bbbb iiii iiii iiii iiii
 	
-	DEFINE_OP
-	DEFINE_RA
-	DEFINE_RB
-	DEFINE_IMM_16BIT
+	DESCRIBE_OP
+	DESCRIBE_RA
+	DESCRIBE_RB
+	DESCRIBE_IMM(16)
 	
-	DEFINE_INSTRUCTIONS
+	DESCRIBE_INSTRUCTIONS
+		DESCRIBE_LOAD_32(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
+		NO_FLAGS
+		INSTR_RA_RB_IMM(ldrxi,ARG_IMM)
+		
+		DESCRIBE_LOAD_16_UNSIGNED(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
+		NO_FLAGS
+		INSTR_RA_RB_IMM(ldhxi,ARG_IMM)
+		
+		DESCRIBE_LOAD_16_SIGNED(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
+		NO_FLAGS
+		INSTR_RA_RB_IMM(ldshxi,ARG_IMM)
+		
+		DESCRIBE_LOAD_8_UNSIGNED(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
+		NO_FLAGS
+		INSTR_RA_RB_IMM(ldbxi,ARG_IMM)
+		
+		
+		
+		DESCRIBE_LOAD_8_SIGNED(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
+		NO_FLAGS
+		INSTR_RA_RB_IMM(ldsbxi,ARG_IMM)
+		
+		DESCRIBE_STORE_32(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
+		NO_FLAGS
+		INSTR_RA_RB_IMM(strxi,ARG_IMM)
+		
+		DESCRIBE_STORE_16(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
+		NO_FLAGS
+		INSTR_RA_RB_IMM(sthxi,ARG_IMM)
+		
+		DESCRIBE_STORE_8(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
+		NO_FLAGS
+		INSTR_RA_RB_IMM(stbxi,ARG_IMM)
+		
+		
+		
+		// ARG_REG(A) low 16 bits = ARG_IMM
+		NO_FLAGS
+		IGNORE_REG(B)
+		INSTR_RA_IMM(cpylo,ARG_IMM)
+		
+		// ARG_REG(A) high 16 bits = ARG_IMM
+		NO_FLAGS
+		IGNORE_REG(B)
+		INSTR_RA_IMM(cpyhi,ARG_IMM)
+		
+		// ARG_REG(A) = ARG_REG(B) + IMM_SIGN_EXTENDED
+		ALL_FLAGS
+		INSTR_RA_RB_IMM(addi,ARG_IMM)
+		
+		// Logical shift left, by IMM_ZERO_EXTENDED bits
+		N_AND_Z
+		INSTR_RA_RB_IMM(lsli,ARG_IMM)
+		
+		
+		
+		// Logical shift right, by IMM_ZERO_EXTENDED bits
+		N_AND_Z
+		INSTR_RA_RB_IMM(lsri,ARG_IMM)
+		
+		// Arithmetic shift right, by IMM_ZERO_EXTENDED bits
+		N_AND_Z
+		INSTR_RA_RB_IMM(asri,ARG_IMM)
+		
+		// Rotate ARG_REG(A) left (NOT through carry) by IMM_ZERO_EXTENDED
+		// bits, ignoring ARG_REG(B)
+		INSTR_RA_IMM(roli,ARG_IMM)
+		
+		// Rotate ARG_REG(A) right (NOT through carry) by IMM_ZERO_EXTENDED
+		// bits, ignoring ARG_REG(B)
+		INSTR_RA_IMM(rori,ARG_IMM)
+		
+		
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//// ARG_REG(A) = ARG_REG(B) - IMM_SIGN_EXTENDED
+		//ALL_FLAGS
+		//INSTR_RA_RB_IMM(subi,ARG_IMM)
 		
