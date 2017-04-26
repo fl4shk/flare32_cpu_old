@@ -42,6 +42,7 @@
 
 
 #endif
+#define INSTR_IMM( instr, immediate ) instr immediate
 #define INSTR_RA(instr) instr ARG_REG(A)
 #define INSTR_RA_IMM( instr, immediate ) INSTR_RA(instr), immediate
 #define INSTR_RA_RB(instr) INSTR_RA(instr), ARG_REG(B)
@@ -74,6 +75,11 @@
 #endif
 #define DESCRIBE_ZERO_EXTEND // This zero extends the value.
 #define DESCRIBE_SIGN_EXTEND // This sign extends the value.
+#if 0
+
+
+#endif
+#define DESCRIBE_BRANCH_TARGET to (pc when instruction starts) + (sign extended 16-bit immediate value)
 #if 0
 
 
@@ -377,12 +383,12 @@ GROUP_HEADER(2)
 		// ARG_REG(A) low 16 bits = ARG_IMM
 		FLAGS_NONE
 		IGNORE_REG(B)
-		INSTR_RA_IMM(cpylo,ARG_IMM)
+		INSTR_RA_IMM(cpyloi,ARG_IMM)
 		
 		// ARG_REG(A) high 16 bits = ARG_IMM
 		FLAGS_NONE
 		IGNORE_REG(B)
-		INSTR_RA_IMM(cpyhi,ARG_IMM)
+		INSTR_RA_IMM(cpyhii,ARG_IMM)
 		
 		// ARG_REG(A) = ARG_REG(B) + IMM_SIGN_EXTENDED
 		FLAGS_ALL
@@ -409,6 +415,63 @@ GROUP_HEADER(2)
 		// Rotate ARG_REG(A) right (NOT through carry) by IMM_ZERO_EXTENDED
 		// bits, ignoring ARG_REG(B)
 		INSTR_RA_IMM(rori,ARG_IMM)
+		
+		
+		
+		
+		// aaaa
+		INSTR_IMM(GGGGG,ARG_IMM)
+		
+		// Branch always, DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bra,ARG_IMM)
+		
+		// Branch when Z == 0, DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bne,ARG_IMM)
+		
+		// Branch when Z == 1, DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(beq,ARG_IMM)
+		
+		
+		
+		// Branch when C == 0 [unsigned less than], DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bcc,ARG_IMM)
+		
+		// Branch when C == 1 [unsigned greater than or equal], DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bcs,ARG_IMM)
+		
+		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bls,ARG_IMM)
+		
+		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bhi,ARG_IMM)
+		
+		
+		
+		// Branch when N == 0, DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bpl,ARG_IMM)
+		
+		// Branch when N == 1, DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bmi,ARG_IMM)
+		
+		// Branch when V == 0, DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bvc,ARG_IMM)
+		
+		// Branch when V == 1, DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bvs,ARG_IMM)
+		
+		
+		
+		// Branch when N == V [signed greater than or equal], DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bge,ARG_IMM)
+		
+		// Branch when N != V [signed less than], DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(blt,ARG_IMM)
+		
+		// Branch when ( N == V and Z == 0 ) [signed greater than], DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(bgt,ARG_IMM)
+		
+		// Branch when ( N != V or Z == 1 ) [signed less than or equal], DESCRIBE_BRANCH_TARGET
+		INSTR_IMM(ble,ARG_IMM)
 		
 		
 		

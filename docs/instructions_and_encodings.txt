@@ -287,12 +287,12 @@ Group 2 Instructions
 		// rA low 16 bits = imm
 		// This instruction does not affect flags.
 		// Note that rB is ignored.
-		cpylo rA, imm
+		cpyloi rA, imm
 		
 		// rA high 16 bits = imm
 		// This instruction does not affect flags.
 		// Note that rB is ignored.
-		cpyhi rA, imm
+		cpyhii rA, imm
 		
 		// rA = rB + (sign-extended imm)
 		// This instruction affects N, V, Z, and C flags.
@@ -319,6 +319,63 @@ Group 2 Instructions
 		// Rotate rA right (NOT through carry) by (zero-extended imm)
 		// bits, ignoring rB
 		rori rA, imm
+		
+		
+		
+		
+		// aaaa
+		GGGGG imm
+		
+		// Branch always, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bra imm
+		
+		// Branch when Z == 0, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bne imm
+		
+		// Branch when Z == 1, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		beq imm
+		
+		
+		
+		// Branch when C == 0 [unsigned less than], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bcc imm
+		
+		// Branch when C == 1 [unsigned greater than or equal], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bcs imm
+		
+		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bls imm
+		
+		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bhi imm
+		
+		
+		
+		// Branch when N == 0, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bpl imm
+		
+		// Branch when N == 1, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bmi imm
+		
+		// Branch when V == 0, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bvc imm
+		
+		// Branch when V == 1, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bvs imm
+		
+		
+		
+		// Branch when N == V [signed greater than or equal], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bge imm
+		
+		// Branch when N != V [signed less than], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		blt imm
+		
+		// Branch when ( N == V and Z == 0 ) [signed greater than], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		bgt imm
+		
+		// Branch when ( N != V or Z == 1 ) [signed less than or equal], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		ble imm
 		
 		
 		
