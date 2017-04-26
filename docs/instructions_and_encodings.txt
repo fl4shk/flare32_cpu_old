@@ -523,3 +523,71 @@ Group 4 Instructions
 		
 		// Store low 8 bits of rA to address in imm.
 		stba rA, rB
+		
+		
+		
+		// Load 32-bit value from address in (imm + rB) into rA.
+		ldrax rA, rB
+		
+		// Load zero-extended 16-bit value from address in (imm + rB) into rA.
+		// This zero-extends the value.
+		ldhax rA, rB
+		
+		// Load sign-extended 16-bit value from address in (imm + rB) into rA.
+		// This sign-extends the value.
+		ldshax rA, rB
+		
+		// Load zero-extended 8-bit value from address in (imm + rB) into rA.
+		// This zero-extends the value.
+		ldbax rA, rB
+		
+		
+		
+		// Load sign-extended 8-bit value from address in (imm + rB) into rA.
+		// This sign-extends the value.
+		ldsbax rA, rB
+		
+		// Store 32-bit value in rA to address in (imm + rB).
+		strax rA, rB
+		
+		// Store low 16 bits of rA to address in (imm + rB).
+		sthax rA, rB
+		
+		// Store low 8 bits of rA to address in (imm + rB).
+		stbax rA, rB
+		
+		
+		
+		// rA = 32-bit immediate
+		cpyi rA, imm
+		
+		// Set pc to destination address in imm.
+		jumpi imm
+		
+		// Subroutine call using imm as destination address. 
+		// The return address is stored in the link register (lr).
+		calli imm
+		
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
