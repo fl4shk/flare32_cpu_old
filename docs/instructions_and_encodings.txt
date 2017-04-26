@@ -214,13 +214,11 @@ Group 1 Instructions
 		
 		
 		
-		// Swap the Interrupt Return Address and rA
-		// This instruction affects the N and Z flags.
-		swpira rA
+		// Push flags as 8-bit value onto the stack (high 4 bits of pushed value are set to zero before the push)
+		pushf
 		
-		// Copy the Interrupt Return Address to rA
-		// This instruction affects the N and Z flags.
-		cpyira rA
+		// Pop 8-bit value from the stack and store low 4 bits to flags
+		popf
 		
 		// Clear rA, then CoPY FRom Flags to rA
 		cpyfrf rA
@@ -246,8 +244,14 @@ Group 1 Instructions
 		
 		
 		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// Swap the Interrupt Return Address and rA
+		// This instruction affects the N and Z flags.
+		swpira rA
+		
+		// Copy the Interrupt Return Address to rA
+		// This instruction affects the N and Z flags.
+		cpyira rA
+		
 		// Reserved for future expansion.
 		// Reserved for future expansion.
 		
