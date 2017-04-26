@@ -1,6 +1,7 @@
 -- Registers --
 
-There will be 16 general purpose registers, each 32-bit
+There will be 16 general purpose registers, each 32-bit, though the stack
+pointer is not as general purpose as r0-r14.
 
 
 -- General Purpose Registers --
@@ -10,10 +11,11 @@ r0 is used for return values <= 32 bits
 r0:r1 is used for return values == 64 bits, with r0 as high byte and r1 as
 low byte
 
-Scratch registers (They need to be preserved by the callee):  r4-r13
+Scratch registers:  r4-r13.  They need to be preserved by the callee.
 
-Link register (call instructions save the return address here):  lr, aka
-r14
+Link register (call instructions store the return address here):  lr, aka
+r14.  This register should be preserved by the callee if the callee uses
+it.
 
 Stack pointer:  sp, aka r15
 
@@ -22,5 +24,4 @@ Stack pointer:  sp, aka r15
 Program counter:  pc
 There won't be any way to perform pc-relative loads.  Instead, there
 will be variable-length instructions that permit 32-bit immediate values.
-
 

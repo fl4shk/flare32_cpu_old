@@ -79,6 +79,9 @@
 
 
 #endif
+#define DESCRIBE_JUMP_DESTINATION_ADDRESS(addr) // Set pc to destination address in addr.
+#define DESCRIBE_CALL_DESTINATION_ADDRESS(addr) // Subroutine call using addr as destination address. 
+#define DESCRIBE_CALL_RETURN_ADDRESS // The return address is stored in the link register (lr).
 #define DESCRIBE_BRANCH_TARGET to (pc when instruction starts) + (sign extended 16-bit immediate value)
 #if 0
 
@@ -285,10 +288,27 @@ GROUP_HEADER(1)
 		
 		
 		
-		RESERVED
-		RESERVED
-		RESERVED
-		RESERVED
+		DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(A))
+		FLAGS_NONE
+		IGNORE_REG(B)
+		INSTR_RA(jump)
+		
+		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
+		FLAGS_NONE
+		INSTR_RA_RB(jumpx)
+		
+		DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_REG(A))
+		DESCRIBE_CALL_RETURN_ADDRESS
+		FLAGS_NONE
+		IGNORE_REG(B)
+		INSTR_RA(call)
+		
+		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
+		DESCRIBE_CALL_RETURN_ADDRESS
+		FLAGS_NONE
+		INSTR_RA_RB(callx)
+		
+		
 		
 		
 		

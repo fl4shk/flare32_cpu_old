@@ -189,10 +189,27 @@ Group 1 Instructions
 		
 		
 		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// Set pc to destination address in rA.
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
+		jump rA
+		
+		// Set pc to destination address in (rA + rB).
+		// This instruction does not affect flags.
+		jumpx rA, rB
+		
+		// Subroutine call using rA as destination address. 
+		// The return address is stored in the link register (lr).
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
+		call rA
+		
+		// Subroutine call using (rA + rB) as destination address. 
+		// The return address is stored in the link register (lr).
+		// This instruction does not affect flags.
+		callx rA, rB
+		
+		
 		
 		
 		
