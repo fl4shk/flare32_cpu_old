@@ -25,6 +25,47 @@
 
 
 #endif
+#define _DESCRIBE_LOAD_PART_1(x) // Load x-bit value from address in
+#define _DESCRIBE_LOAD_US_PART_1( us, x ) // Load us x-bit value from address in
+#define _DESCRIBE_LOAD_PART_2(arg_address) arg_address into ARG_REG(A)
+#define DESCRIBE_LOAD_32(arg_address) _DESCRIBE_LOAD_PART_1(32) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_16_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(unsigned,16) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_16_SIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(signed,16) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_8_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(unsigned,8) _DESCRIBE_LOAD_PART_2(arg_address)
+#define DESCRIBE_LOAD_8_SIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(signed,8) _DESCRIBE_LOAD_PART_2(arg_address)
+#if 0
+
+
+#endif
+#define _DESCRIBE_STORE( x, arg_address ) // Store x ARG_REG(A) to address in arg_address
+#define DESCRIBE_STORE_32(arg_address) _DESCRIBE_STORE(32-bit value in,arg_address)
+#define DESCRIBE_STORE_16(arg_address) _DESCRIBE_STORE(low 16 bits of,arg_address)
+#define DESCRIBE_STORE_8(arg_address) _DESCRIBE_STORE(low 8 bits of,arg_address)
+#if 0
+
+
+#endif
+#define _DESCRIBE_ROTATE( lr, amount ) // Rotate ARG_REG(A) lr by amount
+#define DESCRIBE_ROTATE_NOT_THROUGH_CARRY( lr, amount ) _DESCRIBE_ROTATE(lr (NOT through carry),amount bits).
+#define DESCRIBE_ROTATE_THROUGH_CARRY(lr) _DESCRIBE_ROTATE(lr (THROUGH carry),1 bit), ignoring ARG_REG(B).
+#if 0
+
+
+#endif
+#define DESCRIBE_ZERO_EXTEND // This zero extends the value.
+#define DESCRIBE_SIGN_EXTEND // This sign extends the value.
+#if 0
+
+
+#endif
+#define DESCRIBE_JUMP_DESTINATION_ADDRESS(addr) // Set pc to destination address in addr.
+#define DESCRIBE_CALL_DESTINATION_ADDRESS(addr) // Subroutine call using addr as destination address. 
+#define DESCRIBE_CALL_RETURN_ADDRESS // The return address is stored in the link register (lr).
+#define DESCRIBE_BRANCH_TARGET to (pc when instruction starts) + (sign extended 16-bit immediate value)
+#if 0
+
+
+#endif
 #define GROUP_HEADER(x) Group x Instructions
 #if 0
 
@@ -52,57 +93,16 @@
 #define RESERVED // Reserved for future expansion.
 #if 0
 
-
-#endif
-#define _DESCRIBE_LOAD_PART_1(x) // Load x-bit value from address in
-#define _DESCRIBE_LOAD_US_PART_1( us, x ) // Load us x-bit value from address in
-#define _DESCRIBE_LOAD_PART_2(arg_address) arg_address into ARG_REG(A)
-#define DESCRIBE_LOAD_32(arg_address) _DESCRIBE_LOAD_PART_1(32) _DESCRIBE_LOAD_PART_2(arg_address)
-#define DESCRIBE_LOAD_16_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(unsigned,16) _DESCRIBE_LOAD_PART_2(arg_address)
-#define DESCRIBE_LOAD_16_SIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(signed,16) _DESCRIBE_LOAD_PART_2(arg_address)
-#define DESCRIBE_LOAD_8_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(unsigned,8) _DESCRIBE_LOAD_PART_2(arg_address)
-#define DESCRIBE_LOAD_8_SIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(signed,8) _DESCRIBE_LOAD_PART_2(arg_address)
-#if 0
-
-
-#endif
-#define _DESCRIBE_ROTATE( lr, amount ) // Rotate ARG_REG(A) lr by amount
-#define DESCRIBE_ROTATE_NOT_THROUGH_CARRY( lr, amount ) _DESCRIBE_ROTATE(lr (NOT through carry),amount bits).
-#define DESCRIBE_ROTATE_THROUGH_CARRY(lr) _DESCRIBE_ROTATE(lr (THROUGH carry),1 bit), ignoring ARG_REG(B).
-#if 0
-
-
-#endif
-#define DESCRIBE_ZERO_EXTEND // This zero extends the value.
-#define DESCRIBE_SIGN_EXTEND // This sign extends the value.
-#if 0
-
-
-#endif
-#define DESCRIBE_JUMP_DESTINATION_ADDRESS(addr) // Set pc to destination address in addr.
-#define DESCRIBE_CALL_DESTINATION_ADDRESS(addr) // Subroutine call using addr as destination address. 
-#define DESCRIBE_CALL_RETURN_ADDRESS // The return address is stored in the link register (lr).
-#define DESCRIBE_BRANCH_TARGET to (pc when instruction starts) + (sign extended 16-bit immediate value)
-#if 0
-
-
-#endif
-#define _DESCRIBE_STORE( x, arg_address ) // Store x ARG_REG(A) to address in arg_address
-#define DESCRIBE_STORE_32(arg_address) _DESCRIBE_STORE(32-bit value in,arg_address)
-#define DESCRIBE_STORE_16(arg_address) _DESCRIBE_STORE(low 16 bits of,arg_address)
-#define DESCRIBE_STORE_8(arg_address) _DESCRIBE_STORE(low 8 bits of,arg_address)
-#if 0
-
 You won't see this sentence in the final .txt file.
 It's nice, I guess
 
 #endif
 Three instruction encoding sizes:  16-bit, 32-bit, and 48-bit
 
-The instruction group is a 4-bit field, the 4 most significant bits of the
+The instruction group is a 3-bit field, the 3 most significant bits of the
 first 16-bits.
 
-Group 0 Instructions, for example, use 0000 as their group identifier.
+Group 0 Instructions, for example, use 000 as their group identifier.
 
 GROUP_HEADER(0)
 000o oooo aaaa bbbb
@@ -222,14 +222,6 @@ GROUP_HEADER(0)
 		
 		
 		
-		// ARG_REG(A) = Zero extend of low 8 bits in ARG_REG(B)
-		FLAGS_N_AND_Z
-		INSTR_RA_RB(zeb)
-		
-		// ARG_REG(A) = Sign extend of low 8 bits in ARG_REG(B)
-		FLAGS_N_AND_Z
-		INSTR_RA_RB(seb)
-		
 		// ARG_REG(A) = Zero extend of low 16 bits in ARG_REG(B)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB(zeh)
@@ -237,6 +229,14 @@ GROUP_HEADER(0)
 		// ARG_REG(A) = Sign extend of low 16 bits in ARG_REG(B)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB(seh)
+		
+		// ARG_REG(A) = Zero extend of low 8 bits in ARG_REG(B)
+		FLAGS_N_AND_Z
+		INSTR_RA_RB(zeb)
+		
+		// ARG_REG(A) = Sign extend of low 8 bits in ARG_REG(B)
+		FLAGS_N_AND_Z
+		INSTR_RA_RB(seb)
 		
 		
 		
@@ -258,6 +258,7 @@ GROUP_HEADER(0)
 		FLAGS_NONE
 		INSTR_RA_RB(swp)
 
+
 GROUP_HEADER(1)
 001o oooo aaaa bbbb
 	
@@ -275,14 +276,24 @@ GROUP_HEADER(1)
 		INSTR_RA_RB(dec)
 		
 		// ARG_REG(A):ARG_REG(B) = (64-bit zero extend of ARG_REG(A)) * (64-bit zero extend of ARG_REG(B))
-		// Note that ARG_REG(A) will contain the high 32 bits of the unsigned 64-bit product
-		// Note that ARG_REG(B) will contain the low 32 bits of the unsigned 64-bit product
+		// 
+		// Note that ARG_REG(A) will contain the high 32 bits of the 
+		// unsigned 64-bit product
+		// 
+		// Note that ARG_REG(B) will contain the low 32 bits of the 
+		// unsigned 64-bit product
+		// 
 		FLAGS_NONE
 		INSTR_RA_RB(umull)
 		
 		// ARG_REG(A):ARG_REG(B) = (64-bit sign extend of ARG_REG(A)) * (64-bit sign extend of ARG_REG(B))
-		// Note that ARG_REG(A) will contain the high 32 bits of the signed 64-bit product
-		// Note that ARG_REG(B) will contain the low 32 bits of the signed 64-bit product
+		// 
+		// Note that ARG_REG(A) will contain the high 32 bits of the signed 
+		// 64-bit product
+		// 
+		// Note that ARG_REG(B) will contain the low 32 bits of the signed 
+		// 64-bit product
+		// 
 		FLAGS_NONE
 		INSTR_RA_RB(smull)
 		
@@ -310,25 +321,52 @@ GROUP_HEADER(1)
 		
 		
 		
+		// Push register ARG_REG(A) onto the stack
+		INSTR_RA(pushr)
+		
+		// Pop 32-bit value off the stack into ARG_REG(A)
+		INSTR_RA(popr)
+		
+		// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
+		// stack (in that order)
+		INSTR_RA_RB(pushp)
+		
+		// Pop two 32-bit values off the stack, storing the first popped
+		// value into ARG_REG(B) and the second popped value into ARG_REG(A)
+		INSTR_RA_RB(popp)
 		
 		
-		RESERVED
-		RESERVED
-		RESERVED
-		RESERVED
 		
 		
 		
-		RESERVED
-		RESERVED
-		RESERVED
-		RESERVED
+		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
+		// and stores)
+		FLAGS_N_AND_Z
+		IGNORE_REG(B)
+		INSTR_RA(cpyfrpc)
+		
+		// Swap the Interrupt Return Address and ARG_REG(A)
+		FLAGS_N_AND_Z
+		IGNORE_REG(B)
+		INSTR_RA(swpira)
+		
+		// Copy the Interrupt Return Address to ARG_REG(A)
+		FLAGS_N_AND_Z
+		IGNORE_REG(B)
+		INSTR_RA(cpyira)
+		
+		// Clear ARG_REG(A), then CoPY FRom Flags to ARG_REG(A)
+		FLAGS_NONE
+		IGNORE_REG(B)
+		INSTR_RA(cpyfrf)
 		
 		
 		
+		// Copy to flags from ARG_REG(A)
+		FLAGS_ALL
+		IGNORE_REG(B)
+		INSTR_RA(cpytof)
 		
-		
-		RESERVED
 		RESERVED
 		RESERVED
 		RESERVED
@@ -439,8 +477,10 @@ GROUP_HEADER(2)
 		
 		
 		
-		// aaaa
-		INSTR_IMM(GGGGG,ARG_IMM)
+		
+		// Compare ARG_REG(A) to IMM_ZERO_EXTENDED
+		ONLY_FLAGS
+		INSTR_IMM(cmpi,ARG_IMM)
 		
 		// Branch always, DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bra,ARG_IMM)
@@ -453,16 +493,20 @@ GROUP_HEADER(2)
 		
 		
 		
-		// Branch when C == 0 [unsigned less than], DESCRIBE_BRANCH_TARGET
+		// Branch when C == 0 [unsigned less than], 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bcc,ARG_IMM)
 		
-		// Branch when C == 1 [unsigned greater than or equal], DESCRIBE_BRANCH_TARGET
+		// Branch when C == 1 [unsigned greater than or equal], 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bcs,ARG_IMM)
 		
-		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], DESCRIBE_BRANCH_TARGET
+		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bls,ARG_IMM)
 		
-		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], DESCRIBE_BRANCH_TARGET
+		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bhi,ARG_IMM)
 		
 		
@@ -481,16 +525,20 @@ GROUP_HEADER(2)
 		
 		
 		
-		// Branch when N == V [signed greater than or equal], DESCRIBE_BRANCH_TARGET
+		// Branch when N == V [signed greater than or equal], 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bge,ARG_IMM)
 		
-		// Branch when N != V [signed less than], DESCRIBE_BRANCH_TARGET
+		// Branch when N != V [signed less than], 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(blt,ARG_IMM)
 		
-		// Branch when ( N == V and Z == 0 ) [signed greater than], DESCRIBE_BRANCH_TARGET
+		// Branch when ( N == V and Z == 0 ) [signed greater than], 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bgt,ARG_IMM)
 		
-		// Branch when ( N != V or Z == 1 ) [signed less than or equal], DESCRIBE_BRANCH_TARGET
+		// Branch when ( N != V or Z == 1 ) [signed less than or equal], 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(ble,ARG_IMM)
 		
 		

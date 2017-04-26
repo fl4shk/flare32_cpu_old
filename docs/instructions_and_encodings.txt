@@ -1,9 +1,9 @@
 Three instruction encoding sizes:  16-bit, 32-bit, and 48-bit
 
-The instruction group is a 4-bit field, the 4 most significant bits of the
+The instruction group is a 3-bit field, the 3 most significant bits of the
 first 16-bits.
 
-Group 0 Instructions, for example, use 0000 as their group identifier.
+Group 0 Instructions, for example, use 000 as their group identifier.
 
 Group 0 Instructions
 000o oooo aaaa bbbb
@@ -123,14 +123,6 @@ Group 0 Instructions
 		
 		
 		
-		// rA = Zero extend of low 8 bits in rB
-		// This instruction affects the N and Z flags.
-		zeb rA, rB
-		
-		// rA = Sign extend of low 8 bits in rB
-		// This instruction affects the N and Z flags.
-		seb rA, rB
-		
 		// rA = Zero extend of low 16 bits in rB
 		// This instruction affects the N and Z flags.
 		zeh rA, rB
@@ -138,6 +130,14 @@ Group 0 Instructions
 		// rA = Sign extend of low 16 bits in rB
 		// This instruction affects the N and Z flags.
 		seh rA, rB
+		
+		// rA = Zero extend of low 8 bits in rB
+		// This instruction affects the N and Z flags.
+		zeb rA, rB
+		
+		// rA = Sign extend of low 8 bits in rB
+		// This instruction affects the N and Z flags.
+		seb rA, rB
 		
 		
 		
@@ -159,6 +159,7 @@ Group 0 Instructions
 		// This instruction does not affect flags.
 		swp rA, rB
 
+
 Group 1 Instructions
 001o oooo aaaa bbbb
 	
@@ -176,14 +177,24 @@ Group 1 Instructions
 		dec rA, rB
 		
 		// rA:rB = (64-bit zero extend of rA) * (64-bit zero extend of rB)
-		// Note that rA will contain the high 32 bits of the unsigned 64-bit product
-		// Note that rB will contain the low 32 bits of the unsigned 64-bit product
+		// 
+		// Note that rA will contain the high 32 bits of the 
+		// unsigned 64-bit product
+		// 
+		// Note that rB will contain the low 32 bits of the 
+		// unsigned 64-bit product
+		// 
 		// This instruction does not affect flags.
 		umull rA, rB
 		
 		// rA:rB = (64-bit sign extend of rA) * (64-bit sign extend of rB)
-		// Note that rA will contain the high 32 bits of the signed 64-bit product
-		// Note that rB will contain the low 32 bits of the signed 64-bit product
+		// 
+		// Note that rA will contain the high 32 bits of the signed 
+		// 64-bit product
+		// 
+		// Note that rB will contain the low 32 bits of the signed 
+		// 64-bit product
+		// 
 		// This instruction does not affect flags.
 		smull rA, rB
 		
@@ -211,25 +222,52 @@ Group 1 Instructions
 		
 		
 		
+		// Push register rA onto the stack
+		pushr rA
+		
+		// Pop 32-bit value off the stack into rA
+		popr rA
+		
+		// Push registers rA and rb (as a pair) onto the 
+		// stack (in that order)
+		pushp rA, rB
+		
+		// Pop two 32-bit values off the stack, storing the first popped
+		// value into rB and the second popped value into rA
+		popp rA, rB
 		
 		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
 		
 		
 		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// Copy pc to rA (this can be used for pc-relative loads
+		// and stores)
+		// This instruction affects the N and Z flags.
+		// Note that rB is ignored.
+		cpyfrpc rA
+		
+		// Swap the Interrupt Return Address and rA
+		// This instruction affects the N and Z flags.
+		// Note that rB is ignored.
+		swpira rA
+		
+		// Copy the Interrupt Return Address to rA
+		// This instruction affects the N and Z flags.
+		// Note that rB is ignored.
+		cpyira rA
+		
+		// Clear rA, then CoPY FRom Flags to rA
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
+		cpyfrf rA
 		
 		
 		
+		// Copy to flags from rA
+		// This instruction affects N, V, Z, and C flags.
+		// Note that rB is ignored.
+		cpytof rA
 		
-		
-		// Reserved for future expansion.
 		// Reserved for future expansion.
 		// Reserved for future expansion.
 		// Reserved for future expansion.
@@ -340,8 +378,10 @@ Group 2 Instructions
 		
 		
 		
-		// aaaa
-		GGGGG imm
+		
+		// Compare rA to (zero-extended imm)
+		// This instruction ONLY affects flags.
+		cmpi imm
 		
 		// Branch always, to (pc when instruction starts) + (sign extended 16-bit immediate value)
 		bra imm
@@ -354,16 +394,20 @@ Group 2 Instructions
 		
 		
 		
-		// Branch when C == 0 [unsigned less than], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// Branch when C == 0 [unsigned less than], 
+		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
 		bcc imm
 		
-		// Branch when C == 1 [unsigned greater than or equal], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// Branch when C == 1 [unsigned greater than or equal], 
+		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
 		bcs imm
 		
-		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], 
+		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
 		bls imm
 		
-		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], 
+		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
 		bhi imm
 		
 		
@@ -382,16 +426,20 @@ Group 2 Instructions
 		
 		
 		
-		// Branch when N == V [signed greater than or equal], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// Branch when N == V [signed greater than or equal], 
+		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
 		bge imm
 		
-		// Branch when N != V [signed less than], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// Branch when N != V [signed less than], 
+		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
 		blt imm
 		
-		// Branch when ( N == V and Z == 0 ) [signed greater than], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// Branch when ( N == V and Z == 0 ) [signed greater than], 
+		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
 		bgt imm
 		
-		// Branch when ( N != V or Z == 1 ) [signed less than or equal], to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// Branch when ( N != V or Z == 1 ) [signed less than or equal], 
+		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
 		ble imm
 		
 		
