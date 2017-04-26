@@ -61,24 +61,22 @@ Group 0 Instructions
 		
 		
 		
-		// Rotate rA left (NOT through carry) by rB bits
+		// Rotate rA left (NOT through carry) by rB bits.
 		// This instruction affects the N and Z flags.
 		rol rA, rB
 		
-		// Rotate rA right (NOT through carry) by rB bits
+		// Rotate rA right (NOT through carry) by rB bits.
 		// This instruction affects the N and Z flags.
 		ror rA, rB
 		
-		// Rotate rA left (THROUGH carry) by 1 bit, ignoring
-		// rB
+		// Rotate rA left (THROUGH carry) by 1 bit, ignoring rB.
 		// This instruction affects N, Z, and C flags.
-		// rB ignored
+		// Note that rB is ignored.
 		rlc rA
 		
-		// Rotate rA right (THROUGH carry) by 1 bit, ignoring
-		// rB
+		// Rotate rA right (THROUGH carry) by 1 bit, ignoring rB.
 		// This instruction affects N, Z, and C flags.
-		// rB ignored
+		// Note that rB is ignored.
 		rrc rA
 
 
@@ -214,12 +212,12 @@ Group 2 Instructions
 		
 		// rA low 16 bits = imm
 		// This instruction does not affect flags.
-		// rB ignored
+		// Note that rB is ignored.
 		cpylo rA, imm
 		
 		// rA high 16 bits = imm
 		// This instruction does not affect flags.
-		// rB ignored
+		// Note that rB is ignored.
 		cpyhi rA, imm
 		
 		// rA = rB + (sign-extended imm)
