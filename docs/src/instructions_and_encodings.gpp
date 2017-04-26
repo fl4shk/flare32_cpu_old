@@ -27,7 +27,7 @@
 #endif
 #define _DESCRIBE_LOAD_PART_1(x) // Load x-bit value from address in
 #define _DESCRIBE_LOAD_US_PART_1( us, x ) // Load us x-bit value from address in
-#define _DESCRIBE_LOAD_PART_2(arg_address) arg_address into ARG_REG(A)
+#define _DESCRIBE_LOAD_PART_2(arg_address) arg_address into ARG_REG(A).
 #define DESCRIBE_LOAD_32(arg_address) _DESCRIBE_LOAD_PART_1(32) _DESCRIBE_LOAD_PART_2(arg_address)
 #define DESCRIBE_LOAD_16_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(zero-extended,16) _DESCRIBE_LOAD_PART_2(arg_address)
 #define DESCRIBE_LOAD_16_SIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(sign-extended,16) _DESCRIBE_LOAD_PART_2(arg_address)
@@ -37,7 +37,7 @@
 
 
 #endif
-#define _DESCRIBE_STORE( x, arg_address ) // Store x ARG_REG(A) to address in arg_address
+#define _DESCRIBE_STORE( x, arg_address ) // Store x ARG_REG(A) to address in arg_address.
 #define DESCRIBE_STORE_32(arg_address) _DESCRIBE_STORE(32-bit value in,arg_address)
 #define DESCRIBE_STORE_16(arg_address) _DESCRIBE_STORE(low 16 bits of,arg_address)
 #define DESCRIBE_STORE_8(arg_address) _DESCRIBE_STORE(low 8 bits of,arg_address)
@@ -78,6 +78,7 @@
 #define ARG_FOR_LDST_NON_INDEXED ARG_REG(B)
 #define ARG_FOR_LDST_IMM_INDEXED(immediate) (ARG_FOR_LDST_NON_INDEXED + immediate)
 #define ARG_FOR_LDST_GENERIC_INDEXED(immediate) (ARG_FOR_LDST_NON_INDEXED + ARG_REG(C) + immediate)
+#define ARG_FOR_LDST_ABS ARG_IMM
 #define IGNORE_REG(x) // Note that ARG_REG(x) is ignored.
 #if 0
 
@@ -367,7 +368,7 @@ GROUP_HEADER(1)
 
 
 GROUP_HEADER(2)
-010o oooo aaaa bbbb iiii iiii iiii iiii
+010o oooo aaaa bbbb  iiii iiii iiii iiii
 	
 	DESCRIBE_OP
 	DESCRIBE_RA
@@ -507,7 +508,7 @@ GROUP_HEADER(2)
 
 
 GROUP_HEADER(3)
-011o oooo aaaa bbbb cccc iiii iiii iiii
+011o oooo aaaa bbbb  cccc iiii iiii iiii
 	
 	DESCRIBE_OP
 	DESCRIBE_RA
@@ -583,4 +584,43 @@ GROUP_HEADER(3)
 		RESERVED
 		RESERVED
 		RESERVED
+
+
+GROUP_HEADER(4)
+100o oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 	
+	DESCRIBE_OP
+	DESCRIBE_RA
+	DESCRIBE_RB
+	DESCRIBE_IMM(32)
+	
+	DESCRIBE_INSTRUCTIONS
+		DESCRIBE_LOAD_32(ARG_FOR_LDST_ABS)
+		INSTR_RA_RB(ldra)
+		
+		DESCRIBE_LOAD_16_UNSIGNED(ARG_FOR_LDST_ABS)
+		DESCRIBE_ZERO_EXTEND
+		INSTR_RA_RB(ldha)
+		
+		DESCRIBE_LOAD_16_SIGNED(ARG_FOR_LDST_ABS)
+		DESCRIBE_SIGN_EXTEND
+		INSTR_RA_RB(ldsha)
+		
+		DESCRIBE_LOAD_8_UNSIGNED(ARG_FOR_LDST_ABS)
+		DESCRIBE_ZERO_EXTEND
+		INSTR_RA_RB(ldba)
+		
+		
+		
+		DESCRIBE_LOAD_8_SIGNED(ARG_FOR_LDST_ABS)
+		DESCRIBE_SIGN_EXTEND
+		INSTR_RA_RB(ldsba)
+		
+		DESCRIBE_STORE_32(ARG_FOR_LDST_ABS)
+		INSTR_RA_RB(stra)
+		
+		DESCRIBE_STORE_16(ARG_FOR_LDST_ABS)
+		INSTR_RA_RB(stha)
+		
+		DESCRIBE_STORE_8(ARG_FOR_LDST_ABS)
+		INSTR_RA_RB(stba)
