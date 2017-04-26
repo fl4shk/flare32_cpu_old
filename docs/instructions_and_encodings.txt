@@ -71,54 +71,42 @@ Group 0 Instructions
 		
 		// Rotate rA left (THROUGH carry) by 1 bit, ignoring rB.
 		// This instruction affects N, Z, and C flags.
-		// Note that rB is ignored.
 		rlc rA
 		
 		// Rotate rA right (THROUGH carry) by 1 bit, ignoring rB.
 		// This instruction affects N, Z, and C flags.
-		// Note that rB is ignored.
 		rrc rA
 		
 		
 		
-		
-		
 		// Load 32-bit value from address in rB into rA
-		// This instruction does not affect flags.
 		ldr rA, rB
 		
 		// Load zero-extended 16-bit value from address in rB into rA
 		// This zero-extends the value.
-		// This instruction does not affect flags.
 		ldh rA, rB
 		
 		// Load sign-extended 16-bit value from address in rB into rA
 		// This sign-extends the value.
-		// This instruction does not affect flags.
 		ldsh rA, rB
 		
 		// Load zero-extended 8-bit value from address in rB into rA
 		// This zero-extends the value.
-		// This instruction does not affect flags.
 		ldb rA, rB
 		
 		
 		
 		// Load sign-extended 8-bit value from address in rB into rA
 		// This sign-extends the value.
-		// This instruction does not affect flags.
 		ldsb rA, rB
 		
 		// Store 32-bit value in rA to address in rB
-		// This instruction does not affect flags.
 		str rA, rB
 		
 		// Store low 16 bits of rA to address in rB
-		// This instruction does not affect flags.
 		sth rA, rB
 		
 		// Store low 8 bits of rA to address in rB
-		// This instruction does not affect flags.
 		stb rA, rB
 		
 		
@@ -142,21 +130,17 @@ Group 0 Instructions
 		
 		
 		// Copy (rA = rB)
-		// This instruction does not affect flags.
 		cpy rA, rB
 		
 		// Copy Negated (rA = -rB)
-		// This instruction does not affect flags.
 		cpn rA, rB
 		
 		// Copy Complemented (rA = ~rB)
-		// This instruction does not affect flags.
 		cpc rA, rB
 		
 		// Copy pc to rA (this can be used for pc-relative loads
 		// and stores)
 		// This instruction affects the N and Z flags.
-		// Note that rB is ignored.
 		cpyfrpc rA
 
 
@@ -184,7 +168,6 @@ Group 1 Instructions
 		// Note that rB will contain the low 32 bits of the 
 		// unsigned 64-bit product
 		// 
-		// This instruction does not affect flags.
 		umull rA, rB
 		
 		// rA:rB = (64-bit sign-extend of rA) * (64-bit sign-extend of rB)
@@ -195,102 +178,70 @@ Group 1 Instructions
 		// Note that rB will contain the low 32 bits of the signed 
 		// 64-bit product
 		// 
-		// This instruction does not affect flags.
 		smull rA, rB
 		
 		
 		
 		// Set pc to destination address in rA.
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		jump rA
 		
 		// Set pc to destination address in (rA + rB).
-		// This instruction does not affect flags.
 		jumpx rA, rB
 		
 		// Subroutine call using rA as destination address. 
 		// The return address is stored in the link register (lr).
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		call rA
 		
 		// Subroutine call using (rA + rB) as destination address. 
 		// The return address is stored in the link register (lr).
-		// This instruction does not affect flags.
 		callx rA, rB
 		
 		
 		
 		// Push register rA onto the stack
-		// Note that rB is ignored.
-		// This instruction does not affect flags.
 		pushr rA
 		
 		// Pop 32-bit value off the stack into rA
-		// Note that rB is ignored.
-		// This instruction does not affect flags.
 		popr rA
 		
 		// Push registers rA and rb (as a pair) onto the 
 		// stack (in that order)
-		// This instruction does not affect flags.
 		pushp rA, rB
 		
 		// Pop two 32-bit values off the stack, storing the first popped
 		// value into rB and the second popped value into rA
-		// This instruction does not affect flags.
 		popp rA, rB
-		
-		
 		
 		
 		
 		// Swap the Interrupt Return Address and rA
 		// This instruction affects the N and Z flags.
-		// Note that rB is ignored.
 		swpira rA
 		
 		// Copy the Interrupt Return Address to rA
 		// This instruction affects the N and Z flags.
-		// Note that rB is ignored.
 		cpyira rA
 		
 		// Clear rA, then CoPY FRom Flags to rA
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		cpyfrf rA
 		
 		// Copy to flags from rA
 		// This instruction affects N, V, Z, and C flags.
-		// Note that rB is ignored.
 		cpytof rA
 		
 		
 		
 		// ENable Interrupts
-		// This instruction does not affect flags.
-		// Note that rA is ignored.
-		// Note that rB is ignored.
 		eni
 		
 		// DIsable Interrupts
-		// This instruction does not affect flags.
-		// Note that rA is ignored.
-		// Note that rB is ignored.
 		dii
 		
 		// Set the PC to interrupt RETurn address and enable Interrupts
-		// This instruction does not affect flags.
-		// Note that rA is ignored.
-		// Note that rB is ignored.
 		reti
 		
 		// Set the PC to the Interrupt Return Address, but DON'T enable
 		// interrupts
-		// This instruction does not affect flags.
-		// Note that rA is ignored.
-		// Note that rB is ignored.
 		jumpira
 		
 		
@@ -325,49 +276,37 @@ Group 2 Instructions
 	
 	Instructions:
 		// Load 32-bit value from address in (rB + (sign-extended imm)) into rA
-		// This instruction does not affect flags.
 		ldrxi rA, rB, imm
 		
 		// Load zero-extended 16-bit value from address in (rB + (sign-extended imm)) into rA
-		// This instruction does not affect flags.
 		ldhxi rA, rB, imm
 		
 		// Load sign-extended 16-bit value from address in (rB + (sign-extended imm)) into rA
-		// This instruction does not affect flags.
 		ldshxi rA, rB, imm
 		
 		// Load zero-extended 8-bit value from address in (rB + (sign-extended imm)) into rA
-		// This instruction does not affect flags.
 		ldbxi rA, rB, imm
 		
 		
 		
 		// Load sign-extended 8-bit value from address in (rB + (sign-extended imm)) into rA
-		// This instruction does not affect flags.
 		ldsbxi rA, rB, imm
 		
 		// Store 32-bit value in rA to address in (rB + (sign-extended imm))
-		// This instruction does not affect flags.
 		strxi rA, rB, imm
 		
 		// Store low 16 bits of rA to address in (rB + (sign-extended imm))
-		// This instruction does not affect flags.
 		sthxi rA, rB, imm
 		
 		// Store low 8 bits of rA to address in (rB + (sign-extended imm))
-		// This instruction does not affect flags.
 		stbxi rA, rB, imm
 		
 		
 		
 		// rA low 16 bits = imm
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		cpyloi rA, imm
 		
 		// rA high 16 bits = imm
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		cpyhii rA, imm
 		
 		// rA = rB + (sign-extended imm)
@@ -396,100 +335,67 @@ Group 2 Instructions
 		
 		
 		
-		
-		
 		// Compare rA to (zero-extended imm)
 		// This instruction ONLY affects flags.
-		// Note that rB is ignored.
 		cmpi imm
 		
 		// Branch always, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bra imm
 		
 		// Branch when Z == 0, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bne imm
 		
 		// Branch when Z == 1, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		beq imm
 		
 		
 		
 		// Branch when C == 0 [unsigned less than], 
 		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bcc imm
 		
 		// Branch when C == 1 [unsigned greater than or equal], 
 		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bcs imm
 		
 		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], 
 		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bls imm
 		
 		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], 
 		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bhi imm
 		
 		
 		
 		// Branch when N == 0, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bpl imm
 		
 		// Branch when N == 1, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bmi imm
 		
 		// Branch when V == 0, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bvc imm
 		
 		// Branch when V == 1, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bvs imm
 		
 		
 		
 		// Branch when N == V [signed greater than or equal], 
 		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bge imm
 		
 		// Branch when N != V [signed less than], 
 		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		blt imm
 		
 		// Branch when ( N == V and Z == 0 ) [signed greater than], 
 		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		bgt imm
 		
 		// Branch when ( N != V or Z == 1 ) [signed less than or equal], 
 		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
-		// This instruction does not affect flags.
-		// Note that rB is ignored.
 		ble imm
 		
 		
@@ -511,39 +417,70 @@ Group 3 Instructions
 	
 	Instructions:
 		// Load 32-bit value from address in (rB + rC + (sign-extended imm)) into rA
-		// This instruction does not affect flags.
 		ldrxx rA, rB, rC, imm
 		
 		// Load zero-extended 16-bit value from address in (rB + rC + (sign-extended imm)) into rA
-		// This instruction does not affect flags.
 		ldhxx rA, rB, rC, imm
 		
 		// Load sign-extended 16-bit value from address in (rB + rC + (sign-extended imm)) into rA
-		// This instruction does not affect flags.
 		ldshxx rA, rB, rC, imm
 		
 		// Load zero-extended 8-bit value from address in (rB + rC + (sign-extended imm)) into rA
-		// This instruction does not affect flags.
 		ldbxx rA, rB, rC, imm
 		
 		
 		
 		// Load sign-extended 8-bit value from address in (rB + rC + (sign-extended imm)) into rA
-		// This instruction does not affect flags.
 		ldsbxx rA, rB, rC, imm
 		
 		// Store 32-bit value in rA to address in (rB + rC + (sign-extended imm))
-		// This instruction does not affect flags.
 		strxx rA, rB, rC, imm
 		
 		// Store low 16 bits of rA to address in (rB + rC + (sign-extended imm))
-		// This instruction does not affect flags.
 		sthxx rA, rB, rC, imm
 		
 		// Store low 8 bits of rA to address in (rB + rC + (sign-extended imm))
-		// This instruction does not affect flags.
 		stbxx rA, rB, rC, imm
-	
-	
-	
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
 	

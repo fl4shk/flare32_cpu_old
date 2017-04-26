@@ -171,54 +171,42 @@ GROUP_HEADER(0)
 		
 		DESCRIBE_ROTATE_THROUGH_CARRY(left)
 		FLAGS_N_AND_Z_AND_C
-		IGNORE_REG(B)
 		INSTR_RA(rlc)
 		
 		DESCRIBE_ROTATE_THROUGH_CARRY(right)
 		FLAGS_N_AND_Z_AND_C
-		IGNORE_REG(B)
 		INSTR_RA(rrc)
 		
 		
 		
-		
-		
 		DESCRIBE_LOAD_32(ARG_FOR_LDST_NON_INDEXED)
-		FLAGS_NONE
 		INSTR_RA_RB(ldr)
 		
 		DESCRIBE_LOAD_16_UNSIGNED(ARG_FOR_LDST_NON_INDEXED)
 		DESCRIBE_ZERO_EXTEND
-		FLAGS_NONE
 		INSTR_RA_RB(ldh)
 		
 		DESCRIBE_LOAD_16_SIGNED(ARG_FOR_LDST_NON_INDEXED)
 		DESCRIBE_SIGN_EXTEND
-		FLAGS_NONE
 		INSTR_RA_RB(ldsh)
 		
 		DESCRIBE_LOAD_8_UNSIGNED(ARG_FOR_LDST_NON_INDEXED)
 		DESCRIBE_ZERO_EXTEND
-		FLAGS_NONE
 		INSTR_RA_RB(ldb)
 		
 		
 		
 		DESCRIBE_LOAD_8_SIGNED(ARG_FOR_LDST_NON_INDEXED)
 		DESCRIBE_SIGN_EXTEND
-		FLAGS_NONE
 		INSTR_RA_RB(ldsb)
 		
 		DESCRIBE_STORE_32(ARG_FOR_LDST_NON_INDEXED)
-		FLAGS_NONE
 		INSTR_RA_RB(str)
 		
 		DESCRIBE_STORE_16(ARG_FOR_LDST_NON_INDEXED)
-		FLAGS_NONE
 		INSTR_RA_RB(sth)
 		
 		DESCRIBE_STORE_8(ARG_FOR_LDST_NON_INDEXED)
-		FLAGS_NONE
 		INSTR_RA_RB(stb)
 		
 		
@@ -242,21 +230,17 @@ GROUP_HEADER(0)
 		
 		
 		// Copy (ARG_REG(A) = ARG_REG(B))
-		FLAGS_NONE
 		INSTR_RA_RB(cpy)
 		
 		// Copy Negated (ARG_REG(A) = -ARG_REG(B))
-		FLAGS_NONE
 		INSTR_RA_RB(cpn)
 		
 		// Copy Complemented (ARG_REG(A) = ~ARG_REG(B))
-		FLAGS_NONE
 		INSTR_RA_RB(cpc)
 		
 		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
 		// and stores)
 		FLAGS_N_AND_Z
-		IGNORE_REG(B)
 		INSTR_RA(cpyfrpc)
 
 
@@ -284,7 +268,6 @@ GROUP_HEADER(1)
 		// Note that ARG_REG(B) will contain the low 32 bits of the 
 		// unsigned 64-bit product
 		// 
-		FLAGS_NONE
 		INSTR_RA_RB(umull)
 		
 		// ARG_REG(A):ARG_REG(B) = (64-bit sign-extend of ARG_REG(A)) * (64-bit sign-extend of ARG_REG(B))
@@ -295,102 +278,70 @@ GROUP_HEADER(1)
 		// Note that ARG_REG(B) will contain the low 32 bits of the signed 
 		// 64-bit product
 		// 
-		FLAGS_NONE
 		INSTR_RA_RB(smull)
 		
 		
 		
 		DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(A))
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_RA(jump)
 		
 		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
-		FLAGS_NONE
 		INSTR_RA_RB(jumpx)
 		
 		DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_REG(A))
 		DESCRIBE_CALL_RETURN_ADDRESS
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_RA(call)
 		
 		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
 		DESCRIBE_CALL_RETURN_ADDRESS
-		FLAGS_NONE
 		INSTR_RA_RB(callx)
 		
 		
 		
 		// Push register ARG_REG(A) onto the stack
-		IGNORE_REG(B)
-		FLAGS_NONE
 		INSTR_RA(pushr)
 		
 		// Pop 32-bit value off the stack into ARG_REG(A)
-		IGNORE_REG(B)
-		FLAGS_NONE
 		INSTR_RA(popr)
 		
 		// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
 		// stack (in that order)
-		FLAGS_NONE
 		INSTR_RA_RB(pushp)
 		
 		// Pop two 32-bit values off the stack, storing the first popped
 		// value into ARG_REG(B) and the second popped value into ARG_REG(A)
-		FLAGS_NONE
 		INSTR_RA_RB(popp)
-		
-		
 		
 		
 		
 		// Swap the Interrupt Return Address and ARG_REG(A)
 		FLAGS_N_AND_Z
-		IGNORE_REG(B)
 		INSTR_RA(swpira)
 		
 		// Copy the Interrupt Return Address to ARG_REG(A)
 		FLAGS_N_AND_Z
-		IGNORE_REG(B)
 		INSTR_RA(cpyira)
 		
 		// Clear ARG_REG(A), then CoPY FRom Flags to ARG_REG(A)
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_RA(cpyfrf)
 		
 		// Copy to flags from ARG_REG(A)
 		FLAGS_ALL
-		IGNORE_REG(B)
 		INSTR_RA(cpytof)
 		
 		
 		
 		// ENable Interrupts
-		FLAGS_NONE
-		IGNORE_REG(A)
-		IGNORE_REG(B)
 		INSTR_NO_ARGS(eni)
 		
 		// DIsable Interrupts
-		FLAGS_NONE
-		IGNORE_REG(A)
-		IGNORE_REG(B)
 		INSTR_NO_ARGS(dii)
 		
 		// Set the PC to interrupt RETurn address and enable Interrupts
-		FLAGS_NONE
-		IGNORE_REG(A)
-		IGNORE_REG(B)
 		INSTR_NO_ARGS(reti)
 		
 		// Set the PC to the Interrupt Return Address, but DON'T enable
 		// interrupts
-		FLAGS_NONE
-		IGNORE_REG(A)
-		IGNORE_REG(B)
 		INSTR_NO_ARGS(jumpira)
 		
 		
@@ -425,49 +376,37 @@ GROUP_HEADER(2)
 	
 	DESCRIBE_INSTRUCTIONS
 		DESCRIBE_LOAD_32(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_IMM(ldrxi,ARG_IMM)
 		
 		DESCRIBE_LOAD_16_UNSIGNED(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_IMM(ldhxi,ARG_IMM)
 		
 		DESCRIBE_LOAD_16_SIGNED(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_IMM(ldshxi,ARG_IMM)
 		
 		DESCRIBE_LOAD_8_UNSIGNED(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_IMM(ldbxi,ARG_IMM)
 		
 		
 		
 		DESCRIBE_LOAD_8_SIGNED(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_IMM(ldsbxi,ARG_IMM)
 		
 		DESCRIBE_STORE_32(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_IMM(strxi,ARG_IMM)
 		
 		DESCRIBE_STORE_16(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_IMM(sthxi,ARG_IMM)
 		
 		DESCRIBE_STORE_8(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_IMM(stbxi,ARG_IMM)
 		
 		
 		
 		// ARG_REG(A) low 16 bits = ARG_IMM
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_RA_IMM(cpyloi,ARG_IMM)
 		
 		// ARG_REG(A) high 16 bits = ARG_IMM
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_RA_IMM(cpyhii,ARG_IMM)
 		
 		// ARG_REG(A) = ARG_REG(B) + IMM_SIGN_EXTENDED
@@ -496,100 +435,67 @@ GROUP_HEADER(2)
 		
 		
 		
-		
-		
 		// Compare ARG_REG(A) to IMM_ZERO_EXTENDED
 		ONLY_FLAGS
-		IGNORE_REG(B)
 		INSTR_IMM(cmpi,ARG_IMM)
 		
 		// Branch always, DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bra,ARG_IMM)
 		
 		// Branch when Z == 0, DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bne,ARG_IMM)
 		
 		// Branch when Z == 1, DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(beq,ARG_IMM)
 		
 		
 		
 		// Branch when C == 0 [unsigned less than], 
 		// DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bcc,ARG_IMM)
 		
 		// Branch when C == 1 [unsigned greater than or equal], 
 		// DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bcs,ARG_IMM)
 		
 		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], 
 		// DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bls,ARG_IMM)
 		
 		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], 
 		// DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bhi,ARG_IMM)
 		
 		
 		
 		// Branch when N == 0, DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bpl,ARG_IMM)
 		
 		// Branch when N == 1, DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bmi,ARG_IMM)
 		
 		// Branch when V == 0, DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bvc,ARG_IMM)
 		
 		// Branch when V == 1, DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bvs,ARG_IMM)
 		
 		
 		
 		// Branch when N == V [signed greater than or equal], 
 		// DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bge,ARG_IMM)
 		
 		// Branch when N != V [signed less than], 
 		// DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(blt,ARG_IMM)
 		
 		// Branch when ( N == V and Z == 0 ) [signed greater than], 
 		// DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(bgt,ARG_IMM)
 		
 		// Branch when ( N != V or Z == 1 ) [signed less than or equal], 
 		// DESCRIBE_BRANCH_TARGET
-		FLAGS_NONE
-		IGNORE_REG(B)
 		INSTR_IMM(ble,ARG_IMM)
 		
 		
@@ -611,39 +517,70 @@ GROUP_HEADER(3)
 	
 	DESCRIBE_INSTRUCTIONS
 		DESCRIBE_LOAD_32(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_RC_IMM(ldrxx,ARG_IMM)
 		
 		DESCRIBE_LOAD_16_UNSIGNED(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_RC_IMM(ldhxx,ARG_IMM)
 		
 		DESCRIBE_LOAD_16_SIGNED(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_RC_IMM(ldshxx,ARG_IMM)
 		
 		DESCRIBE_LOAD_8_UNSIGNED(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_RC_IMM(ldbxx,ARG_IMM)
 		
 		
 		
 		DESCRIBE_LOAD_8_SIGNED(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_RC_IMM(ldsbxx,ARG_IMM)
 		
 		DESCRIBE_STORE_32(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_RC_IMM(strxx,ARG_IMM)
 		
 		DESCRIBE_STORE_16(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_RC_IMM(sthxx,ARG_IMM)
 		
 		DESCRIBE_STORE_8(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED))
-		FLAGS_NONE
 		INSTR_RA_RB_RC_IMM(stbxx,ARG_IMM)
-	
-	
-	
+		
+		
+		
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED
+		
+		
+		
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED
+		
+		
+		
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED
+		
+		
+		
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED
+		
+		
+		
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED
+		
+		
+		
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED
 	
