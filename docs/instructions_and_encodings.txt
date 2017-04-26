@@ -367,12 +367,10 @@ Group 2 Instructions
 		// This instruction affects the N and Z flags.
 		asri rA, rB, imm
 		
-		// Rotate rA left (NOT through carry) by (zero-extended imm)
-		// bits, ignoring rB
+		// Rotate rA left (NOT through carry) by rB bits.
 		roli rA, imm
 		
-		// Rotate rA right (NOT through carry) by (zero-extended imm)
-		// bits, ignoring rB
+		// Rotate rA right (NOT through carry) by rB bits.
 		rori rA, imm
 		
 		
@@ -381,65 +379,96 @@ Group 2 Instructions
 		
 		// Compare rA to (zero-extended imm)
 		// This instruction ONLY affects flags.
+		// Note that rB is ignored.
 		cmpi imm
 		
 		// Branch always, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bra imm
 		
 		// Branch when Z == 0, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bne imm
 		
 		// Branch when Z == 1, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		beq imm
 		
 		
 		
 		// Branch when C == 0 [unsigned less than], 
 		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bcc imm
 		
 		// Branch when C == 1 [unsigned greater than or equal], 
 		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bcs imm
 		
 		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], 
 		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bls imm
 		
 		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], 
 		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bhi imm
 		
 		
 		
 		// Branch when N == 0, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bpl imm
 		
 		// Branch when N == 1, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bmi imm
 		
 		// Branch when V == 0, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bvc imm
 		
 		// Branch when V == 1, to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bvs imm
 		
 		
 		
 		// Branch when N == V [signed greater than or equal], 
 		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bge imm
 		
 		// Branch when N != V [signed less than], 
 		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		blt imm
 		
 		// Branch when ( N == V and Z == 0 ) [signed greater than], 
 		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		bgt imm
 		
 		// Branch when ( N != V or Z == 1 ) [signed less than or equal], 
 		// to (pc when instruction starts) + (sign extended 16-bit immediate value)
+		// This instruction does not affect flags.
+		// Note that rB is ignored.
 		ble imm
 		
 		
