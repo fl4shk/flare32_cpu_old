@@ -25,8 +25,8 @@
 
 
 #endif
-#define _DESCRIBE_LOAD_PART_1(x) // Load x-bit value from address in
-#define _DESCRIBE_LOAD_US_PART_1( us, x ) // Load us x-bit value from address in
+#define _DESCRIBE_LOAD_PART_1(x) // Load x-bit value from address
+#define _DESCRIBE_LOAD_US_PART_1( us, x ) // Load us x-bit value from address
 #define _DESCRIBE_LOAD_PART_2(arg_address) arg_address into ARG_REG(A).
 #define DESCRIBE_LOAD_32(arg_address) _DESCRIBE_LOAD_PART_1(32) _DESCRIBE_LOAD_PART_2(arg_address)
 #define DESCRIBE_LOAD_16_UNSIGNED(arg_address) _DESCRIBE_LOAD_US_PART_1(zero-extended,16) _DESCRIBE_LOAD_PART_2(arg_address)
@@ -37,7 +37,7 @@
 
 
 #endif
-#define _DESCRIBE_STORE( x, arg_address ) // Store x ARG_REG(A) to address in arg_address.
+#define _DESCRIBE_STORE( x, arg_address ) // Store x ARG_REG(A) to address arg_address.
 #define DESCRIBE_STORE_32(arg_address) _DESCRIBE_STORE(32-bit value in,arg_address)
 #define DESCRIBE_STORE_16(arg_address) _DESCRIBE_STORE(low 16 bits of,arg_address)
 #define DESCRIBE_STORE_8(arg_address) _DESCRIBE_STORE(low 8 bits of,arg_address)
@@ -66,6 +66,15 @@
 
 
 #endif
+#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(op) // op two registers,
+#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1_TYPE_2(op) // op ARG_REG(B) by ARG_REG(C),
+#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2 // and then add sign extended immediate \(can set immediate to zero
+#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3 // if needed\)
+#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(op) // ARG_REG(A) = (ARG_REG(B) op ARG_REG(C)) + IMM_SIGN_EXTENDED
+#if 0
+
+
+#endif
 #define GROUP_HEADER(x) Group x Instructions
 #if 0
 
@@ -75,10 +84,11 @@
 #define ARG_IMM imm
 #define IMM_ZERO_EXTENDED (zero-extended ARG_IMM)
 #define IMM_SIGN_EXTENDED (sign-extended ARG_IMM)
+#define ARG_ABS absolute_addr
 #define ARG_FOR_LDST_NON_INDEXED ARG_REG(B)
 #define ARG_FOR_LDST_IMM_INDEXED(immediate) (ARG_FOR_LDST_NON_INDEXED + immediate)
 #define ARG_FOR_LDST_GENERIC_INDEXED(immediate) (ARG_FOR_LDST_NON_INDEXED + ARG_REG(C) + immediate)
-#define ARG_FOR_LDST_ABS ARG_IMM
+#define ARG_FOR_LDST_ABS ARG_ABS
 #define ARG_FOR_LDST_ABS_INDEXED (ARG_FOR_LDST_ABS + ARG_REG(B))
 #define IGNORE_REG(x) // Note that ARG_REG(x) is ignored.
 #if 0
@@ -134,6 +144,21 @@ GROUP_HEADER(0)
 		ONLY_FLAGS
 		INSTR_RA_RB(cmp)
 		
+		// ARG_REG(A) *= ARG_REG(B)
+		FLAGS_N_AND_Z
+		INSTR_RA_RB(mul)
+		
+		FLAGS_N_AND_Z
+		INSTR_RA_RB(and)
+		
+		FLAGS_N_AND_Z
+		INSTR_RA_RB(or)
+		
+		
+		
+		FLAGS_N_AND_Z
+		INSTR_RA_RB(xor)
+		
 		// Logical shift left
 		FLAGS_N_AND_Z
 		INSTR_RA_RB(lsl)
@@ -145,21 +170,6 @@ GROUP_HEADER(0)
 		// Arithmetic shift right
 		FLAGS_N_AND_Z
 		INSTR_RA_RB(asr)
-		
-		
-		
-		FLAGS_N_AND_Z
-		INSTR_RA_RB(and)
-		
-		FLAGS_N_AND_Z
-		INSTR_RA_RB(or)
-		
-		FLAGS_N_AND_Z
-		INSTR_RA_RB(xor)
-		
-		// ARG_REG(A) *= ARG_REG(B)
-		FLAGS_N_AND_Z
-		INSTR_RA_RB(mul)
 		
 		
 		
@@ -354,7 +364,10 @@ GROUP_HEADER(1)
 		FLAGS_N_AND_Z
 		INSTR_RA(cpyira)
 		
-		RESERVED
+		// Compare to zero
+		ONLY_FLAGS
+		INSTR_RA(cmpz)
+		
 		RESERVED
 		
 		
@@ -409,12 +422,6 @@ GROUP_HEADER(2)
 		
 		
 		
-		// ARG_REG(A) low 16 bits = ARG_IMM
-		INSTR_RA_IMM(cpyloi,ARG_IMM)
-		
-		// ARG_REG(A) high 16 bits = ARG_IMM
-		INSTR_RA_IMM(cpyhii,ARG_IMM)
-		
 		// ARG_REG(A) = ARG_REG(B) + IMM_SIGN_EXTENDED
 		FLAGS_ALL
 		INSTR_RA_RB_IMM(addsi,ARG_IMM)
@@ -422,8 +429,6 @@ GROUP_HEADER(2)
 		// Logical shift left, by IMM_ZERO_EXTENDED bits
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_IMM(lsli,ARG_IMM)
-		
-		
 		
 		// Logical shift right, by IMM_ZERO_EXTENDED bits
 		FLAGS_N_AND_Z
@@ -433,17 +438,11 @@ GROUP_HEADER(2)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_IMM(asri,ARG_IMM)
 		
-		DESCRIBE_ROTATE_NOT_THROUGH_CARRY(left,ARG_REG(B))
-		INSTR_RA_IMM(roli,ARG_IMM)
-		
-		DESCRIBE_ROTATE_NOT_THROUGH_CARRY(right,ARG_REG(B))
-		INSTR_RA_IMM(rori,ARG_IMM)
-		
 		
 		
 		// Compare ARG_REG(A) to IMM_ZERO_EXTENDED
 		ONLY_FLAGS
-		INSTR_IMM(cmpi,ARG_IMM)
+		INSTR_IMM(cmpsi,ARG_IMM)
 		
 		// Branch always, DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bra,ARG_IMM)
@@ -550,24 +549,60 @@ GROUP_HEADER(3)
 		
 		
 		
-		RESERVED
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Add)
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(+)
+		FLAGS_ALL
+		INSTR_RA_RB_RC_IMM(addti,IMM_SIGN_EXTENDED)
+		
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Subtract)
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(-)
+		FLAGS_ALL
+		INSTR_RA_RB_RC_IMM(subti,IMM_SIGN_EXTENDED)
+		
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Multiply)
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(*)
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_RC_IMM(multi,IMM_SIGN_EXTENDED)
+		
+		// ARG_REG(A) = ARG_REG(B) & ARG_REG(C)
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_RC(andt)
+		
+		
+		
+		// ARG_REG(A) = ARG_REG(B) | ARG_REG(C)
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_RC(ort)
+		
+		// ARG_REG(A) = ARG_REG(B) ^ ARG_REG(C)
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_RC(xort)
+		
+		// Logical shift left
+		// ARG_REG(A) = ARG_REG(B) << ARG_REG(C)
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_RC(lslt)
+		
+		// Logical shift right
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_RC(lsrt)
+		
+		
+		
+		// Arithmetic shift right
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_RC(asrt)
+		
 		RESERVED
 		RESERVED
 		RESERVED
 		
-		
-		
-		RESERVED
-		RESERVED
-		RESERVED
-		RESERVED
-		
-		
-		
-		RESERVED
-		RESERVED
-		RESERVED
-		RESERVED
 		
 		
 		
@@ -601,86 +636,95 @@ GROUP_HEADER(4)
 	
 	DESCRIBE_INSTRUCTIONS
 		DESCRIBE_LOAD_32(ARG_FOR_LDST_ABS)
-		INSTR_RA_RB(ldra)
+		INSTR_RA_IMM(ldra,ARG_FOR_LDST_ABS)
 		
 		DESCRIBE_LOAD_16_UNSIGNED(ARG_FOR_LDST_ABS)
 		DESCRIBE_ZERO_EXTEND
-		INSTR_RA_RB(ldha)
+		INSTR_RA_IMM(ldha,ARG_FOR_LDST_ABS)
 		
 		DESCRIBE_LOAD_16_SIGNED(ARG_FOR_LDST_ABS)
 		DESCRIBE_SIGN_EXTEND
-		INSTR_RA_RB(ldsha)
+		INSTR_RA_IMM(ldsha,ARG_FOR_LDST_ABS)
 		
 		DESCRIBE_LOAD_8_UNSIGNED(ARG_FOR_LDST_ABS)
 		DESCRIBE_ZERO_EXTEND
-		INSTR_RA_RB(ldba)
+		INSTR_RA_IMM(ldba,ARG_FOR_LDST_ABS)
 		
 		
 		
 		DESCRIBE_LOAD_8_SIGNED(ARG_FOR_LDST_ABS)
 		DESCRIBE_SIGN_EXTEND
-		INSTR_RA_RB(ldsba)
+		INSTR_RA_IMM(ldsba,ARG_FOR_LDST_ABS)
 		
 		DESCRIBE_STORE_32(ARG_FOR_LDST_ABS)
-		INSTR_RA_RB(stra)
+		INSTR_RA_IMM(stra,ARG_FOR_LDST_ABS)
 		
 		DESCRIBE_STORE_16(ARG_FOR_LDST_ABS)
-		INSTR_RA_RB(stha)
+		INSTR_RA_IMM(stha,ARG_FOR_LDST_ABS)
 		
 		DESCRIBE_STORE_8(ARG_FOR_LDST_ABS)
-		INSTR_RA_RB(stba)
+		INSTR_RA_IMM(stba,ARG_FOR_LDST_ABS)
 		
 		
 		
 		DESCRIBE_LOAD_32(ARG_FOR_LDST_ABS_INDEXED)
-		INSTR_RA_RB(ldrax)
+		INSTR_RA_RB_IMM(ldrax,ARG_ABS)
 		
 		DESCRIBE_LOAD_16_UNSIGNED(ARG_FOR_LDST_ABS_INDEXED)
 		DESCRIBE_ZERO_EXTEND
-		INSTR_RA_RB(ldhax)
+		INSTR_RA_RB_IMM(ldhax,ARG_ABS)
 		
 		DESCRIBE_LOAD_16_SIGNED(ARG_FOR_LDST_ABS_INDEXED)
 		DESCRIBE_SIGN_EXTEND
-		INSTR_RA_RB(ldshax)
+		INSTR_RA_RB_IMM(ldshax,ARG_ABS)
 		
 		DESCRIBE_LOAD_8_UNSIGNED(ARG_FOR_LDST_ABS_INDEXED)
 		DESCRIBE_ZERO_EXTEND
-		INSTR_RA_RB(ldbax)
+		INSTR_RA_RB_IMM(ldbax,ARG_ABS)
 		
 		
 		
 		DESCRIBE_LOAD_8_SIGNED(ARG_FOR_LDST_ABS_INDEXED)
 		DESCRIBE_SIGN_EXTEND
-		INSTR_RA_RB(ldsbax)
+		INSTR_RA_RB_IMM(ldsbax,ARG_ABS)
 		
 		DESCRIBE_STORE_32(ARG_FOR_LDST_ABS_INDEXED)
-		INSTR_RA_RB(strax)
+		INSTR_RA_RB_IMM(strax,ARG_ABS)
 		
 		DESCRIBE_STORE_16(ARG_FOR_LDST_ABS_INDEXED)
-		INSTR_RA_RB(sthax)
+		INSTR_RA_RB_IMM(sthax,ARG_ABS)
 		
 		DESCRIBE_STORE_8(ARG_FOR_LDST_ABS_INDEXED)
-		INSTR_RA_RB(stbax)
+		INSTR_RA_RB_IMM(stbax,ARG_ABS)
 		
 		
 		
 		// rA = 32-bit immediate
 		INSTR_RA_IMM(cpyi,ARG_IMM)
 		
-		DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_IMM)
-		INSTR_IMM(jumpi,ARG_IMM)
+		DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_ABS)
+		INSTR_IMM(jumpa,ARG_ABS)
 		
-		DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_IMM)
+		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_ABS))
+		INSTR_RA_IMM(jumpax,ARG_ABS)
+		
+		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B) + ARG_ABS))
+		INSTR_RA_RB_IMM(jumpxx,ARG_ABS)
+		
+		
+		
+		DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_ABS)
 		DESCRIBE_CALL_RETURN_ADDRESS
-		INSTR_IMM(calli,ARG_IMM)
+		INSTR_IMM(calla,ARG_ABS)
 		
-		RESERVED
+		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_ABS))
+		DESCRIBE_CALL_RETURN_ADDRESS
+		INSTR_RA_IMM(callax,ARG_ABS)
 		
+		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B) + ARG_ABS))
+		DESCRIBE_CALL_RETURN_ADDRESS
+		INSTR_RA_RB_IMM(callxx,ARG_ABS)
 		
-		
-		RESERVED
-		RESERVED
-		RESERVED
 		RESERVED
 		
 		
