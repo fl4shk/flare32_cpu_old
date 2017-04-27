@@ -330,7 +330,7 @@ Group 2 Instructions
 		
 		// Compare rA to (zero-extended imm)
 		// This instruction ONLY affects flags.
-		cmpsi imm
+		cmpi imm
 		
 		// Branch always, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
 		bra imm
