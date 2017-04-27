@@ -61,19 +61,19 @@ Group 0 Instructions
 		
 		
 		
-		// Rotate rA left (NOT through carry) by rB bits.
+		// Rotate rA left (NOT through carry) by rB bits, then store result in rA.
 		// This instruction affects the N and Z flags.
 		rol rA, rB
 		
-		// Rotate rA right (NOT through carry) by rB bits.
+		// Rotate rA right (NOT through carry) by rB bits, then store result in rA.
 		// This instruction affects the N and Z flags.
 		ror rA, rB
 		
-		// Rotate rA left (THROUGH carry) by 1 bit, ignoring rB.
+		// Rotate rA left (THROUGH carry) by 1 bit, ignoring rB, then store result in rA.
 		// This instruction affects N, Z, and C flags.
 		rlc rA
 		
-		// Rotate rA right (THROUGH carry) by 1 bit, ignoring rB.
+		// Rotate rA right (THROUGH carry) by 1 bit, ignoring rB, then store result in rA.
 		// This instruction affects N, Z, and C flags.
 		rrc rA
 		
@@ -487,8 +487,14 @@ Group 3 Instructions
 		// This instruction affects the N and Z flags.
 		asrt rA, rB, rC
 		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// Rotate rB left by rC bits, then store result in rA.
+		// This instruction affects the N and Z flags.
+		rolt rA, rB, rC
+		
+		// Rotate rB right by rC bits, then store result in rA.
+		// This instruction affects the N and Z flags.
+		rort rA, rB, rC
+		
 		// Reserved for future expansion.
 		
 		

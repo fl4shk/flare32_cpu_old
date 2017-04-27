@@ -45,9 +45,10 @@
 
 
 #endif
-#define _DESCRIBE_ROTATE( lr, amount ) // Rotate ARG_REG(A) lr by amount
-#define DESCRIBE_ROTATE_NOT_THROUGH_CARRY( lr, amount ) _DESCRIBE_ROTATE(lr (NOT through carry),amount bits).
-#define DESCRIBE_ROTATE_THROUGH_CARRY(lr) _DESCRIBE_ROTATE(lr (THROUGH carry),1 bit), ignoring ARG_REG(B).
+#define _DESCRIBE_ROTATE( lr, amount, src, dst ) // Rotate src lr by amount, then store result in dst
+#define DESCRIBE_ROTATE_NOT_THROUGH_CARRY( lr, amount ) _DESCRIBE_ROTATE(lr (NOT through carry),amount bits,ARG_REG(A),ARG_REG(A)).
+#define DESCRIBE_ROTATE_THROUGH_CARRY(lr) _DESCRIBE_ROTATE(lr (THROUGH carry),1 bit\, ignoring ARG_REG(B),ARG_REG(A),ARG_REG(A)).
+#define DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(lr) _DESCRIBE_ROTATE(lr,ARG_REG(C) bits,ARG_REG(B),ARG_REG(A)).
 #if 0
 
 
@@ -599,8 +600,14 @@ GROUP_HEADER(3)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_RC(asrt)
 		
-		RESERVED
-		RESERVED
+		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(left)
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_RC(rolt)
+		
+		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(right)
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_RC(rort)
+		
 		RESERVED
 		
 		
