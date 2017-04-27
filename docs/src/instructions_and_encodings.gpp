@@ -550,7 +550,7 @@ GROUP_HEADER(3)
 		INSTR_RA_RB_RC_IMM(multi,ARG_IMM)
 		
 		// Fused multiply-add
-		// ARG_REG(A) = (ARG_REG(A) + ARG_REG(B)) + ARG_REG(C)
+		// ARG_REG(A) = (ARG_REG(B) + ARG_REG(C)) + ARG_REG(A)
 		INSTR_RA_RB_RC(fma)
 		
 		
