@@ -442,21 +442,21 @@ Group 3 Instructions
 		// if needed)
 		// rA = (rB + rC) + (sign-extended imm)
 		// This instruction affects N, V, Z, and C flags.
-		addti rA, rB, rC, (sign-extended imm)
+		addti rA, rB, rC, imm
 		
 		// Subtract two registers,
 		// and then add sign extended immediate (can set immediate to zero
 		// if needed)
 		// rA = (rB - rC) + (sign-extended imm)
 		// This instruction affects N, V, Z, and C flags.
-		subti rA, rB, rC, (sign-extended imm)
+		subti rA, rB, rC, imm
 		
 		// Multiply two registers,
 		// and then add sign extended immediate (can set immediate to zero
 		// if needed)
 		// rA = (rB * rC) + (sign-extended imm)
 		// This instruction affects the N and Z flags.
-		multi rA, rB, rC, (sign-extended imm)
+		multi rA, rB, rC, imm
 		
 		// rA = rB & rC
 		// This instruction affects the N and Z flags.
