@@ -5,7 +5,7 @@
 #define ONLY_FLAGS // This instruction ONLY affects flags.
 #define FLAGS_NONE // This instruction does not affect flags.
 #define FLAGS_N_AND_Z // This instruction affects the N and Z flags.
-#define ONLY_Z // This instruction only affects the Z flag.
+#define FLAGS_ONLY(f) // This instruction only affects the f flag.
 #define FLAGS_N_AND_Z_AND_C // This instruction affects N, Z, and C flags.
 #define FLAGS_ALL // This instruction affects N, V, Z, and C flags.
 #if 0
@@ -146,7 +146,6 @@ GROUP_HEADER(0)
 		INSTR_RA_RB(cmp)
 		
 		// ARG_REG(A) *= ARG_REG(B)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(mul)
 		
 		FLAGS_N_AND_Z
@@ -161,33 +160,28 @@ GROUP_HEADER(0)
 		INSTR_RA_RB(xor)
 		
 		// Logical shift left
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(lsl)
 		
 		// Logical shift right
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(lsr)
 		
 		// Arithmetic shift right
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(asr)
 		
 		
 		
 		DESCRIBE_ROTATE_NOT_THROUGH_CARRY(left,ARG_REG(B))
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(rol)
 		
 		DESCRIBE_ROTATE_NOT_THROUGH_CARRY(right,ARG_REG(B))
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(ror)
 		
 		DESCRIBE_ROTATE_THROUGH_CARRY(left)
-		FLAGS_N_AND_Z_AND_C
+		FLAGS_ONLY(C)
 		INSTR_RA(rlc)
 		
 		DESCRIBE_ROTATE_THROUGH_CARRY(right)
-		FLAGS_N_AND_Z_AND_C
+		FLAGS_ONLY(C)
 		INSTR_RA(rrc)
 		
 		
@@ -225,19 +219,15 @@ GROUP_HEADER(0)
 		
 		
 		// ARG_REG(A) = Zero extend of low 16 bits in ARG_REG(B)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(zeh)
 		
 		// ARG_REG(A) = Sign extend of low 16 bits in ARG_REG(B)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(seh)
 		
 		// ARG_REG(A) = Zero extend of low 8 bits in ARG_REG(B)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(zeb)
 		
 		// ARG_REG(A) = Sign extend of low 8 bits in ARG_REG(B)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(seb)
 		
 		
@@ -253,7 +243,6 @@ GROUP_HEADER(0)
 		
 		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
 		// and stores)
-		FLAGS_N_AND_Z
 		INSTR_RA(cpyfrpc)
 
 
@@ -358,17 +347,12 @@ GROUP_HEADER(1)
 		
 		
 		// Swap the Interrupt Return Address and ARG_REG(A)
-		FLAGS_N_AND_Z
 		INSTR_RA(swpira)
 		
 		// Copy the Interrupt Return Address to ARG_REG(A)
-		FLAGS_N_AND_Z
 		INSTR_RA(cpyira)
 		
-		// Compare to zero
-		ONLY_FLAGS
-		INSTR_RA(cmpz)
-		
+		RESERVED
 		RESERVED
 		
 		
@@ -428,15 +412,12 @@ GROUP_HEADER(2)
 		INSTR_RA_RB_IMM(addsi,ARG_IMM)
 		
 		// Logical shift left, by IMM_ZERO_EXTENDED bits
-		FLAGS_N_AND_Z
 		INSTR_RA_RB_IMM(lsli,ARG_IMM)
 		
 		// Logical shift right, by IMM_ZERO_EXTENDED bits
-		FLAGS_N_AND_Z
 		INSTR_RA_RB_IMM(lsri,ARG_IMM)
 		
 		// Arithmetic shift right, by IMM_ZERO_EXTENDED bits
-		FLAGS_N_AND_Z
 		INSTR_RA_RB_IMM(asri,ARG_IMM)
 		
 		
@@ -554,28 +535,29 @@ GROUP_HEADER(3)
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(+)
-		FLAGS_ALL
 		INSTR_RA_RB_RC_IMM(addti,ARG_IMM)
 		
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Subtract)
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(-)
-		FLAGS_ALL
 		INSTR_RA_RB_RC_IMM(subti,ARG_IMM)
 		
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Multiply)
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(*)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB_RC_IMM(multi,ARG_IMM)
+		
+		// Fused multiply-add
+		// ARG_REG(A) = (ARG_REG(A) + ARG_REG(B)) + ARG_REG(C)
+		INSTR_RA_RB_RC(fma)
+		
+		
 		
 		// ARG_REG(A) = ARG_REG(B) & ARG_REG(C)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_RC(andt)
-		
-		
 		
 		// ARG_REG(A) = ARG_REG(B) | ARG_REG(C)
 		FLAGS_N_AND_Z
@@ -587,29 +569,21 @@ GROUP_HEADER(3)
 		
 		// Logical shift left
 		// ARG_REG(A) = ARG_REG(B) << ARG_REG(C)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB_RC(lslt)
 		
+		
+		
 		// Logical shift right
-		FLAGS_N_AND_Z
 		INSTR_RA_RB_RC(lsrt)
 		
-		
-		
 		// Arithmetic shift right
-		FLAGS_N_AND_Z
 		INSTR_RA_RB_RC(asrt)
 		
 		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(left)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB_RC(rolt)
 		
 		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(right)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB_RC(rort)
-		
-		RESERVED
-		
 		
 		
 		

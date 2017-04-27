@@ -33,7 +33,6 @@ Group 0 Instructions
 		cmp rA, rB
 		
 		// rA *= rB
-		// This instruction affects the N and Z flags.
 		mul rA, rB
 		
 		// This instruction affects the N and Z flags.
@@ -48,33 +47,28 @@ Group 0 Instructions
 		xor rA, rB
 		
 		// Logical shift left
-		// This instruction affects the N and Z flags.
 		lsl rA, rB
 		
 		// Logical shift right
-		// This instruction affects the N and Z flags.
 		lsr rA, rB
 		
 		// Arithmetic shift right
-		// This instruction affects the N and Z flags.
 		asr rA, rB
 		
 		
 		
 		// Rotate rA left (NOT through carry) by rB bits, then store result in rA.
-		// This instruction affects the N and Z flags.
 		rol rA, rB
 		
 		// Rotate rA right (NOT through carry) by rB bits, then store result in rA.
-		// This instruction affects the N and Z flags.
 		ror rA, rB
 		
 		// Rotate rA left (THROUGH carry) by 1 bit, ignoring rB, then store result in rA.
-		// This instruction affects N, Z, and C flags.
+		// This instruction only affects the C flag.
 		rlc rA
 		
 		// Rotate rA right (THROUGH carry) by 1 bit, ignoring rB, then store result in rA.
-		// This instruction affects N, Z, and C flags.
+		// This instruction only affects the C flag.
 		rrc rA
 		
 		
@@ -112,19 +106,15 @@ Group 0 Instructions
 		
 		
 		// rA = Zero extend of low 16 bits in rB
-		// This instruction affects the N and Z flags.
 		zeh rA, rB
 		
 		// rA = Sign extend of low 16 bits in rB
-		// This instruction affects the N and Z flags.
 		seh rA, rB
 		
 		// rA = Zero extend of low 8 bits in rB
-		// This instruction affects the N and Z flags.
 		zeb rA, rB
 		
 		// rA = Sign extend of low 8 bits in rB
-		// This instruction affects the N and Z flags.
 		seb rA, rB
 		
 		
@@ -140,7 +130,6 @@ Group 0 Instructions
 		
 		// Copy pc to rA (this can be used for pc-relative loads
 		// and stores)
-		// This instruction affects the N and Z flags.
 		cpyfrpc rA
 
 
@@ -245,17 +234,12 @@ Group 1 Instructions
 		
 		
 		// Swap the Interrupt Return Address and rA
-		// This instruction affects the N and Z flags.
 		swpira rA
 		
 		// Copy the Interrupt Return Address to rA
-		// This instruction affects the N and Z flags.
 		cpyira rA
 		
-		// Compare to zero
-		// This instruction ONLY affects flags.
-		cmpz rA
-		
+		// Reserved for future expansion.
 		// Reserved for future expansion.
 		
 		
@@ -315,15 +299,12 @@ Group 2 Instructions
 		addsi rA, rB, imm
 		
 		// Logical shift left, by (zero-extended imm) bits
-		// This instruction affects the N and Z flags.
 		lsli rA, rB, imm
 		
 		// Logical shift right, by (zero-extended imm) bits
-		// This instruction affects the N and Z flags.
 		lsri rA, rB, imm
 		
 		// Arithmetic shift right, by (zero-extended imm) bits
-		// This instruction affects the N and Z flags.
 		asri rA, rB, imm
 		
 		
@@ -441,28 +422,29 @@ Group 3 Instructions
 		// and then add sign extended immediate (can set immediate to zero
 		// if needed)
 		// rA = (rB + rC) + (sign-extended imm)
-		// This instruction affects N, V, Z, and C flags.
 		addti rA, rB, rC, imm
 		
 		// Subtract two registers,
 		// and then add sign extended immediate (can set immediate to zero
 		// if needed)
 		// rA = (rB - rC) + (sign-extended imm)
-		// This instruction affects N, V, Z, and C flags.
 		subti rA, rB, rC, imm
 		
 		// Multiply two registers,
 		// and then add sign extended immediate (can set immediate to zero
 		// if needed)
 		// rA = (rB * rC) + (sign-extended imm)
-		// This instruction affects the N and Z flags.
 		multi rA, rB, rC, imm
+		
+		// Fused multiply-add
+		// rA = (rA + rB) + rC
+		fma rA, rB, rC
+		
+		
 		
 		// rA = rB & rC
 		// This instruction affects the N and Z flags.
 		andt rA, rB, rC
-		
-		
 		
 		// rA = rB | rC
 		// This instruction affects the N and Z flags.
@@ -474,29 +456,21 @@ Group 3 Instructions
 		
 		// Logical shift left
 		// rA = rB << rC
-		// This instruction affects the N and Z flags.
 		lslt rA, rB, rC
 		
+		
+		
 		// Logical shift right
-		// This instruction affects the N and Z flags.
 		lsrt rA, rB, rC
 		
-		
-		
 		// Arithmetic shift right
-		// This instruction affects the N and Z flags.
 		asrt rA, rB, rC
 		
 		// Rotate rB left by rC bits, then store result in rA.
-		// This instruction affects the N and Z flags.
 		rolt rA, rB, rC
 		
 		// Rotate rB right by rC bits, then store result in rA.
-		// This instruction affects the N and Z flags.
 		rort rA, rB, rC
-		
-		// Reserved for future expansion.
-		
 		
 		
 		
