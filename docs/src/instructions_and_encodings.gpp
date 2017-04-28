@@ -71,7 +71,7 @@
 #define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1_TYPE_2(op) // op ARG_REG(B) by ARG_REG(C),
 #define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2 // and then add sign extended immediate \(can set immediate to zero
 #define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3 // if needed\)
-#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(op) // ARG_REG(A) = (ARG_REG(B) op ARG_REG(C)) + IMM_SIGN_EXTENDED
+#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(op,B,C) // ARG_REG(A) = (ARG_REG(B) op ARG_REG(C)) + IMM_SIGN_EXTENDED
 #if 0
 
 
@@ -356,7 +356,8 @@ GROUP_HEADER(1)
 		
 		
 		
-		// Push flags as 8-bit value onto the stack (high 4 bits of pushed value are set to zero before the push)
+		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
+		// value are set to zero before the push)
 		INSTR_NO_ARGS(pushf)
 		
 		// Pop 8-bit value from the stack and store low 4 bits to flags
@@ -371,11 +372,23 @@ GROUP_HEADER(1)
 		
 		
 		
+		// Add 4 to ARG_REG(B), then load from address in ARG_REG(B) into
+		// ARG_REG(A)
+		// LoaD Register, Add Before
+		INSTR_RA_RB(ldrab)
+		
+		// Store ARG_REG(A) to address in ARG_REG(B), then subtract 4 from
+		// ARG_REG(B)
+		// STore Register, Subtract After
+		INSTR_RA_RB(strsa)
+		
 		// ENable Interrupts
 		INSTR_NO_ARGS(eni)
 		
 		// DIsable Interrupts
 		INSTR_NO_ARGS(dii)
+		
+		
 		
 		// Set the PC to interrupt RETurn address and enable Interrupts
 		INSTR_NO_ARGS(reti)
@@ -384,16 +397,12 @@ GROUP_HEADER(1)
 		// interrupts
 		INSTR_NO_ARGS(jumpira)
 		
-		
-		
 		// Swap the Interrupt Return Address and ARG_REG(A)
 		INSTR_RA(swpira)
 		
 		// Copy the Interrupt Return Address to ARG_REG(A)
 		INSTR_RA(cpyira)
 		
-		RESERVED
-		RESERVED
 		
 		
 		
@@ -530,24 +539,26 @@ GROUP_HEADER(3)
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Add)
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(+)
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(+,B,C)
 		INSTR_RA_RB_RC_IMM(addti,ARG_IMM)
 		
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Subtract)
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(-)
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(-,B,C)
 		INSTR_RA_RB_RC_IMM(subti,ARG_IMM)
 		
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Multiply)
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
 		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(*)
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(*,B,C)
 		INSTR_RA_RB_RC_IMM(multi,ARG_IMM)
 		
-		// Fused multiply-add
-		// ARG_REG(A) = ARG_REG(A) + (ARG_REG(B) + ARG_REG(C))
-		INSTR_RA_RB_RC(fma)
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Reverse Subtract)
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
+		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(-,C,B)
+		INSTR_RA_RB_RC_IMM(rsbi,ARG_IMM)
 		
 		
 		
@@ -583,7 +594,10 @@ GROUP_HEADER(3)
 		
 		
 		
-		RESERVED
+		// Fused multiply-add
+		// ARG_REG(A) = ARG_REG(A) + (ARG_REG(B) + ARG_REG(C))
+		INSTR_RA_RB_RC(fma)
+		
 		RESERVED
 		RESERVED
 		RESERVED
@@ -624,19 +638,11 @@ GROUP_HEADER(4)
 		
 		
 		
-		// rA = 32-bit immediate
-		INSTR_RA_IMM(cpyi,ARG_IMM)
-		
 		DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_ABS)
 		INSTR_IMM(jumpa,ARG_ABS)
 		
 		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_ABS))
 		INSTR_RA_IMM(jumpax,ARG_ABS)
-		
-		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B) + ARG_ABS))
-		INSTR_RA_RB_IMM(jumpxx,ARG_ABS)
-		
-		
 		
 		DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_ABS)
 		DESCRIBE_CALL_RETURN_ADDRESS
@@ -646,10 +652,13 @@ GROUP_HEADER(4)
 		DESCRIBE_CALL_RETURN_ADDRESS
 		INSTR_RA_IMM(callax,ARG_ABS)
 		
-		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B) + ARG_ABS))
-		DESCRIBE_CALL_RETURN_ADDRESS
-		INSTR_RA_RB_IMM(callxx,ARG_ABS)
 		
+		
+		// rA = 32-bit immediate
+		INSTR_RA_IMM(cpyi,ARG_IMM)
+		
+		RESERVED
+		RESERVED
 		RESERVED
 		
 		

@@ -67,18 +67,22 @@ Group 0 Instructions
 		// rA *= rB
 		mul rA, rB
 		
+		rA &= rB
 		// This instruction affects the N and Z flags.
 		and rA, rB
 		
+		rA |= rB
 		// This instruction affects the N and Z flags.
 		or rA, rB
 		
 		
 		
+		rA ^= rB
 		// This instruction affects the N and Z flags.
 		xor rA, rB
 		
 		// Logical shift left
+		rA <<= rB
 		lsl rA, rB
 		
 		// Logical shift right
@@ -203,7 +207,8 @@ Group 1 Instructions
 		
 		
 		
-		// Push flags as 8-bit value onto the stack (high 4 bits of pushed value are set to zero before the push)
+		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
+		// value are set to zero before the push)
 		pushf
 		
 		// Pop 8-bit value from the stack and store low 4 bits to flags
@@ -218,11 +223,23 @@ Group 1 Instructions
 		
 		
 		
+		// Add 4 to rB, then load from address in rB into
+		// rA
+		// LoaD Register, Add Before
+		ldrab rA, rB
+		
+		// Store rA to address in rB, then subtract 4 from
+		// rB
+		// STore Register, Subtract After
+		strsa rA, rB
+		
 		// ENable Interrupts
 		eni
 		
 		// DIsable Interrupts
 		dii
+		
+		
 		
 		// Set the PC to interrupt RETurn address and enable Interrupts
 		reti
@@ -231,16 +248,12 @@ Group 1 Instructions
 		// interrupts
 		jumpira
 		
-		
-		
 		// Swap the Interrupt Return Address and rA
 		swpira rA
 		
 		// Copy the Interrupt Return Address to rA
 		cpyira rA
 		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
 		
 		
 		
@@ -444,9 +457,11 @@ Group 3 Instructions
 		// rA = (rB * rC) + (sign-extended imm)
 		multi rA, rB, rC, imm
 		
-		// Fused multiply-add
-		// rA = rA + (rB + rC)
-		fma rA, rB, rC
+		// Reverse Subtract two registers,
+		// and then add sign extended immediate (can set immediate to zero
+		// if needed)
+		// rA = (rC - rB) + (sign-extended imm)
+		rsbi rA, rB, rC, imm
 		
 		
 		
@@ -482,7 +497,10 @@ Group 3 Instructions
 		
 		
 		
-		// Reserved for future expansion.
+		// Fused multiply-add
+		// rA = rA + (rB + rC)
+		fma rA, rB, rC
+		
 		// Reserved for future expansion.
 		// Reserved for future expansion.
 		// Reserved for future expansion.
@@ -575,19 +593,11 @@ Group 4 Instructions
 		
 		
 		
-		// rA = 32-bit immediate
-		cpyi rA, imm
-		
 		// Set pc to destination address in absolute_addr.
 		jumpa absolute_addr
 		
 		// Set pc to destination address in (rA + absolute_addr).
 		jumpax rA, absolute_addr
-		
-		// Set pc to destination address in (rA + rB + absolute_addr).
-		jumpxx rA, rB, absolute_addr
-		
-		
 		
 		// Subroutine call using absolute_addr as destination address. 
 		// The return address is stored in the link register (lr).
@@ -597,10 +607,13 @@ Group 4 Instructions
 		// The return address is stored in the link register (lr).
 		callax rA, absolute_addr
 		
-		// Subroutine call using (rA + rB + absolute_addr) as destination address. 
-		// The return address is stored in the link register (lr).
-		callxx rA, rB, absolute_addr
 		
+		
+		// rA = 32-bit immediate
+		cpyi rA, imm
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
 		// Reserved for future expansion.
 		
 		
