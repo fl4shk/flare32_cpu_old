@@ -13,6 +13,38 @@ Group 0 Instructions
 	b:  rB
 	
 	Instructions:
+		// Load 32-bit value from address rB into rA. 
+		ldr rA, rB 
+		
+		// Load zero-extended 16-bit value from address rB into rA. 
+		// This zero-extends the value. 
+		ldh rA, rB 
+		
+		// Load sign-extended 16-bit value from address rB into rA. 
+		// This sign-extends the value. 
+		ldsh rA, rB 
+		
+		// Load zero-extended 8-bit value from address rB into rA. 
+		// This zero-extends the value. 
+		ldb rA, rB 
+		
+		
+		
+		// Load sign-extended 8-bit value from address rB into rA. 
+		// This sign-extends the value. 
+		ldsb rA, rB 
+		
+		// Store 32-bit value in rA to address rB. 
+		str rA, rB 
+		
+		// Store low 16 bits of rA to address rB. 
+		sth rA, rB 
+		
+		// Store low 8 bits of rA to address rB. 
+		stb rA, rB
+		
+		
+		
 		// This instruction affects N, V, Z, and C flags.
 		add rA, rB
 		
@@ -70,38 +102,6 @@ Group 0 Instructions
 		// Rotate rA right (THROUGH carry) by 1 bit, ignoring rB, then store result in rA.
 		// This instruction only affects the C flag.
 		rrc rA
-		
-		
-		
-		// Load 32-bit value from address rB into rA.
-		ldr rA, rB
-		
-		// Load zero-extended 16-bit value from address rB into rA.
-		// This zero-extends the value.
-		ldh rA, rB
-		
-		// Load sign-extended 16-bit value from address rB into rA.
-		// This sign-extends the value.
-		ldsh rA, rB
-		
-		// Load zero-extended 8-bit value from address rB into rA.
-		// This zero-extends the value.
-		ldb rA, rB
-		
-		
-		
-		// Load sign-extended 8-bit value from address rB into rA.
-		// This sign-extends the value.
-		ldsb rA, rB
-		
-		// Store 32-bit value in rA to address rB.
-		str rA, rB
-		
-		// Store low 16 bits of rA to address rB.
-		sth rA, rB
-		
-		// Store low 8 bits of rA to address rB.
-		stb rA, rB
 		
 		
 		
@@ -266,30 +266,34 @@ Group 2 Instructions
 	i:  16-bit immediate value
 	
 	Instructions:
-		// Load 32-bit value from address (rB + (sign-extended imm)) into rA.
-		ldrxi rA, rB, imm
+		// Load 32-bit value from address (rB + (sign-extended imm)) into rA. 
+		ldrxi rA, rB, imm 
 		
-		// Load zero-extended 16-bit value from address (rB + (sign-extended imm)) into rA.
-		ldhxi rA, rB, imm
+		// Load zero-extended 16-bit value from address (rB + (sign-extended imm)) into rA. 
+		// This zero-extends the value. 
+		ldhxi rA, rB, imm 
 		
-		// Load sign-extended 16-bit value from address (rB + (sign-extended imm)) into rA.
-		ldshxi rA, rB, imm
+		// Load sign-extended 16-bit value from address (rB + (sign-extended imm)) into rA. 
+		// This sign-extends the value. 
+		ldshxi rA, rB, imm 
 		
-		// Load zero-extended 8-bit value from address (rB + (sign-extended imm)) into rA.
-		ldbxi rA, rB, imm
+		// Load zero-extended 8-bit value from address (rB + (sign-extended imm)) into rA. 
+		// This zero-extends the value. 
+		ldbxi rA, rB, imm 
 		
 		
 		
-		// Load sign-extended 8-bit value from address (rB + (sign-extended imm)) into rA.
-		ldsbxi rA, rB, imm
+		// Load sign-extended 8-bit value from address (rB + (sign-extended imm)) into rA. 
+		// This sign-extends the value. 
+		ldsbxi rA, rB, imm 
 		
-		// Store 32-bit value in rA to address (rB + (sign-extended imm)).
-		strxi rA, rB, imm
+		// Store 32-bit value in rA to address (rB + (sign-extended imm)). 
+		strxi rA, rB, imm 
 		
-		// Store low 16 bits of rA to address (rB + (sign-extended imm)).
-		sthxi rA, rB, imm
+		// Store low 16 bits of rA to address (rB + (sign-extended imm)). 
+		sthxi rA, rB, imm 
 		
-		// Store low 8 bits of rA to address (rB + (sign-extended imm)).
+		// Store low 8 bits of rA to address (rB + (sign-extended imm)). 
 		stbxi rA, rB, imm
 		
 		
@@ -390,30 +394,34 @@ Group 3 Instructions
 	i:  12-bit immediate value
 	
 	Instructions:
-		// Load 32-bit value from address (rB + rC + (sign-extended imm)) into rA.
-		ldrxx rA, rB, rC, imm
+		// Load 32-bit value from address (rB + rC + (sign-extended imm)) into rA. 
+		ldrxx rA, rB, rC, imm 
 		
-		// Load zero-extended 16-bit value from address (rB + rC + (sign-extended imm)) into rA.
-		ldhxx rA, rB, rC, imm
+		// Load zero-extended 16-bit value from address (rB + rC + (sign-extended imm)) into rA. 
+		// This zero-extends the value. 
+		ldhxx rA, rB, rC, imm 
 		
-		// Load sign-extended 16-bit value from address (rB + rC + (sign-extended imm)) into rA.
-		ldshxx rA, rB, rC, imm
+		// Load sign-extended 16-bit value from address (rB + rC + (sign-extended imm)) into rA. 
+		// This sign-extends the value. 
+		ldshxx rA, rB, rC, imm 
 		
-		// Load zero-extended 8-bit value from address (rB + rC + (sign-extended imm)) into rA.
-		ldbxx rA, rB, rC, imm
+		// Load zero-extended 8-bit value from address (rB + rC + (sign-extended imm)) into rA. 
+		// This zero-extends the value. 
+		ldbxx rA, rB, rC, imm 
 		
 		
 		
-		// Load sign-extended 8-bit value from address (rB + rC + (sign-extended imm)) into rA.
-		ldsbxx rA, rB, rC, imm
+		// Load sign-extended 8-bit value from address (rB + rC + (sign-extended imm)) into rA. 
+		// This sign-extends the value. 
+		ldsbxx rA, rB, rC, imm 
 		
-		// Store 32-bit value in rA to address (rB + rC + (sign-extended imm)).
-		strxx rA, rB, rC, imm
+		// Store 32-bit value in rA to address (rB + rC + (sign-extended imm)). 
+		strxx rA, rB, rC, imm 
 		
-		// Store low 16 bits of rA to address (rB + rC + (sign-extended imm)).
-		sthxx rA, rB, rC, imm
+		// Store low 16 bits of rA to address (rB + rC + (sign-extended imm)). 
+		sthxx rA, rB, rC, imm 
 		
-		// Store low 8 bits of rA to address (rB + rC + (sign-extended imm)).
+		// Store low 8 bits of rA to address (rB + rC + (sign-extended imm)). 
 		stbxx rA, rB, rC, imm
 		
 		
@@ -437,7 +445,7 @@ Group 3 Instructions
 		multi rA, rB, rC, imm
 		
 		// Fused multiply-add
-		// rA = (rB + rC) + rA
+		// rA = rA + (rB + rC)
 		fma rA, rB, rC
 		
 		
@@ -503,66 +511,66 @@ Group 4 Instructions
 	i:  32-bit immediate value
 	
 	Instructions:
-		// Load 32-bit value from address absolute_addr into rA.
-		ldra rA, absolute_addr
+		// Load 32-bit value from address absolute_addr into rA. 
+		ldra rA, absolute_addr 
 		
-		// Load zero-extended 16-bit value from address absolute_addr into rA.
-		// This zero-extends the value.
-		ldha rA, absolute_addr
+		// Load zero-extended 16-bit value from address absolute_addr into rA. 
+		// This zero-extends the value. 
+		ldha rA, absolute_addr 
 		
-		// Load sign-extended 16-bit value from address absolute_addr into rA.
-		// This sign-extends the value.
-		ldsha rA, absolute_addr
+		// Load sign-extended 16-bit value from address absolute_addr into rA. 
+		// This sign-extends the value. 
+		ldsha rA, absolute_addr 
 		
-		// Load zero-extended 8-bit value from address absolute_addr into rA.
-		// This zero-extends the value.
-		ldba rA, absolute_addr
+		// Load zero-extended 8-bit value from address absolute_addr into rA. 
+		// This zero-extends the value. 
+		ldba rA, absolute_addr 
 		
 		
 		
-		// Load sign-extended 8-bit value from address absolute_addr into rA.
-		// This sign-extends the value.
-		ldsba rA, absolute_addr
+		// Load sign-extended 8-bit value from address absolute_addr into rA. 
+		// This sign-extends the value. 
+		ldsba rA, absolute_addr 
 		
-		// Store 32-bit value in rA to address absolute_addr.
-		stra rA, absolute_addr
+		// Store 32-bit value in rA to address absolute_addr. 
+		stra rA, absolute_addr 
 		
-		// Store low 16 bits of rA to address absolute_addr.
-		stha rA, absolute_addr
+		// Store low 16 bits of rA to address absolute_addr. 
+		stha rA, absolute_addr 
 		
-		// Store low 8 bits of rA to address absolute_addr.
+		// Store low 8 bits of rA to address absolute_addr. 
 		stba rA, absolute_addr
 		
 		
 		
-		// Load 32-bit value from address (absolute_addr + rB) into rA.
-		ldrax rA, rB, absolute_addr
+		// Load 32-bit value from address (absolute_addr + rB) into rA. 
+		ldrax rA, rB, absolute_addr 
 		
-		// Load zero-extended 16-bit value from address (absolute_addr + rB) into rA.
-		// This zero-extends the value.
-		ldhax rA, rB, absolute_addr
+		// Load zero-extended 16-bit value from address (absolute_addr + rB) into rA. 
+		// This zero-extends the value. 
+		ldhax rA, rB, absolute_addr 
 		
-		// Load sign-extended 16-bit value from address (absolute_addr + rB) into rA.
-		// This sign-extends the value.
-		ldshax rA, rB, absolute_addr
+		// Load sign-extended 16-bit value from address (absolute_addr + rB) into rA. 
+		// This sign-extends the value. 
+		ldshax rA, rB, absolute_addr 
 		
-		// Load zero-extended 8-bit value from address (absolute_addr + rB) into rA.
-		// This zero-extends the value.
-		ldbax rA, rB, absolute_addr
+		// Load zero-extended 8-bit value from address (absolute_addr + rB) into rA. 
+		// This zero-extends the value. 
+		ldbax rA, rB, absolute_addr 
 		
 		
 		
-		// Load sign-extended 8-bit value from address (absolute_addr + rB) into rA.
-		// This sign-extends the value.
-		ldsbax rA, rB, absolute_addr
+		// Load sign-extended 8-bit value from address (absolute_addr + rB) into rA. 
+		// This sign-extends the value. 
+		ldsbax rA, rB, absolute_addr 
 		
-		// Store 32-bit value in rA to address (absolute_addr + rB).
-		strax rA, rB, absolute_addr
+		// Store 32-bit value in rA to address (absolute_addr + rB). 
+		strax rA, rB, absolute_addr 
 		
-		// Store low 16 bits of rA to address (absolute_addr + rB).
-		sthax rA, rB, absolute_addr
+		// Store low 16 bits of rA to address (absolute_addr + rB). 
+		sthax rA, rB, absolute_addr 
 		
-		// Store low 8 bits of rA to address (absolute_addr + rB).
+		// Store low 8 bits of rA to address (absolute_addr + rB). 
 		stbax rA, rB, absolute_addr
 		
 		
