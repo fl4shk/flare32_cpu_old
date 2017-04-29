@@ -30,7 +30,7 @@ Group 0 Instructions
 		
 		
 		// temp = rA - rB
-		// This instruction ONLY affects flags.
+		// This instruction ONLY affects flags, and it affects all of them.
 		cmp rA, rB
 		
 		// temp = rA & rB
@@ -178,11 +178,15 @@ Group 1 Instructions
 		
 		
 		
-		// Push register rA onto the stack
-		pushr rA
+		// Compare negated
+		// temp = rA - (-rB)
+		// This instruction ONLY affects flags, and it affects all of them.
+		cmn rA, rB
 		
-		// Pop 32-bit value off the stack into rA
-		popr rA
+		// Compare reversed
+		// temp = rB - rA
+		// This instruction ONLY affects flags, and it affects all of them.
+		cmr rA, rB
 		
 		// Push registers rA and rb (as a pair) onto the 
 		// stack (in that order)
@@ -282,8 +286,21 @@ Group 2 Instructions
 		addsi rA, rB, imm
 		
 		// Compare rA to (zero-extended imm)
-		// This instruction ONLY affects flags.
-		cmpi imm
+		// temp = rA - (zero-extended imm)
+		// This instruction ONLY affects flags, and it affects all of them.
+		cmpi rA, imm
+		
+		// Compare rA to negated (zero-extended imm)
+		// temp = rA - (-(zero-extended imm))
+		// This instruction ONLY affects flags, and it affects all of them.
+		cmni rA, imm
+		
+		// Compare reversed with immediate value
+		// temp = (zero-extended imm) - rA
+		// This instruction ONLY affects flags, and it affects all of them.
+		cmri rA, imm
+		
+		
 		
 		// temp = rA & (zero-extended imm)
 		// This instruction affects the N and Z flags.
@@ -293,8 +310,6 @@ Group 2 Instructions
 		// This instruction affects the N and Z flags.
 		andi rA, rB, imm
 		
-		
-		
 		// rA = rB | (zero-extended imm)
 		// This instruction affects the N and Z flags.
 		ori rA, rB, imm
@@ -303,6 +318,8 @@ Group 2 Instructions
 		// This instruction affects the N and Z flags.
 		xori rA, rB, imm
 		
+		
+		
 		// Logical shift left, by (zero-extended imm) bits
 		rA = rB << (zero-extended imm)
 		lsli rA, rB, imm
@@ -310,74 +327,92 @@ Group 2 Instructions
 		// Logical shift right, by (zero-extended imm) bits
 		lsri rA, rB, imm
 		
-		
-		
 		// Arithmetic shift right, by (zero-extended imm) bits
 		asri rA, rB, imm
 		
-		// Branch always, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// Branch always, 
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bra imm
 		
-		// Branch when Z == 0, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		
+		
+		// Branch when Z == 0, 
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bne imm
 		
-		// Branch when Z == 1, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// Branch when Z == 1, 
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		beq imm
 		
-		
-		
 		// Branch when C == 0 [unsigned less than], 
-		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bcc imm
 		
 		// Branch when C == 1 [unsigned greater than or equal], 
-		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bcs imm
 		
+		
+		
 		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], 
-		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bls imm
 		
 		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], 
-		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bhi imm
 		
-		
-		
-		// Branch when N == 0, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// Branch when N == 0, 
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bpl imm
 		
-		// Branch when N == 1, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// Branch when N == 1, 
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bmi imm
 		
-		// Branch when V == 0, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		
+		
+		// Branch when V == 0, 
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bvc imm
 		
-		// Branch when V == 1, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// Branch when V == 1, 
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bvs imm
 		
-		
-		
 		// Branch when N == V [signed greater than or equal], 
-		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bge imm
 		
 		// Branch when N != V [signed less than], 
-		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		blt imm
 		
+		
+		
 		// Branch when ( N == V and Z == 0 ) [signed greater than], 
-		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		bgt imm
 		
 		// Branch when ( N != V or Z == 1 ) [signed less than or equal], 
-		// to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+		// to ( (pc when instruction starts) 
+		// + (sign-extended 16-bit immediate value) )
 		ble imm
 		
-		
-		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
 		// Reserved for future expansion.
 		// Reserved for future expansion.
 		

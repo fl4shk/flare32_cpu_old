@@ -2,7 +2,7 @@
 #if 0
 
 #endif
-#define ONLY_FLAGS // This instruction ONLY affects flags.
+#define ONLY_FLAGS // This instruction ONLY affects flags, and it affects all of them.
 #define FLAGS_NONE // This instruction does not affect flags.
 #define FLAGS_N_AND_Z // This instruction affects the N and Z flags.
 #define FLAGS_ONLY(f) // This instruction only affects the f flag.
@@ -62,7 +62,8 @@
 #define DESCRIBE_JUMP_DESTINATION_ADDRESS(addr) // Set pc to destination address in addr.
 #define DESCRIBE_CALL_DESTINATION_ADDRESS(addr) // Subroutine call using addr as destination address. 
 #define DESCRIBE_CALL_RETURN_ADDRESS // The return address is stored in the link register (lr).
-#define DESCRIBE_BRANCH_TARGET to (pc when instruction starts) + (sign-extended 16-bit immediate value)
+#define DESCRIBE_BRANCH_TARGET to ( (pc when instruction starts) \
+		// + (sign-extended 16-bit immediate value) )
 #if 0
 
 
@@ -328,11 +329,15 @@ GROUP_HEADER(1)
 		
 		
 		
-		// Push register ARG_REG(A) onto the stack
-		INSTR_RA(pushr)
+		// Compare negated
+		// ARG_TEMP = ARG_REG(A) - (-ARG_REG(B))
+		ONLY_FLAGS
+		INSTR_RA_RB(cmn)
 		
-		// Pop 32-bit value off the stack into ARG_REG(A)
-		INSTR_RA(popr)
+		// Compare reversed
+		// ARG_TEMP = ARG_REG(B) - ARG_REG(A)
+		ONLY_FLAGS
+		INSTR_RA_RB(cmr)
 		
 		// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
 		// stack (in that order)
@@ -432,8 +437,21 @@ GROUP_HEADER(2)
 		INSTR_RA_RB_IMM(addsi,ARG_IMM)
 		
 		// Compare ARG_REG(A) to IMM_ZERO_EXTENDED
+		// ARG_TEMP = ARG_REG(A) - IMM_ZERO_EXTENDED
 		ONLY_FLAGS
-		INSTR_IMM(cmpi,ARG_IMM)
+		INSTR_RA_IMM(cmpi,ARG_IMM)
+		
+		// Compare ARG_REG(A) to negated IMM_ZERO_EXTENDED
+		// ARG_TEMP = ARG_REG(A) - (-IMM_ZERO_EXTENDED)
+		ONLY_FLAGS
+		INSTR_RA_IMM(cmni,ARG_IMM)
+		
+		// Compare reversed with immediate value
+		// ARG_TEMP = IMM_ZERO_EXTENDED - ARG_REG(A)
+		ONLY_FLAGS
+		INSTR_RA_IMM(cmri,ARG_IMM)
+		
+		
 		
 		// ARG_TEMP = ARG_REG(A) & IMM_ZERO_EXTENDED
 		FLAGS_N_AND_Z
@@ -443,8 +461,6 @@ GROUP_HEADER(2)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_IMM(andi,ARG_IMM)
 		
-		
-		
 		// ARG_REG(A) = ARG_REG(B) | IMM_ZERO_EXTENDED
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_IMM(ori,ARG_IMM)
@@ -453,6 +469,8 @@ GROUP_HEADER(2)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_IMM(xori,ARG_IMM)
 		
+		
+		
 		// Logical shift left, by IMM_ZERO_EXTENDED bits
 		ARG_REG(A) = ARG_REG(B) << IMM_ZERO_EXTENDED
 		INSTR_RA_RB_IMM(lsli,ARG_IMM)
@@ -460,21 +478,22 @@ GROUP_HEADER(2)
 		// Logical shift right, by IMM_ZERO_EXTENDED bits
 		INSTR_RA_RB_IMM(lsri,ARG_IMM)
 		
-		
-		
 		// Arithmetic shift right, by IMM_ZERO_EXTENDED bits
 		INSTR_RA_RB_IMM(asri,ARG_IMM)
 		
-		// Branch always, DESCRIBE_BRANCH_TARGET
+		// Branch always, 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bra,ARG_IMM)
 		
-		// Branch when Z == 0, DESCRIBE_BRANCH_TARGET
+		
+		
+		// Branch when Z == 0, 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bne,ARG_IMM)
 		
-		// Branch when Z == 1, DESCRIBE_BRANCH_TARGET
+		// Branch when Z == 1, 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(beq,ARG_IMM)
-		
-		
 		
 		// Branch when C == 0 [unsigned less than], 
 		// DESCRIBE_BRANCH_TARGET
@@ -484,6 +503,8 @@ GROUP_HEADER(2)
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bcs,ARG_IMM)
 		
+		
+		
 		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], 
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bls,ARG_IMM)
@@ -492,21 +513,23 @@ GROUP_HEADER(2)
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bhi,ARG_IMM)
 		
-		
-		
-		// Branch when N == 0, DESCRIBE_BRANCH_TARGET
+		// Branch when N == 0, 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bpl,ARG_IMM)
 		
-		// Branch when N == 1, DESCRIBE_BRANCH_TARGET
+		// Branch when N == 1, 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bmi,ARG_IMM)
 		
-		// Branch when V == 0, DESCRIBE_BRANCH_TARGET
+		
+		
+		// Branch when V == 0, 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bvc,ARG_IMM)
 		
-		// Branch when V == 1, DESCRIBE_BRANCH_TARGET
+		// Branch when V == 1, 
+		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bvs,ARG_IMM)
-		
-		
 		
 		// Branch when N == V [signed greater than or equal], 
 		// DESCRIBE_BRANCH_TARGET
@@ -516,6 +539,8 @@ GROUP_HEADER(2)
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(blt,ARG_IMM)
 		
+		
+		
 		// Branch when ( N == V and Z == 0 ) [signed greater than], 
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bgt,ARG_IMM)
@@ -524,10 +549,6 @@ GROUP_HEADER(2)
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(ble,ARG_IMM)
 		
-		
-		
-		RESERVED
-		RESERVED
 		RESERVED
 		RESERVED
 		
