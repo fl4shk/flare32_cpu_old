@@ -82,6 +82,7 @@
 
 #endif
 #define ARG_REG(x) concat(r,x)
+#define ARG_TEMP temp
 #define ARG_IMM imm
 #define IMM_ZERO_EXTENDED (zero-extended ARG_IMM)
 #define IMM_SIGN_EXTENDED (sign-extended ARG_IMM)
@@ -188,12 +189,6 @@ GROUP_HEADER(0)
 	DESCRIBE_RB
 	
 	DESCRIBE_INSTRUCTIONS
-#define __TEMP_LDST_INSTR_TYPE INSTR_RA_RB
-		GEN_LDST_NO_SUFFIX(ARG_FOR_LDST_NON_INDEXED)
-#undef __TEMP_LDST_INSTR_TYPE
-		
-		
-		
 		FLAGS_ALL
 		INSTR_RA_RB(add)
 		
@@ -210,23 +205,25 @@ GROUP_HEADER(0)
 		
 		
 		
+		// ARG_TEMP = ARG_REG(A) - ARG_REG(B)
 		ONLY_FLAGS
 		INSTR_RA_RB(cmp)
 		
-		// ARG_REG(A) *= ARG_REG(B)
-		INSTR_RA_RB(mul)
+		// ARG_TEMP = ARG_REG(A) & ARG_REG(B)
+		FLAGS_N_AND_Z
+		INSTR_RA_RB(tst)
 		
-		ARG_REG(A) &= ARG_REG(B)
+		// ARG_REG(A) &= ARG_REG(B)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB(and)
 		
-		ARG_REG(A) |= ARG_REG(B)
+		// ARG_REG(A) |= ARG_REG(B)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB(or)
 		
 		
 		
-		ARG_REG(A) ^= ARG_REG(B)
+		// ARG_REG(A) ^= ARG_REG(B)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB(xor)
 		
@@ -284,6 +281,37 @@ GROUP_HEADER(0)
 		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
 		// and stores)
 		INSTR_RA(cpyfrpc)
+		
+		
+		
+		
+		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
+		INSTR_RA_RB(jumpx)
+		
+		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
+		DESCRIBE_CALL_RETURN_ADDRESS
+		INSTR_RA_RB(callx)
+		
+		// ENable Interrupts
+		INSTR_NO_ARGS(eni)
+		
+		// DIsable Interrupts
+		INSTR_NO_ARGS(dii)
+		
+		
+		
+		// Set the PC to interrupt RETurn address and enable Interrupts
+		INSTR_NO_ARGS(reti)
+		
+		// Set the PC to the Interrupt Return Address, but DON'T enable
+		// interrupts
+		INSTR_NO_ARGS(jumpira)
+		
+		// Swap the Interrupt Return Address and ARG_REG(A)
+		INSTR_RA(swpira)
+		
+		// Copy the Interrupt Return Address to ARG_REG(A)
+		INSTR_RA(cpyira)
 
 
 GROUP_HEADER(1)
@@ -294,13 +322,53 @@ GROUP_HEADER(1)
 	DESCRIBE_RB
 	
 	DESCRIBE_INSTRUCTIONS
-		// ARG_REG(A) = ARG_REG(B) + 1
-		FLAGS_ALL
-		INSTR_RA_RB(inc)
+#define __TEMP_LDST_INSTR_TYPE INSTR_RA_RB
+		GEN_LDST_NO_SUFFIX(in ARG_FOR_LDST_NON_INDEXED)
+#undef __TEMP_LDST_INSTR_TYPE
 		
-		// ARG_REG(A) = ARG_REG(B) - 1
+		
+		
+		// Push register ARG_REG(A) onto the stack
+		INSTR_RA(pushr)
+		
+		// Pop 32-bit value off the stack into ARG_REG(A)
+		INSTR_RA(popr)
+		
+		// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
+		// stack (in that order)
+		INSTR_RA_RB(pushp)
+		
+		// Pop two 32-bit values off the stack, storing the first popped
+		// value into ARG_REG(B) and the second popped value into ARG_REG(A)
+		INSTR_RA_RB(popp)
+		
+		
+		
+		// Add 4 to ARG_REG(B), then load from address in ARG_REG(B) into
+		// ARG_REG(A)
+		// LoaD Register, Add Before
+		INSTR_RA_RB(ldrab)
+		
+		// Store ARG_REG(A) to address in ARG_REG(B), then subtract 4 from
+		// ARG_REG(B)
+		// STore Register, Subtract After
+		INSTR_RA_RB(strsa)
+		
+		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
+		// value are set to zero before the push)
+		INSTR_NO_ARGS(pushf)
+		
+		// Pop 8-bit value from the stack and store low 4 bits to flags
+		INSTR_NO_ARGS(popf)
+		
+		
+		
+		// Clear ARG_REG(A), then CoPY FRom Flags to ARG_REG(A)
+		INSTR_RA(cpyfrf)
+		
+		// Copy to flags from ARG_REG(A)
 		FLAGS_ALL
-		INSTR_RA_RB(dec)
+		INSTR_RA(cpytof)
 		
 		// ARG_REG(A):ARG_REG(B) = (64-bit zero-extend of ARG_REG(A)) * (64-bit zero-extend of ARG_REG(B))
 		// 
@@ -324,85 +392,16 @@ GROUP_HEADER(1)
 		
 		
 		
-		DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(A))
-		INSTR_RA(jump)
-		
-		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
-		INSTR_RA_RB(jumpx)
-		
-		DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_REG(A))
-		DESCRIBE_CALL_RETURN_ADDRESS
-		INSTR_RA(call)
-		
-		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
-		DESCRIBE_CALL_RETURN_ADDRESS
-		INSTR_RA_RB(callx)
-		
-		
-		
-		// Push register ARG_REG(A) onto the stack
-		INSTR_RA(pushr)
-		
-		// Pop 32-bit value off the stack into ARG_REG(A)
-		INSTR_RA(popr)
-		
-		// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
-		// stack (in that order)
-		INSTR_RA_RB(pushp)
-		
-		// Pop two 32-bit values off the stack, storing the first popped
-		// value into ARG_REG(B) and the second popped value into ARG_REG(A)
-		INSTR_RA_RB(popp)
-		
-		
-		
-		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
-		// value are set to zero before the push)
-		INSTR_NO_ARGS(pushf)
-		
-		// Pop 8-bit value from the stack and store low 4 bits to flags
-		INSTR_NO_ARGS(popf)
-		
-		// Clear ARG_REG(A), then CoPY FRom Flags to ARG_REG(A)
-		INSTR_RA(cpyfrf)
-		
-		// Copy to flags from ARG_REG(A)
+		// ARG_REG(A) = ARG_REG(B) + 1
 		FLAGS_ALL
-		INSTR_RA(cpytof)
+		INSTR_RA_RB(inc)
 		
+		// ARG_REG(A) = ARG_REG(B) - 1
+		FLAGS_ALL
+		INSTR_RA_RB(dec)
 		
-		
-		// Add 4 to ARG_REG(B), then load from address in ARG_REG(B) into
-		// ARG_REG(A)
-		// LoaD Register, Add Before
-		INSTR_RA_RB(ldrab)
-		
-		// Store ARG_REG(A) to address in ARG_REG(B), then subtract 4 from
-		// ARG_REG(B)
-		// STore Register, Subtract After
-		INSTR_RA_RB(strsa)
-		
-		// ENable Interrupts
-		INSTR_NO_ARGS(eni)
-		
-		// DIsable Interrupts
-		INSTR_NO_ARGS(dii)
-		
-		
-		
-		// Set the PC to interrupt RETurn address and enable Interrupts
-		INSTR_NO_ARGS(reti)
-		
-		// Set the PC to the Interrupt Return Address, but DON'T enable
-		// interrupts
-		INSTR_NO_ARGS(jumpira)
-		
-		// Swap the Interrupt Return Address and ARG_REG(A)
-		INSTR_RA(swpira)
-		
-		// Copy the Interrupt Return Address to ARG_REG(A)
-		INSTR_RA(cpyira)
-		
+		RESERVED
+		RESERVED
 		
 		
 		
@@ -428,30 +427,43 @@ GROUP_HEADER(2)
 	DESCRIBE_IMM(16)
 	
 	DESCRIBE_INSTRUCTIONS
-#define __TEMP_LDST_INSTR_TYPE INSTR_RA_RB_IMM
-		GEN_LDST_WITH_SUFFIX(ARG_FOR_LDST_IMM_INDEXED(IMM_SIGN_EXTENDED),xi\,ARG_IMM)
-#undef __TEMP_LDST_INSTR_TYPE
-		
-		
-		
 		// ARG_REG(A) = ARG_REG(B) + IMM_SIGN_EXTENDED
 		FLAGS_ALL
 		INSTR_RA_RB_IMM(addsi,ARG_IMM)
 		
+		// Compare ARG_REG(A) to IMM_ZERO_EXTENDED
+		ONLY_FLAGS
+		INSTR_IMM(cmpi,ARG_IMM)
+		
+		// ARG_TEMP = ARG_REG(A) & IMM_ZERO_EXTENDED
+		FLAGS_N_AND_Z
+		INSTR_RA_IMM(tsti,ARG_IMM)
+		
+		// ARG_REG(A) = ARG_REG(B) & IMM_ZERO_EXTENDED
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_IMM(andi,ARG_IMM)
+		
+		
+		
+		// ARG_REG(A) = ARG_REG(B) | IMM_ZERO_EXTENDED
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_IMM(ori,ARG_IMM)
+		
+		// ARG_REG(A) = ARG_REG(B) ^ IMM_ZERO_EXTENDED
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_IMM(xori,ARG_IMM)
+		
 		// Logical shift left, by IMM_ZERO_EXTENDED bits
+		ARG_REG(A) = ARG_REG(B) << IMM_ZERO_EXTENDED
 		INSTR_RA_RB_IMM(lsli,ARG_IMM)
 		
 		// Logical shift right, by IMM_ZERO_EXTENDED bits
 		INSTR_RA_RB_IMM(lsri,ARG_IMM)
 		
+		
+		
 		// Arithmetic shift right, by IMM_ZERO_EXTENDED bits
 		INSTR_RA_RB_IMM(asri,ARG_IMM)
-		
-		
-		
-		// Compare ARG_REG(A) to IMM_ZERO_EXTENDED
-		ONLY_FLAGS
-		INSTR_IMM(cmpi,ARG_IMM)
 		
 		// Branch always, DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bra,ARG_IMM)
@@ -514,6 +526,20 @@ GROUP_HEADER(2)
 		
 		
 		
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED
+		
+		
+		
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED
+		
+		
+		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_REG(A) = ARG_REG(B) - IMM_SIGN_EXTENDED
 		//FLAGS_ALL
@@ -535,30 +561,18 @@ GROUP_HEADER(3)
 #undef __TEMP_LDST_INSTR_TYPE
 		
 		
+		// ARG_REG(A) = ARG_REG(B) + ARG_REG(C)
+		INSTR_RA_RB_RC(addt)
 		
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Add)
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(+,B,C)
-		INSTR_RA_RB_RC_IMM(addti,ARG_IMM)
+		// ARG_REG(A) = ARG_REG(B) - ARG_REG(C)
+		INSTR_RA_RB_RC(subt)
 		
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Subtract)
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(-,B,C)
-		INSTR_RA_RB_RC_IMM(subti,ARG_IMM)
+		// ARG_REG(A) = ARG_REG(C) - ARG_REG(B)
+		INSTR_RA_RB_RC(rsbt)
 		
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Multiply)
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(*,B,C)
-		INSTR_RA_RB_RC_IMM(multi,ARG_IMM)
+		// ARG_REG(A) = ARG_REG(B) * ARG_REG(C)
+		INSTR_RA_RB_RC(mult)
 		
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(Reverse Subtract)
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3
-		DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(-,C,B)
-		INSTR_RA_RB_RC_IMM(rsbi,ARG_IMM)
 		
 		
 		
@@ -626,39 +640,24 @@ GROUP_HEADER(4)
 	DESCRIBE_IMM(32)
 	
 	DESCRIBE_INSTRUCTIONS
-#define __TEMP_LDST_INSTR_TYPE INSTR_RA_IMM
-		GEN_LDST_WITH_SUFFIX(ARG_FOR_LDST_ABS,a\,ARG_FOR_LDST_ABS)
-#undef __TEMP_LDST_INSTR_TYPE
-		
-		
-		
 #define __TEMP_LDST_INSTR_TYPE INSTR_RA_RB_IMM
 		GEN_LDST_WITH_SUFFIX(ARG_FOR_LDST_ABS_INDEXED,ax\,ARG_ABS)
 #undef __TEMP_LDST_INSTR_TYPE
 		
 		
 		
-		DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_ABS)
-		INSTR_IMM(jumpa,ARG_ABS)
+		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B) + ARG_ABS))
+		INSTR_RA_RB_IMM(jumpax,ARG_ABS)
 		
-		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_ABS))
-		INSTR_RA_IMM(jumpax,ARG_ABS)
-		
-		DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_ABS)
+		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B) + ARG_ABS))
 		DESCRIBE_CALL_RETURN_ADDRESS
-		INSTR_IMM(calla,ARG_ABS)
+		INSTR_RA_RB_IMM(callax,ARG_ABS)
 		
-		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_ABS))
-		DESCRIBE_CALL_RETURN_ADDRESS
-		INSTR_RA_IMM(callax,ARG_ABS)
+		// ARG_REG(A) = 32-bit immediate, ARG_REG(B) = same 32-bit immediate, 
+		// Can use ARG_REG(0) as one of the registers being set to ensure
+		// that only one regular register gets set to the immediate value
+		INSTR_RA_RB_IMM(cpyi,ARG_IMM)
 		
-		
-		
-		// rA = 32-bit immediate
-		INSTR_RA_IMM(cpyi,ARG_IMM)
-		
-		RESERVED
-		RESERVED
 		RESERVED
 		
 		
@@ -675,3 +674,23 @@ GROUP_HEADER(4)
 		RESERVED
 		RESERVED
 		
+		
+		
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED
+		
+		
+		
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED
+		
+		
+		
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED

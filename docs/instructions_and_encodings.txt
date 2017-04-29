@@ -13,38 +13,6 @@ Group 0 Instructions
 	b:  rB
 	
 	Instructions:
-		// Load 32-bit value from address rB into rA. 
-		ldr rA, rB 
-		
-		// Load zero-extended 16-bit value from address rB into rA. 
-		// This zero-extends the value. 
-		ldh rA, rB 
-		
-		// Load sign-extended 16-bit value from address rB into rA. 
-		// This sign-extends the value. 
-		ldsh rA, rB 
-		
-		// Load zero-extended 8-bit value from address rB into rA. 
-		// This zero-extends the value. 
-		ldb rA, rB 
-		
-		
-		
-		// Load sign-extended 8-bit value from address rB into rA. 
-		// This sign-extends the value. 
-		ldsb rA, rB 
-		
-		// Store 32-bit value in rA to address rB. 
-		str rA, rB 
-		
-		// Store low 16 bits of rA to address rB. 
-		sth rA, rB 
-		
-		// Store low 8 bits of rA to address rB. 
-		stb rA, rB
-		
-		
-		
 		// This instruction affects N, V, Z, and C flags.
 		add rA, rB
 		
@@ -61,23 +29,25 @@ Group 0 Instructions
 		
 		
 		
+		// temp = rA - rB
 		// This instruction ONLY affects flags.
 		cmp rA, rB
 		
-		// rA *= rB
-		mul rA, rB
+		// temp = rA & rB
+		// This instruction affects the N and Z flags.
+		tst rA, rB
 		
-		rA &= rB
+		// rA &= rB
 		// This instruction affects the N and Z flags.
 		and rA, rB
 		
-		rA |= rB
+		// rA |= rB
 		// This instruction affects the N and Z flags.
 		or rA, rB
 		
 		
 		
-		rA ^= rB
+		// rA ^= rB
 		// This instruction affects the N and Z flags.
 		xor rA, rB
 		
@@ -135,6 +105,37 @@ Group 0 Instructions
 		// Copy pc to rA (this can be used for pc-relative loads
 		// and stores)
 		cpyfrpc rA
+		
+		
+		
+		
+		// Set pc to destination address in (rA + rB).
+		jumpx rA, rB
+		
+		// Subroutine call using (rA + rB) as destination address. 
+		// The return address is stored in the link register (lr).
+		callx rA, rB
+		
+		// ENable Interrupts
+		eni
+		
+		// DIsable Interrupts
+		dii
+		
+		
+		
+		// Set the PC to interrupt RETurn address and enable Interrupts
+		reti
+		
+		// Set the PC to the Interrupt Return Address, but DON'T enable
+		// interrupts
+		jumpira
+		
+		// Swap the Interrupt Return Address and rA
+		swpira rA
+		
+		// Copy the Interrupt Return Address to rA
+		cpyira rA
 
 
 Group 1 Instructions
@@ -145,13 +146,79 @@ Group 1 Instructions
 	b:  rB
 	
 	Instructions:
-		// rA = rB + 1
-		// This instruction affects N, V, Z, and C flags.
-		inc rA, rB
+		// Load 32-bit value from address in rB into rA. 
+		ldr rA, rB 
 		
-		// rA = rB - 1
+		// Load zero-extended 16-bit value from address in rB into rA. 
+		// This zero-extends the value. 
+		ldh rA, rB 
+		
+		// Load sign-extended 16-bit value from address in rB into rA. 
+		// This sign-extends the value. 
+		ldsh rA, rB 
+		
+		// Load zero-extended 8-bit value from address in rB into rA. 
+		// This zero-extends the value. 
+		ldb rA, rB 
+		
+		
+		
+		// Load sign-extended 8-bit value from address in rB into rA. 
+		// This sign-extends the value. 
+		ldsb rA, rB 
+		
+		// Store 32-bit value in rA to address in rB. 
+		str rA, rB 
+		
+		// Store low 16 bits of rA to address in rB. 
+		sth rA, rB 
+		
+		// Store low 8 bits of rA to address in rB. 
+		stb rA, rB
+		
+		
+		
+		// Push register rA onto the stack
+		pushr rA
+		
+		// Pop 32-bit value off the stack into rA
+		popr rA
+		
+		// Push registers rA and rb (as a pair) onto the 
+		// stack (in that order)
+		pushp rA, rB
+		
+		// Pop two 32-bit values off the stack, storing the first popped
+		// value into rB and the second popped value into rA
+		popp rA, rB
+		
+		
+		
+		// Add 4 to rB, then load from address in rB into
+		// rA
+		// LoaD Register, Add Before
+		ldrab rA, rB
+		
+		// Store rA to address in rB, then subtract 4 from
+		// rB
+		// STore Register, Subtract After
+		strsa rA, rB
+		
+		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
+		// value are set to zero before the push)
+		pushf
+		
+		// Pop 8-bit value from the stack and store low 4 bits to flags
+		popf
+		
+		
+		
+		// Clear rA, then CoPY FRom Flags to rA
+		cpyfrf rA
+		
+		// Copy to flags from rA
 		// This instruction affects N, V, Z, and C flags.
-		dec rA, rB
+		cpytof rA
 		
 		// rA:rB = (64-bit zero-extend of rA) * (64-bit zero-extend of rB)
 		// 
@@ -175,85 +242,16 @@ Group 1 Instructions
 		
 		
 		
-		// Set pc to destination address in rA.
-		jump rA
-		
-		// Set pc to destination address in (rA + rB).
-		jumpx rA, rB
-		
-		// Subroutine call using rA as destination address. 
-		// The return address is stored in the link register (lr).
-		call rA
-		
-		// Subroutine call using (rA + rB) as destination address. 
-		// The return address is stored in the link register (lr).
-		callx rA, rB
-		
-		
-		
-		// Push register rA onto the stack
-		pushr rA
-		
-		// Pop 32-bit value off the stack into rA
-		popr rA
-		
-		// Push registers rA and rb (as a pair) onto the 
-		// stack (in that order)
-		pushp rA, rB
-		
-		// Pop two 32-bit values off the stack, storing the first popped
-		// value into rB and the second popped value into rA
-		popp rA, rB
-		
-		
-		
-		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
-		// value are set to zero before the push)
-		pushf
-		
-		// Pop 8-bit value from the stack and store low 4 bits to flags
-		popf
-		
-		// Clear rA, then CoPY FRom Flags to rA
-		cpyfrf rA
-		
-		// Copy to flags from rA
+		// rA = rB + 1
 		// This instruction affects N, V, Z, and C flags.
-		cpytof rA
+		inc rA, rB
 		
+		// rA = rB - 1
+		// This instruction affects N, V, Z, and C flags.
+		dec rA, rB
 		
-		
-		// Add 4 to rB, then load from address in rB into
-		// rA
-		// LoaD Register, Add Before
-		ldrab rA, rB
-		
-		// Store rA to address in rB, then subtract 4 from
-		// rB
-		// STore Register, Subtract After
-		strsa rA, rB
-		
-		// ENable Interrupts
-		eni
-		
-		// DIsable Interrupts
-		dii
-		
-		
-		
-		// Set the PC to interrupt RETurn address and enable Interrupts
-		reti
-		
-		// Set the PC to the Interrupt Return Address, but DON'T enable
-		// interrupts
-		jumpira
-		
-		// Swap the Interrupt Return Address and rA
-		swpira rA
-		
-		// Copy the Interrupt Return Address to rA
-		cpyira rA
-		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
 		
 		
 		
@@ -279,56 +277,43 @@ Group 2 Instructions
 	i:  16-bit immediate value
 	
 	Instructions:
-		// Load 32-bit value from address (rB + (sign-extended imm)) into rA. 
-		ldrxi rA, rB, imm 
-		
-		// Load zero-extended 16-bit value from address (rB + (sign-extended imm)) into rA. 
-		// This zero-extends the value. 
-		ldhxi rA, rB, imm 
-		
-		// Load sign-extended 16-bit value from address (rB + (sign-extended imm)) into rA. 
-		// This sign-extends the value. 
-		ldshxi rA, rB, imm 
-		
-		// Load zero-extended 8-bit value from address (rB + (sign-extended imm)) into rA. 
-		// This zero-extends the value. 
-		ldbxi rA, rB, imm 
-		
-		
-		
-		// Load sign-extended 8-bit value from address (rB + (sign-extended imm)) into rA. 
-		// This sign-extends the value. 
-		ldsbxi rA, rB, imm 
-		
-		// Store 32-bit value in rA to address (rB + (sign-extended imm)). 
-		strxi rA, rB, imm 
-		
-		// Store low 16 bits of rA to address (rB + (sign-extended imm)). 
-		sthxi rA, rB, imm 
-		
-		// Store low 8 bits of rA to address (rB + (sign-extended imm)). 
-		stbxi rA, rB, imm
-		
-		
-		
 		// rA = rB + (sign-extended imm)
 		// This instruction affects N, V, Z, and C flags.
 		addsi rA, rB, imm
 		
+		// Compare rA to (zero-extended imm)
+		// This instruction ONLY affects flags.
+		cmpi imm
+		
+		// temp = rA & (zero-extended imm)
+		// This instruction affects the N and Z flags.
+		tsti rA, imm
+		
+		// rA = rB & (zero-extended imm)
+		// This instruction affects the N and Z flags.
+		andi rA, rB, imm
+		
+		
+		
+		// rA = rB | (zero-extended imm)
+		// This instruction affects the N and Z flags.
+		ori rA, rB, imm
+		
+		// rA = rB ^ (zero-extended imm)
+		// This instruction affects the N and Z flags.
+		xori rA, rB, imm
+		
 		// Logical shift left, by (zero-extended imm) bits
+		rA = rB << (zero-extended imm)
 		lsli rA, rB, imm
 		
 		// Logical shift right, by (zero-extended imm) bits
 		lsri rA, rB, imm
 		
+		
+		
 		// Arithmetic shift right, by (zero-extended imm) bits
 		asri rA, rB, imm
-		
-		
-		
-		// Compare rA to (zero-extended imm)
-		// This instruction ONLY affects flags.
-		cmpi imm
 		
 		// Branch always, to (pc when instruction starts) + (sign-extended 16-bit immediate value)
 		bra imm
@@ -391,6 +376,20 @@ Group 2 Instructions
 		
 		
 		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
 		// Pseudo instruction:
 		//// rA = rB - (sign-extended imm)
 		//// This instruction affects N, V, Z, and C flags.
@@ -438,30 +437,18 @@ Group 3 Instructions
 		stbxx rA, rB, rC, imm
 		
 		
+		// rA = rB + rC
+		addt rA, rB, rC
 		
-		// Add two registers,
-		// and then add sign extended immediate (can set immediate to zero
-		// if needed)
-		// rA = (rB + rC) + (sign-extended imm)
-		addti rA, rB, rC, imm
+		// rA = rB - rC
+		subt rA, rB, rC
 		
-		// Subtract two registers,
-		// and then add sign extended immediate (can set immediate to zero
-		// if needed)
-		// rA = (rB - rC) + (sign-extended imm)
-		subti rA, rB, rC, imm
+		// rA = rC - rB
+		rsbt rA, rB, rC
 		
-		// Multiply two registers,
-		// and then add sign extended immediate (can set immediate to zero
-		// if needed)
-		// rA = (rB * rC) + (sign-extended imm)
-		multi rA, rB, rC, imm
+		// rA = rB * rC
+		mult rA, rB, rC
 		
-		// Reverse Subtract two registers,
-		// and then add sign extended immediate (can set immediate to zero
-		// if needed)
-		// rA = (rC - rB) + (sign-extended imm)
-		rsbi rA, rB, rC, imm
 		
 		
 		
@@ -529,38 +516,6 @@ Group 4 Instructions
 	i:  32-bit immediate value
 	
 	Instructions:
-		// Load 32-bit value from address absolute_addr into rA. 
-		ldra rA, absolute_addr 
-		
-		// Load zero-extended 16-bit value from address absolute_addr into rA. 
-		// This zero-extends the value. 
-		ldha rA, absolute_addr 
-		
-		// Load sign-extended 16-bit value from address absolute_addr into rA. 
-		// This sign-extends the value. 
-		ldsha rA, absolute_addr 
-		
-		// Load zero-extended 8-bit value from address absolute_addr into rA. 
-		// This zero-extends the value. 
-		ldba rA, absolute_addr 
-		
-		
-		
-		// Load sign-extended 8-bit value from address absolute_addr into rA. 
-		// This sign-extends the value. 
-		ldsba rA, absolute_addr 
-		
-		// Store 32-bit value in rA to address absolute_addr. 
-		stra rA, absolute_addr 
-		
-		// Store low 16 bits of rA to address absolute_addr. 
-		stha rA, absolute_addr 
-		
-		// Store low 8 bits of rA to address absolute_addr. 
-		stba rA, absolute_addr
-		
-		
-		
 		// Load 32-bit value from address (absolute_addr + rB) into rA. 
 		ldrax rA, rB, absolute_addr 
 		
@@ -593,27 +548,18 @@ Group 4 Instructions
 		
 		
 		
-		// Set pc to destination address in absolute_addr.
-		jumpa absolute_addr
+		// Set pc to destination address in (rA + rB + absolute_addr).
+		jumpax rA, rB, absolute_addr
 		
-		// Set pc to destination address in (rA + absolute_addr).
-		jumpax rA, absolute_addr
-		
-		// Subroutine call using absolute_addr as destination address. 
+		// Subroutine call using (rA + rB + absolute_addr) as destination address. 
 		// The return address is stored in the link register (lr).
-		calla absolute_addr
+		callax rA, rB, absolute_addr
 		
-		// Subroutine call using (rA + absolute_addr) as destination address. 
-		// The return address is stored in the link register (lr).
-		callax rA, absolute_addr
+		// rA = 32-bit immediate, rB = same 32-bit immediate, 
+		// Can use r0 as one of the registers being set to ensure
+		// that only one regular register gets set to the immediate value
+		cpyi rA, rB, imm
 		
-		
-		
-		// rA = 32-bit immediate
-		cpyi rA, imm
-		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
 		// Reserved for future expansion.
 		
 		
@@ -630,3 +576,23 @@ Group 4 Instructions
 		// Reserved for future expansion.
 		// Reserved for future expansion.
 		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		
+		
+		
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
