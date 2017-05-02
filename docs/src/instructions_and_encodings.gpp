@@ -2,7 +2,6 @@
 #if 0
 
 #endif
-#define ONLY_FLAGS // This instruction ONLY affects flags, and it affects all of them.
 #define FLAGS_NONE // This instruction does not affect flags.
 #define FLAGS_N_AND_Z // This instruction affects the N and Z flags.
 #define FLAGS_ONLY(f) // This instruction only affects the f flag.
@@ -47,8 +46,8 @@
 #endif
 #define _DESCRIBE_ROTATE( lr, amount, src, dst ) // Rotate src lr by amount, then store result in dst
 #define DESCRIBE_ROTATE_NOT_THROUGH_CARRY( lr, amount ) _DESCRIBE_ROTATE(lr (NOT through carry),amount bits,ARG_REG(A),ARG_REG(A)).
-#define DESCRIBE_ROTATE_THROUGH_CARRY(lr) _DESCRIBE_ROTATE(lr (THROUGH carry),1 bit\, ignoring ARG_REG(B),ARG_REG(A),ARG_REG(A)).
-#define DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(lr) _DESCRIBE_ROTATE(lr,ARG_REG(C) bits,ARG_REG(B),ARG_REG(A)).
+#define DESCRIBE_ROTATE_THROUGH_CARRY(lr) _DESCRIBE_ROTATE(lr (THROUGH carry),1 bit,ARG_REG(B),ARG_REG(A)).
+#define DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY( lr, amount ) _DESCRIBE_ROTATE(lr,amount bits,ARG_REG(B),ARG_REG(A)).
 #if 0
 
 
@@ -93,19 +92,29 @@
 #define ARG_FOR_LDST_GENERIC_INDEXED(immediate) (ARG_FOR_LDST_NON_INDEXED + ARG_REG(C) + immediate)
 #define ARG_FOR_LDST_ABS ARG_ABS
 #define ARG_FOR_LDST_ABS_INDEXED (ARG_FOR_LDST_ABS + ARG_REG(B))
+#define ARG_CARRY carry_flag
 #define IGNORE_REG(x) // Note that ARG_REG(x) is ignored.
 #if 0
 
 
 #endif
 #define INSTR_NO_ARGS(instr) instr
-#define INSTR_IMM( instr, immediate ) instr immediate
-#define INSTR_RA(instr) instr ARG_REG(A)
+#define INSTR_ONE_ARG( instr, arg ) INSTR_NO_ARGS(instr) arg
+#define INSTR_IMM( instr, immediate ) INSTR_ONE_ARG(instr,immediate)
+#define INSTR_WITH_REG( instr, regno ) INSTR_ONE_ARG(instr,ARG_REG(regno))
+#define INSTR_RA(instr) INSTR_WITH_REG(instr,A)
 #define INSTR_RA_IMM( instr, immediate ) INSTR_RA(instr), immediate
 #define INSTR_RA_RB(instr) INSTR_RA(instr), ARG_REG(B)
 #define INSTR_RA_RB_IMM( instr, immediate ) INSTR_RA_RB(instr), immediate
 #define INSTR_RA_RB_RC(instr) INSTR_RA_RB(instr), ARG_REG(C)
 #define INSTR_RA_RB_RC_IMM( instr, immediate ) INSTR_RA_RB_RC(instr), immediate
+#define PSEUDO_INSTR_RB(instr) INSTR_WITH_REG(instr,B)
+#define PSEUDO_INSTR_RB_IMM( instr, immediate ) INSTR_RB(instr), immediate
+#define PSEUDO_INSTR_RB_RC(instr) INSTR_RB(instr), ARG_REG(C)
+#define PSEUDO_INSTR_RB_RC_IMM( instr, immediate ) INSTR_RB_RC(instr), immediate
+#define DESCRIBE_PSEUDO_INSTR_ENCODING( real_instr, arg ) //// Encoded like this:  real_instr arg
+#define DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING( real_instr, arg ) DESCRIBE_PSEUDO_INSTR_ENCODING(real_instr,ARG_REG(0)\, arg)
+#define DESCRIBE_PSEUDO_INSTR_T_ENCODING( real_instr, first_arg, last_arg ) DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(real_instr,first_arg \, last_arg)
 #define RESERVED // Reserved for future expansion.
 #if 0
 
@@ -190,29 +199,32 @@ GROUP_HEADER(0)
 	DESCRIBE_RB
 	
 	DESCRIBE_INSTRUCTIONS
+		// ARG_REG(A) = ARG_REG(A) + ARG_REG(B)
 		FLAGS_ALL
 		INSTR_RA_RB(add)
 		
+		// ARG_REG(A) = ARG_REG(A) + ARG_REG(B) + ARG_CARRY
 		// Add with carry
 		FLAGS_ALL
 		INSTR_RA_RB(adc)
 		
+		// ARG_REG(A) = ARG_REG(A) - ARG_REG(B)
 		FLAGS_ALL
 		INSTR_RA_RB(sub)
 		
+		// ARG_REG(A) = ARG_REG(A) + (~ARG_REG(B)) + ARG_CARRY
 		// Subtract with borrow (6502 style)
 		FLAGS_ALL
 		INSTR_RA_RB(sbc)
 		
 		
 		
-		// ARG_TEMP = ARG_REG(A) - ARG_REG(B)
-		ONLY_FLAGS
-		INSTR_RA_RB(cmp)
+		// ARG_REG(A) = ARG_REG(B) - ARG_REG(A)
+		FLAGS_ALL
+		INSTR_RA_RB(rsb)
 		
-		// ARG_TEMP = ARG_REG(A) & ARG_REG(B)
-		FLAGS_N_AND_Z
-		INSTR_RA_RB(tst)
+		// ARG_REG(A) = ARG_REG(A) * ARG_REG(B)
+		INSTR_RA_RB(mul)
 		
 		// ARG_REG(A) &= ARG_REG(B)
 		FLAGS_N_AND_Z
@@ -229,7 +241,7 @@ GROUP_HEADER(0)
 		INSTR_RA_RB(xor)
 		
 		// Logical shift left
-		ARG_REG(A) <<= ARG_REG(B)
+		// ARG_REG(A) <<= ARG_REG(B)
 		INSTR_RA_RB(lsl)
 		
 		// Logical shift right
@@ -248,21 +260,24 @@ GROUP_HEADER(0)
 		
 		DESCRIBE_ROTATE_THROUGH_CARRY(left)
 		FLAGS_ONLY(C)
-		INSTR_RA(rlc)
+		INSTR_RA_RB(rlc)
 		
 		DESCRIBE_ROTATE_THROUGH_CARRY(right)
 		FLAGS_ONLY(C)
-		INSTR_RA(rrc)
+		INSTR_RA_RB(rrc)
 		
 		
 		
 		// ARG_REG(A) = Zero extend of low 16 bits in ARG_REG(B)
+		// Note that the high 16 bits of ARG_REG(B) are ignored
 		INSTR_RA_RB(zeh)
 		
 		// ARG_REG(A) = Sign extend of low 16 bits in ARG_REG(B)
+		// Note that the high 16 bits of ARG_REG(B) are ignored
 		INSTR_RA_RB(seh)
 		
 		// ARG_REG(A) = Zero extend of low 8 bits in ARG_REG(B)
+		// Note that
 		INSTR_RA_RB(zeb)
 		
 		// ARG_REG(A) = Sign extend of low 8 bits in ARG_REG(B)
@@ -270,10 +285,12 @@ GROUP_HEADER(0)
 		
 		
 		
-		// Copy (ARG_REG(A) = ARG_REG(B))
+		// Copy 
+		// ARG_REG(A) = ARG_REG(B)
 		INSTR_RA_RB(cpy)
 		
-		// Copy Negated (ARG_REG(A) = -ARG_REG(B))
+		// Copy Negated
+		// ARG_REG(A) = -ARG_REG(B)
 		INSTR_RA_RB(cpn)
 		
 		// Copy Complemented (ARG_REG(A) = ~ARG_REG(B))
@@ -313,6 +330,19 @@ GROUP_HEADER(0)
 		
 		// Copy the Interrupt Return Address to ARG_REG(A)
 		INSTR_RA(cpyira)
+		
+		
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(B))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(jump,ARG_REG(B))
+		//INSTR_RB(jump)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_REG(B))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(call,ARG_REG(B))
+		//INSTR_RB(call)
+		
 
 
 GROUP_HEADER(1)
@@ -328,16 +358,13 @@ GROUP_HEADER(1)
 #undef __TEMP_LDST_INSTR_TYPE
 		
 		
+		// ARG_TEMP = ARG_REG(A) - ARG_REG(B)
+		FLAGS_ALL
+		INSTR_RA_RB(cmp)
 		
-		// Compare negated
 		// ARG_TEMP = ARG_REG(A) - (-ARG_REG(B))
-		ONLY_FLAGS
+		FLAGS_ALL
 		INSTR_RA_RB(cmn)
-		
-		// Compare reversed
-		// ARG_TEMP = ARG_REG(B) - ARG_REG(A)
-		ONLY_FLAGS
-		INSTR_RA_RB(cmr)
 		
 		// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
 		// stack (in that order)
@@ -432,30 +459,32 @@ GROUP_HEADER(2)
 	DESCRIBE_IMM(16)
 	
 	DESCRIBE_INSTRUCTIONS
-		// ARG_REG(A) = ARG_REG(B) + IMM_SIGN_EXTENDED
+		// ARG_REG(A) = ARG_REG(B) + IMM_ZERO_EXTENDED
 		FLAGS_ALL
-		INSTR_RA_RB_IMM(addsi,ARG_IMM)
+		INSTR_RA_RB_IMM(addi,ARG_IMM)
 		
-		// Compare ARG_REG(A) to IMM_ZERO_EXTENDED
-		// ARG_TEMP = ARG_REG(A) - IMM_ZERO_EXTENDED
-		ONLY_FLAGS
-		INSTR_RA_IMM(cmpi,ARG_IMM)
+		// ARG_REG(A) = ARG_REG(B) + IMM_ZERO_EXTENDED + ARG_CARRY
+		// Add with carry
+		FLAGS_ALL
+		INSTR_RA_RB_IMM(adci,ARG_IMM)
 		
-		// Compare ARG_REG(A) to negated IMM_ZERO_EXTENDED
-		// ARG_TEMP = ARG_REG(A) - (-IMM_ZERO_EXTENDED)
-		ONLY_FLAGS
-		INSTR_RA_IMM(cmni,ARG_IMM)
+		// ARG_REG(A) = ARG_REG(B) - IMM_ZERO_EXTENDED
+		FLAGS_ALL
+		INSTR_RA_RB_IMM(subi,ARG_IMM)
 		
-		// Compare reversed with immediate value
-		// ARG_TEMP = IMM_ZERO_EXTENDED - ARG_REG(A)
-		ONLY_FLAGS
-		INSTR_RA_IMM(cmri,ARG_IMM)
-		
+		// ARG_REG(A) = ARG_REG(B) + (~IMM_ZERO_EXTENDED) + ARG_CARRY
+		// Subtract with borrow (6502 style)
+		FLAGS_ALL
+		INSTR_RA_RB_IMM(sbci,ARG_IMM)
 		
 		
-		// ARG_TEMP = ARG_REG(A) & IMM_ZERO_EXTENDED
-		FLAGS_N_AND_Z
-		INSTR_RA_IMM(tsti,ARG_IMM)
+		
+		// ARG_REG(A) = IMM_ZERO_EXTENDED - ARG_REG(B)
+		FLAGS_ALL
+		INSTR_RA_RB_IMM(rsbi,ARG_IMM)
+		
+		// ARG_REG(A) = ARG_REG(B) * IMM_ZERO_EXTENDED
+		INSTR_RA_RB_IMM(muli,ARG_IMM)
 		
 		// ARG_REG(A) = ARG_REG(B) & IMM_ZERO_EXTENDED
 		FLAGS_N_AND_Z
@@ -465,11 +494,11 @@ GROUP_HEADER(2)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_IMM(ori,ARG_IMM)
 		
+		
+		
 		// ARG_REG(A) = ARG_REG(B) ^ IMM_ZERO_EXTENDED
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_IMM(xori,ARG_IMM)
-		
-		
 		
 		// Logical shift left, by IMM_ZERO_EXTENDED bits
 		ARG_REG(A) = ARG_REG(B) << IMM_ZERO_EXTENDED
@@ -481,15 +510,23 @@ GROUP_HEADER(2)
 		// Arithmetic shift right, by IMM_ZERO_EXTENDED bits
 		INSTR_RA_RB_IMM(asri,ARG_IMM)
 		
+		
+		
+		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(left,IMM_ZERO_EXTENDED)
+		INSTR_RA_RB_IMM(roli,ARG_IMM)
+		
+		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(right,IMM_ZERO_EXTENDED)
+		INSTR_RA_RB_IMM(rori,ARG_IMM)
+		
 		// Branch always, 
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bra,ARG_IMM)
 		
-		
-		
 		// Branch when Z == 0, 
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bne,ARG_IMM)
+		
+		
 		
 		// Branch when Z == 1, 
 		// DESCRIBE_BRANCH_TARGET
@@ -503,11 +540,11 @@ GROUP_HEADER(2)
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bcs,ARG_IMM)
 		
-		
-		
 		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], 
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bls,ARG_IMM)
+		
+		
 		
 		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], 
 		// DESCRIBE_BRANCH_TARGET
@@ -521,11 +558,11 @@ GROUP_HEADER(2)
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bmi,ARG_IMM)
 		
-		
-		
 		// Branch when V == 0, 
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bvc,ARG_IMM)
+		
+		
 		
 		// Branch when V == 1, 
 		// DESCRIBE_BRANCH_TARGET
@@ -539,11 +576,11 @@ GROUP_HEADER(2)
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(blt,ARG_IMM)
 		
-		
-		
 		// Branch when ( N == V and Z == 0 ) [signed greater than], 
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(bgt,ARG_IMM)
+		
+		
 		
 		// Branch when ( N != V or Z == 1 ) [signed less than or equal], 
 		// DESCRIBE_BRANCH_TARGET
@@ -551,20 +588,36 @@ GROUP_HEADER(2)
 		
 		RESERVED
 		RESERVED
-		
-		
-		
-		RESERVED
-		RESERVED
-		RESERVED
 		RESERVED
 		
 		
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
-		//// ARG_REG(A) = ARG_REG(B) - IMM_SIGN_EXTENDED
+		//// Compare ARG_REG(B) to IMM_ZERO_EXTENDED
+		DESCRIBE_PSEUDO_INSTR_T_ENCODING(subi,ARG_REG(B),ARG_IMM)
+		//// ARG_TEMP = ARG_REG(B) - IMM_ZERO_EXTENDED
 		//FLAGS_ALL
-		//INSTR_RA_RB_IMM(subsi,ARG_IMM)
+		//INSTR_RB_IMM(cmpi,ARG_IMM)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//// Compare ARG_REG(B) to negated IMM_ZERO_EXTENDED
+		DESCRIBE_PSEUDO_INSTR_T_ENCODING(addi,ARG_REG(B),ARG_IMM)
+		//// ARG_TEMP = ARG_REG(B) - (-IMM_ZERO_EXTENDED)
+		//FLAGS_ALL
+		//INSTR_RB_IMM(cmni,ARG_IMM)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//// Compare reversed with immediate value
+		DESCRIBE_PSEUDO_INSTR_T_ENCODING(rsbi,ARG_REG(B),ARG_IMM)
+		//// ARG_TEMP = IMM_ZERO_EXTENDED - ARG_REG(B)
+		//FLAGS_ALL
+		//INSTR_RB_IMM(cmri,ARG_IMM)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//// ARG_TEMP = ARG_REG(B) & IMM_ZERO_EXTENDED
+		DESCRIBE_PSEUDO_INSTR_T_ENCODING(andi,ARG_REG(B),ARG_IMM)
+		//FLAGS_N_AND_Z
+		//INSTR_RB_IMM(tsti,ARG_IMM)
 
 
 GROUP_HEADER(3)
@@ -585,17 +638,23 @@ GROUP_HEADER(3)
 		// ARG_REG(A) = ARG_REG(B) + ARG_REG(C)
 		INSTR_RA_RB_RC(addt)
 		
+		// ARG_REG(A) = ARG_REG(B) + ARG_REG(C) + ARG_CARRY
+		INSTR_RA_RB_RC(adct)
+		
 		// ARG_REG(A) = ARG_REG(B) - ARG_REG(C)
 		INSTR_RA_RB_RC(subt)
+		
+		// ARG_REG(A) = ARG_REG(B) + (~ARG_REG(C)) + ARG_CARRY
+		// Subtract with borrow (6502 style)
+		INSTR_RA_RB_RC(sbct)
+		
+		
 		
 		// ARG_REG(A) = ARG_REG(C) - ARG_REG(B)
 		INSTR_RA_RB_RC(rsbt)
 		
 		// ARG_REG(A) = ARG_REG(B) * ARG_REG(C)
 		INSTR_RA_RB_RC(mult)
-		
-		
-		
 		
 		// ARG_REG(A) = ARG_REG(B) & ARG_REG(C)
 		FLAGS_N_AND_Z
@@ -605,6 +664,8 @@ GROUP_HEADER(3)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_RC(ort)
 		
+		
+		
 		// ARG_REG(A) = ARG_REG(B) ^ ARG_REG(C)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_RC(xort)
@@ -613,21 +674,19 @@ GROUP_HEADER(3)
 		// ARG_REG(A) = ARG_REG(B) << ARG_REG(C)
 		INSTR_RA_RB_RC(lslt)
 		
-		
-		
 		// Logical shift right
 		INSTR_RA_RB_RC(lsrt)
 		
 		// Arithmetic shift right
 		INSTR_RA_RB_RC(asrt)
 		
-		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(left)
+		
+		
+		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(left,ARG_REG(C))
 		INSTR_RA_RB_RC(rolt)
 		
-		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(right)
+		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(right,ARG_REG(C))
 		INSTR_RA_RB_RC(rort)
-		
-		
 		
 		// Fused multiply-add
 		// ARG_REG(A) = ARG_REG(A) + (ARG_REG(B) + ARG_REG(C))
@@ -650,6 +709,13 @@ GROUP_HEADER(3)
 		RESERVED
 		RESERVED
 		RESERVED
+		
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//// ARG_TEMP = ARG_REG(B) & ARG_REG(C)
+		DESCRIBE_PSEUDO_INSTR_T_ENCODING(andt,ARG_REG(B),ARG_REG(C))
+		//FLAGS_N_AND_Z
+		//INSTR_RB_RC(tst)
 
 
 GROUP_HEADER(4)
@@ -668,16 +734,14 @@ GROUP_HEADER(4)
 		
 		
 		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B) + ARG_ABS))
-		INSTR_RA_RB_IMM(jumpax,ARG_ABS)
+		INSTR_RA_RB_IMM(jumpaxx,ARG_ABS)
 		
 		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B) + ARG_ABS))
 		DESCRIBE_CALL_RETURN_ADDRESS
-		INSTR_RA_RB_IMM(callax,ARG_ABS)
+		INSTR_RA_RB_IMM(callaxx,ARG_ABS)
 		
 		// ARG_REG(A) = 32-bit immediate, ARG_REG(B) = same 32-bit immediate, 
-		// Can use ARG_REG(0) as one of the registers being set to ensure
-		// that only one regular register gets set to the immediate value
-		INSTR_RA_RB_IMM(cpyi,ARG_IMM)
+		INSTR_RA_RB_IMM(cpypi,ARG_IMM)
 		
 		RESERVED
 		
@@ -715,3 +779,34 @@ GROUP_HEADER(4)
 		RESERVED
 		RESERVED
 		RESERVED
+		
+		
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_ABS))
+		DESCRIBE_PSEUDO_INSTR_ENCODING(jumpaxx,ARG_REG(A)\, ARG_REG(0)\, ARG_ABS)
+		INSTR_RA_IMM(jumpax,ARG_ABS)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_ABS))
+		DESCRIBE_PSEUDO_INSTR_ENCODING(jumpaxx,ARG_REG(0)\, ARG_REG(0)\, ARG_ABS)
+		INSTR_IMM(jumpa,ARG_ABS)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_ABS))
+		//DESCRIBE_CALL_RETURN_ADDRESS
+		DESCRIBE_PSEUDO_INSTR_ENCODING(callaxx,ARG_REG(A)\, ARG_REG(0)\, ARG_ABS)
+		INSTR_RA_IMM(callax,ARG_ABS)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_ABS))
+		//DESCRIBE_CALL_RETURN_ADDRESS
+		DESCRIBE_PSEUDO_INSTR_ENCODING(callaxx,ARG_REG(0)\, ARG_REG(0)\, ARG_ABS)
+		INSTR_IMM(calla,ARG_ABS)
+		
+		
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//// ARG_REG(A) = 32-bit immediate
+		DESCRIBE_PSEUDO_INSTR_ENCODING(cpypi,ARG_REG(A)\, ARG_REG(0)\, ARG_IMM)
+		//INSTR_RA_IMM(cpyi,ARG_IMM)
