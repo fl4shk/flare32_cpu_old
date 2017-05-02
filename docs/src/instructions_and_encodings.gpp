@@ -109,12 +109,13 @@
 #define INSTR_RA_RB_RC(instr) INSTR_RA_RB(instr), ARG_REG(C)
 #define INSTR_RA_RB_RC_IMM( instr, immediate ) INSTR_RA_RB_RC(instr), immediate
 #define PSEUDO_INSTR_RB(instr) INSTR_WITH_REG(instr,B)
-#define PSEUDO_INSTR_RB_IMM( instr, immediate ) INSTR_RB(instr), immediate
-#define PSEUDO_INSTR_RB_RC(instr) INSTR_RB(instr), ARG_REG(C)
-#define PSEUDO_INSTR_RB_RC_IMM( instr, immediate ) INSTR_RB_RC(instr), immediate
+#define PSEUDO_INSTR_RB_IMM( instr, immediate ) PSEUDO_INSTR_RB(instr), immediate
+#define PSEUDO_INSTR_RB_RC(instr) PSEUDO_INSTR_RB(instr), ARG_REG(C)
+#define PSEUDO_INSTR_RB_RC_IMM( instr, immediate ) PSEUDO_INSTR_RB_RC(instr), immediate
+#define PSEUDO_INSTR_RA_RC(instr) INSTR_RA(instr), ARG_REG(C)
 #define DESCRIBE_PSEUDO_INSTR_ENCODING( real_instr, arg ) //// Encoded like this:  real_instr arg
 #define DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING( real_instr, arg ) DESCRIBE_PSEUDO_INSTR_ENCODING(real_instr,ARG_REG(0)\, arg)
-#define DESCRIBE_PSEUDO_INSTR_T_ENCODING( real_instr, first_arg, last_arg ) DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(real_instr,first_arg \, last_arg)
+#define DESCRIBE_PSEUDO_INSTR_T_ENCODING( real_instr, first_arg, last_arg ) DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(real_instr,first_arg\, last_arg)
 #define RESERVED // Reserved for future expansion.
 #if 0
 
@@ -200,34 +201,28 @@ GROUP_HEADER(0)
 	
 	DESCRIBE_INSTRUCTIONS
 		// ARG_REG(A) = ARG_REG(A) + ARG_REG(B)
-		FLAGS_ALL
 		INSTR_RA_RB(add)
 		
 		// ARG_REG(A) = ARG_REG(A) + ARG_REG(B) + ARG_CARRY
 		// Add with carry
-		FLAGS_ALL
 		INSTR_RA_RB(adc)
 		
 		// ARG_REG(A) = ARG_REG(A) - ARG_REG(B)
-		FLAGS_ALL
 		INSTR_RA_RB(sub)
 		
 		// ARG_REG(A) = ARG_REG(A) + (~ARG_REG(B)) + ARG_CARRY
 		// Subtract with borrow (6502 style)
-		FLAGS_ALL
 		INSTR_RA_RB(sbc)
 		
 		
 		
 		// ARG_REG(A) = ARG_REG(B) - ARG_REG(A)
-		FLAGS_ALL
 		INSTR_RA_RB(rsb)
 		
 		// ARG_REG(A) = ARG_REG(A) * ARG_REG(B)
 		INSTR_RA_RB(mul)
 		
 		// ARG_REG(A) &= ARG_REG(B)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(and)
 		
 		// ARG_REG(A) |= ARG_REG(B)
@@ -237,7 +232,6 @@ GROUP_HEADER(0)
 		
 		
 		// ARG_REG(A) ^= ARG_REG(B)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(xor)
 		
 		// Logical shift left
@@ -268,33 +262,31 @@ GROUP_HEADER(0)
 		
 		
 		
-		// ARG_REG(A) = Zero extend of low 16 bits in ARG_REG(B)
-		// Note that the high 16 bits of ARG_REG(B) are ignored
-		INSTR_RA_RB(zeh)
-		
 		// ARG_REG(A) = Sign extend of low 16 bits in ARG_REG(B)
 		// Note that the high 16 bits of ARG_REG(B) are ignored
 		INSTR_RA_RB(seh)
 		
-		// ARG_REG(A) = Zero extend of low 8 bits in ARG_REG(B)
-		// Note that
-		INSTR_RA_RB(zeb)
-		
 		// ARG_REG(A) = Sign extend of low 8 bits in ARG_REG(B)
 		INSTR_RA_RB(seb)
 		
+		// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
+		// stack (in that order)
+		INSTR_RA_RB(pushp)
+		
+		// Pop two 32-bit values off the stack, storing the first popped
+		// value into ARG_REG(B) and the second popped value into ARG_REG(A)
+		INSTR_RA_RB(popp)
 		
 		
-		// Copy 
-		// ARG_REG(A) = ARG_REG(B)
-		INSTR_RA_RB(cpy)
 		
-		// Copy Negated
-		// ARG_REG(A) = -ARG_REG(B)
-		INSTR_RA_RB(cpn)
+		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
+		// value are set to zero before the push)
+		INSTR_NO_ARGS(pushf)
 		
-		// Copy Complemented (ARG_REG(A) = ~ARG_REG(B))
-		INSTR_RA_RB(cpc)
+		// Pop 8-bit value from the stack and store low 4 bits to flags
+		INSTR_NO_ARGS(popf)
+		
+		RESERVED
 		
 		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
 		// and stores)
@@ -336,12 +328,12 @@ GROUP_HEADER(0)
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(B))
 		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(jump,ARG_REG(B))
-		//INSTR_RB(jump)
+		//PSEUDO_INSTR_RB(jump)
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_REG(B))
 		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(call,ARG_REG(B))
-		//INSTR_RB(call)
+		//PSEUDO_INSTR_RB(call)
 		
 
 
@@ -358,21 +350,11 @@ GROUP_HEADER(1)
 #undef __TEMP_LDST_INSTR_TYPE
 		
 		
-		// ARG_TEMP = ARG_REG(A) - ARG_REG(B)
-		FLAGS_ALL
-		INSTR_RA_RB(cmp)
+		RESERVED
+		RESERVED
 		
-		// ARG_TEMP = ARG_REG(A) - (-ARG_REG(B))
-		FLAGS_ALL
-		INSTR_RA_RB(cmn)
-		
-		// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
-		// stack (in that order)
-		INSTR_RA_RB(pushp)
-		
-		// Pop two 32-bit values off the stack, storing the first popped
-		// value into ARG_REG(B) and the second popped value into ARG_REG(A)
-		INSTR_RA_RB(popp)
+		RESERVED
+		RESERVED
 		
 		
 		
@@ -386,12 +368,8 @@ GROUP_HEADER(1)
 		// STore Register, Subtract After
 		INSTR_RA_RB(strsa)
 		
-		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
-		// value are set to zero before the push)
-		INSTR_NO_ARGS(pushf)
-		
-		// Pop 8-bit value from the stack and store low 4 bits to flags
-		INSTR_NO_ARGS(popf)
+		RESERVED
+		RESERVED
 		
 		
 		
@@ -402,35 +380,14 @@ GROUP_HEADER(1)
 		FLAGS_ALL
 		INSTR_RA(cpytof)
 		
-		// ARG_REG(A):ARG_REG(B) = (64-bit zero-extend of ARG_REG(A)) * (64-bit zero-extend of ARG_REG(B))
-		// 
-		// Note that ARG_REG(A) will contain the high 32 bits of the 
-		// unsigned 64-bit product
-		// 
-		// Note that ARG_REG(B) will contain the low 32 bits of the 
-		// unsigned 64-bit product
-		// 
-		INSTR_RA_RB(umull)
-		
-		// ARG_REG(A):ARG_REG(B) = (64-bit sign-extend of ARG_REG(A)) * (64-bit sign-extend of ARG_REG(B))
-		// 
-		// Note that ARG_REG(A) will contain the high 32 bits of the signed 
-		// 64-bit product
-		// 
-		// Note that ARG_REG(B) will contain the low 32 bits of the signed 
-		// 64-bit product
-		// 
-		INSTR_RA_RB(smull)
+		RESERVED
+		RESERVED
 		
 		
 		
-		// ARG_REG(A) = ARG_REG(B) + 1
-		FLAGS_ALL
-		INSTR_RA_RB(inc)
+		RESERVED
 		
-		// ARG_REG(A) = ARG_REG(B) - 1
-		FLAGS_ALL
-		INSTR_RA_RB(dec)
+		RESERVED
 		
 		RESERVED
 		RESERVED
@@ -586,9 +543,17 @@ GROUP_HEADER(2)
 		// DESCRIBE_BRANCH_TARGET
 		INSTR_IMM(ble,ARG_IMM)
 		
-		RESERVED
-		RESERVED
-		RESERVED
+		// ARG_REG(A) = ARG_REG(B) & IMM_SIGN_EXTENDED
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_IMM(andsi,ARG_IMM)
+		
+		// ARG_REG(A) = ARG_REG(B) | IMM_SIGN_EXTENDED
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_IMM(orsi,ARG_IMM)
+		
+		// ARG_REG(A) = ARG_REG(B) ^ IMM_SIGN_EXTENDED
+		FLAGS_N_AND_Z
+		INSTR_RA_RB_IMM(xorsi,ARG_IMM)
 		
 		
 		
@@ -597,27 +562,35 @@ GROUP_HEADER(2)
 		DESCRIBE_PSEUDO_INSTR_T_ENCODING(subi,ARG_REG(B),ARG_IMM)
 		//// ARG_TEMP = ARG_REG(B) - IMM_ZERO_EXTENDED
 		//FLAGS_ALL
-		//INSTR_RB_IMM(cmpi,ARG_IMM)
+		//PSEUDO_INSTR_RB_IMM(cmpi,ARG_IMM)
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// Compare ARG_REG(B) to negated IMM_ZERO_EXTENDED
 		DESCRIBE_PSEUDO_INSTR_T_ENCODING(addi,ARG_REG(B),ARG_IMM)
 		//// ARG_TEMP = ARG_REG(B) - (-IMM_ZERO_EXTENDED)
 		//FLAGS_ALL
-		//INSTR_RB_IMM(cmni,ARG_IMM)
+		//PSEUDO_INSTR_RB_IMM(cmni,ARG_IMM)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//// Copy Negated
+		DESCRIBE_PSEUDO_INSTR_ENCODING(rsbi,ARG_REG(A)\, ARG_REG(B)\, 0)
+		//// ARG_REG(A) = -ARG_REG(B)
+		//INSTR_RA_RB(cpn)
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// Compare reversed with immediate value
 		DESCRIBE_PSEUDO_INSTR_T_ENCODING(rsbi,ARG_REG(B),ARG_IMM)
 		//// ARG_TEMP = IMM_ZERO_EXTENDED - ARG_REG(B)
 		//FLAGS_ALL
-		//INSTR_RB_IMM(cmri,ARG_IMM)
+		//PSEUDO_INSTR_RB_IMM(cmri,ARG_IMM)
+		
+		
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_TEMP = ARG_REG(B) & IMM_ZERO_EXTENDED
 		DESCRIBE_PSEUDO_INSTR_T_ENCODING(andi,ARG_REG(B),ARG_IMM)
 		//FLAGS_N_AND_Z
-		//INSTR_RB_IMM(tsti,ARG_IMM)
+		//PSEUDO_INSTR_RB_IMM(tsti,ARG_IMM)
 
 
 GROUP_HEADER(3)
@@ -636,21 +609,26 @@ GROUP_HEADER(3)
 		
 		
 		// ARG_REG(A) = ARG_REG(B) + ARG_REG(C)
+		FLAGS_ALL
 		INSTR_RA_RB_RC(addt)
 		
 		// ARG_REG(A) = ARG_REG(B) + ARG_REG(C) + ARG_CARRY
+		FLAGS_ALL
 		INSTR_RA_RB_RC(adct)
 		
 		// ARG_REG(A) = ARG_REG(B) - ARG_REG(C)
+		FLAGS_ALL
 		INSTR_RA_RB_RC(subt)
 		
 		// ARG_REG(A) = ARG_REG(B) + (~ARG_REG(C)) + ARG_CARRY
 		// Subtract with borrow (6502 style)
+		FLAGS_ALL
 		INSTR_RA_RB_RC(sbct)
 		
 		
 		
 		// ARG_REG(A) = ARG_REG(C) - ARG_REG(B)
+		FLAGS_ALL
 		INSTR_RA_RB_RC(rsbt)
 		
 		// ARG_REG(A) = ARG_REG(B) * ARG_REG(C)
@@ -689,9 +667,16 @@ GROUP_HEADER(3)
 		INSTR_RA_RB_RC(rort)
 		
 		// Fused multiply-add
-		// ARG_REG(A) = ARG_REG(A) + (ARG_REG(B) + ARG_REG(C))
+		// ARG_REG(A) = ARG_REG(A) + (ARG_REG(B) * ARG_REG(C))
 		INSTR_RA_RB_RC(fma)
 		
+		// Copy ARG_REG(C) to ARG_REG(A) and to ARG_REG(B)
+		INSTR_RA_RB_RC(cpyp)
+		
+		
+		
+		
+		RESERVED
 		RESERVED
 		RESERVED
 		RESERVED
@@ -705,17 +690,38 @@ GROUP_HEADER(3)
 		
 		
 		
-		RESERVED
-		RESERVED
-		RESERVED
-		RESERVED
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//// ARG_TEMP = ARG_REG(B) - ARG_REG(C)
+		//FLAGS_ALL
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(subt,ARG_REG(B)\, ARG_REG(C))
+		//PSEUDO_INSTR_RB_RC(cmp)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//// ARG_TEMP = ARG_REG(B) - (-ARG_REG(C))
+		//FLAGS_ALL
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(addt,ARG_REG(B)\, ARG_REG(C))
+		//PSEUDO_INSTR_RB_RC(cmn)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//// ARG_TEMP = ARG_REG(C) - ARG_REG(B)
+		//FLAGS_ALL
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(rsbt,ARG_REG(B)\, ARG_REG(C))
+		//PSEUDO_INSTR_RB_RC(cmr)
 		
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_TEMP = ARG_REG(B) & ARG_REG(C)
 		DESCRIBE_PSEUDO_INSTR_T_ENCODING(andt,ARG_REG(B),ARG_REG(C))
 		//FLAGS_N_AND_Z
-		//INSTR_RB_RC(tst)
+		//PSEUDO_INSTR_RB_RC(tst)
+		
+		
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//// Copy
+		//// ARG_REG(A) = ARG_REG(C)
+		DESCRIBE_PSEUDO_INSTR_ENCODING(cpyp,ARG_REG(A)\, ARG_REG(0)\, ARG_REG(C))
+		//PSEUDO_INSTR_RA_RC(cpy)
 
 
 GROUP_HEADER(4)
@@ -793,6 +799,18 @@ GROUP_HEADER(4)
 		INSTR_IMM(jumpa,ARG_ABS)
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
+		DESCRIBE_PSEUDO_INSTR_ENCODING(jumpaxx,ARG_REG(A)\, ARG_REG(B)\, 0)
+		INSTR_RA_RB(jumpxx)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A)))
+		DESCRIBE_PSEUDO_INSTR_ENCODING(jumpaxx,ARG_REG(A)\, ARG_REG(0)\, 0)
+		INSTR_RA(jumpx)
+		
+		
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
 		//DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_ABS))
 		//DESCRIBE_CALL_RETURN_ADDRESS
 		DESCRIBE_PSEUDO_INSTR_ENCODING(callaxx,ARG_REG(A)\, ARG_REG(0)\, ARG_ABS)
@@ -803,6 +821,18 @@ GROUP_HEADER(4)
 		//DESCRIBE_CALL_RETURN_ADDRESS
 		DESCRIBE_PSEUDO_INSTR_ENCODING(callaxx,ARG_REG(0)\, ARG_REG(0)\, ARG_ABS)
 		INSTR_IMM(calla,ARG_ABS)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
+		//DESCRIBE_CALL_RETURN_ADDRESS
+		DESCRIBE_PSEUDO_INSTR_ENCODING(callaxx,ARG_REG(A)\, ARG_REG(B)\, ARG_ABS)
+		INSTR_RA_RB(callxx)
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_ABS))
+		//DESCRIBE_CALL_RETURN_ADDRESS
+		DESCRIBE_PSEUDO_INSTR_ENCODING(callaxx,ARG_REG(A)\, ARG_REG(0)\, 0)
+		INSTR_RA(callx)
 		
 		
 		
