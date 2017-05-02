@@ -472,6 +472,8 @@ GROUP_HEADER(2)
 		INSTR_RA_RB_RC(fma)
 		
 		// Copy ARG_REG(C) to ARG_REG(A) and to ARG_REG(B)
+		// If ARG_REG(A) is the same register as ARG_REG(B), then the 
+		// register will only be written once.
 		INSTR_RA_RB_RC(cpyp)
 		
 		
@@ -529,7 +531,7 @@ GROUP_HEADER(2)
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// Copy
 		//// ARG_REG(A) = ARG_REG(C)
-		DESCRIBE_PSEUDO_INSTR_ENCODING(cpyp,ARG_REG(A)\, ARG_REG(0)\, ARG_REG(C))
+		DESCRIBE_PSEUDO_INSTR_ENCODING(cpyp,ARG_REG(A)\, ARG_REG(A)\, ARG_REG(C))
 		//PSEUDO_INSTR_RA_RC(cpy)
 		
 		
@@ -563,7 +565,9 @@ GROUP_HEADER(3)
 		DESCRIBE_CALL_RETURN_ADDRESS
 		INSTR_RA_RB_IMM(callaxx,ARG_ABS)
 		
-		// ARG_REG(A) = 32-bit immediate, ARG_REG(B) = same 32-bit immediate, 
+		// ARG_REG(A) = 32-bit immediate, ARG_REG(B) = same 32-bit immediate
+		// If ARG_REG(A) is the same register as ARG_REG(B), then the 
+		// register will only be written once.
 		INSTR_RA_RB_IMM(cpypi,ARG_IMM)
 		
 		RESERVED
@@ -631,5 +635,5 @@ GROUP_HEADER(3)
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_REG(A) = 32-bit immediate
-		DESCRIBE_PSEUDO_INSTR_ENCODING(cpypi,ARG_REG(A)\, ARG_REG(0)\, ARG_IMM)
+		DESCRIBE_PSEUDO_INSTR_ENCODING(cpypi,ARG_REG(A)\, ARG_REG(A)\, ARG_IMM)
 		//INSTR_RA_IMM(cpyi,ARG_IMM)

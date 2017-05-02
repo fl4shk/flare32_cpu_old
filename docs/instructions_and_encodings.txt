@@ -466,6 +466,8 @@ Group 2 Instructions
 		fma rA, rB, rC
 		
 		// Copy rC to rA and to rB
+		// If rA is the same register as rB, then the 
+		// register will only be written once.
 		cpyp rA, rB, rC
 		
 		
@@ -523,7 +525,7 @@ Group 2 Instructions
 		// Pseudo instruction:
 		//// Copy
 		//// rA = rC
-		//// Encoded like this:  cpyp rA, r0, rC
+		//// Encoded like this:  cpyp rA, rA, rC
 		//cpy rA, rC
 		
 		
@@ -585,7 +587,9 @@ Group 3 Instructions
 		// The return address is stored in the link register (lr).
 		callaxx rA, rB, absolute_addr
 		
-		// rA = 32-bit immediate, rB = same 32-bit immediate, 
+		// rA = 32-bit immediate, rB = same 32-bit immediate
+		// If rA is the same register as rB, then the 
+		// register will only be written once.
 		cpypi rA, rB, imm
 		
 		// Reserved for future expansion.
@@ -653,5 +657,5 @@ Group 3 Instructions
 		
 		// Pseudo instruction:
 		//// rA = 32-bit immediate
-		//// Encoded like this:  cpypi rA, r0, imm
+		//// Encoded like this:  cpypi rA, rA, imm
 		//cpyi rA, imm
