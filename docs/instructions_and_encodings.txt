@@ -9,8 +9,7 @@ Group 0 Instructions
 00fo oooo aaaa bbbb
 	
 	f:  1 if can affect flags (and instruction type supports it), 0 if 
-	flags unchanged.  Note that some instructions always affect the flags 
-	(basically just compare instructions), or don't affects flags at all. 
+	flags unchanged. 
 	
 	o:  opcode
 	a:  rA (destination register usually)
@@ -151,8 +150,7 @@ Group 1 Instructions
 01fo oooo aaaa bbbb  iiii iiii iiii iiii
 	
 	f:  1 if can affect flags (and instruction type supports it), 0 if 
-	flags unchanged.  Note that some instructions always affect the flags 
-	(basically just compare instructions), or don't affects flags at all. 
+	flags unchanged. 
 	
 	o:  opcode
 	a:  rA
@@ -356,8 +354,7 @@ Group 2 Instructions
 10fo oooo aaaa bbbb  cccc iiii iiii iiii
 	
 	f:  1 if can affect flags (and instruction type supports it), 0 if 
-	flags unchanged.  Note that some instructions always affect the flags 
-	(basically just compare instructions), or don't affects flags at all. 
+	flags unchanged. 
 	
 	o:  opcode
 	a:  rA
@@ -532,8 +529,7 @@ Group 3 Instructions
 11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 	
 	f:  1 if can affect flags (and instruction type supports it), 0 if 
-	flags unchanged.  Note that some instructions always affect the flags 
-	(basically just compare instructions), or don't affects flags at all. 
+	flags unchanged. 
 	
 	o:  opcode
 	a:  rA

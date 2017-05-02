@@ -11,8 +11,7 @@
 
 #endif
 #define DESCRIBE_AFFECTS_FLAGS f:  1 if can affect flags (and instruction type supports it), 0 if \
-	flags unchanged.  Note that some instructions always affect the flags \
-	(basically just compare instructions), or don't affects flags at all. \
+	flags unchanged. \
 	
 #define DESCRIBE_OP o:  opcode
 #define DESCRIBE_RA a:  rA
