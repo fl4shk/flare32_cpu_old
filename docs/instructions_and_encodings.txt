@@ -39,7 +39,6 @@ Group 0 Instructions
 		and rA, rB
 		
 		// rA |= rB
-		// This instruction affects the N and Z flags.
 		or rA, rB
 		
 		

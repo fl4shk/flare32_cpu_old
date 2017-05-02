@@ -226,7 +226,6 @@ GROUP_HEADER(0)
 		INSTR_RA_RB(and)
 		
 		// ARG_REG(A) |= ARG_REG(B)
-		FLAGS_N_AND_Z
 		INSTR_RA_RB(or)
 		
 		
