@@ -3,14 +3,17 @@
 
 #endif
 #define FLAGS_NONE // This instruction does not affect flags.
-#define FLAGS_N_AND_Z // This instruction affects the N and Z flags.
-#define FLAGS_ONLY(f) // This instruction only affects the f flag.
-#define FLAGS_N_AND_Z_AND_C // This instruction affects N, Z, and C flags.
-#define FLAGS_ALL // This instruction affects N, V, Z, and C flags.
+#define FLAGS_N_AND_Z // This instruction can affect the N and Z flags.
+#define FLAGS_ONLY(f) // This instruction can only affect the f flag.
+#define FLAGS_ALL // This instruction can affect N, V, Z, and C flags.
 #if 0
 
 
 #endif
+#define DESCRIBE_AFFECTS_FLAGS f:  1 if can affect flags (and instruction type supports it), 0 if \
+	flags unchanged.  Note that some instructions always affect the flags \
+	(basically just compare instructions), or don't affects flags at all. \
+	
 #define DESCRIBE_OP o:  opcode
 #define DESCRIBE_RA a:  rA
 #define DESCRIBE_RB b:  rB
@@ -187,14 +190,15 @@ It's nice, I guess
 #endif
 Three instruction encoding sizes:  16-bit, 32-bit, and 48-bit
 
-The instruction group is a 3-bit field, the 3 most significant bits of the
+The instruction group is a 2-bit field, the 2 most significant bits of the
 first 16-bits.
 
 Group 0 Instructions, for example, use 000 as their group identifier.
 
 GROUP_HEADER(0)
-000o oooo aaaa bbbb
+00fo oooo aaaa bbbb
 	
+	DESCRIBE_AFFECTS_FLAGS
 	DESCRIBE_OP
 	DESCRIBE_RA (destination register usually)
 	DESCRIBE_RB
@@ -285,27 +289,28 @@ GROUP_HEADER(0)
 		// Pop 8-bit value from the stack and store low 4 bits to flags
 		INSTR_NO_ARGS(popf)
 		
-		RESERVED
+		// Clear ARG_REG(A), then CoPY FRom Flags to ARG_REG(A)
+		INSTR_RA(cpyfrf)
 		
-		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
-		// and stores)
-		INSTR_RA(cpyfrpc)
+		// Copy to flags from ARG_REG(A)
+		FLAGS_ALL
+		INSTR_RA(cpytof)
 		
 		
-		
-		
-		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
-		INSTR_RA_RB(jumpx)
-		
-		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
-		DESCRIBE_CALL_RETURN_ADDRESS
-		INSTR_RA_RB(callx)
 		
 		// ENable Interrupts
 		INSTR_NO_ARGS(eni)
 		
 		// DIsable Interrupts
 		INSTR_NO_ARGS(dii)
+		
+		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
+		DESCRIBE_CALL_RETURN_ADDRESS
+		INSTR_RA_RB(callx)
+		
+		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
+		// and stores)
+		INSTR_RA(cpyfrpc)
 		
 		
 		
@@ -323,92 +328,16 @@ GROUP_HEADER(0)
 		INSTR_RA(cpyira)
 		
 		
-		
-		DESCRIBE_PSEUDO_INSTRUCTION
-		//DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(B))
-		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(jump,ARG_REG(B))
-		//PSEUDO_INSTR_RB(jump)
-		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_REG(B))
-		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(call,ARG_REG(B))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(callx,ARG_REG(B))
 		//PSEUDO_INSTR_RB(call)
-		
 
 
 GROUP_HEADER(1)
-001o oooo aaaa bbbb
+01fo oooo aaaa bbbb  iiii iiii iiii iiii
 	
-	DESCRIBE_OP
-	DESCRIBE_RA
-	DESCRIBE_RB
-	
-	DESCRIBE_INSTRUCTIONS
-#define __TEMP_LDST_INSTR_TYPE INSTR_RA_RB
-		GEN_LDST_NO_SUFFIX(in ARG_FOR_LDST_NON_INDEXED)
-#undef __TEMP_LDST_INSTR_TYPE
-		
-		
-		RESERVED
-		RESERVED
-		
-		RESERVED
-		RESERVED
-		
-		
-		
-		// Add 4 to ARG_REG(B), then load from address in ARG_REG(B) into
-		// ARG_REG(A)
-		// LoaD Register, Add Before
-		INSTR_RA_RB(ldrab)
-		
-		// Store ARG_REG(A) to address in ARG_REG(B), then subtract 4 from
-		// ARG_REG(B)
-		// STore Register, Subtract After
-		INSTR_RA_RB(strsa)
-		
-		RESERVED
-		RESERVED
-		
-		
-		
-		// Clear ARG_REG(A), then CoPY FRom Flags to ARG_REG(A)
-		INSTR_RA(cpyfrf)
-		
-		// Copy to flags from ARG_REG(A)
-		FLAGS_ALL
-		INSTR_RA(cpytof)
-		
-		RESERVED
-		RESERVED
-		
-		
-		
-		RESERVED
-		
-		RESERVED
-		
-		RESERVED
-		RESERVED
-		
-		
-		
-		RESERVED
-		RESERVED
-		RESERVED
-		RESERVED
-		
-		
-		
-		RESERVED
-		RESERVED
-		RESERVED
-		RESERVED
-
-
-GROUP_HEADER(2)
-010o oooo aaaa bbbb  iiii iiii iiii iiii
-	
+	DESCRIBE_AFFECTS_FLAGS
 	DESCRIBE_OP
 	DESCRIBE_RA
 	DESCRIBE_RB
@@ -592,9 +521,10 @@ GROUP_HEADER(2)
 		//PSEUDO_INSTR_RB_IMM(tsti,ARG_IMM)
 
 
-GROUP_HEADER(3)
-011o oooo aaaa bbbb  cccc iiii iiii iiii
+GROUP_HEADER(2)
+10fo oooo aaaa bbbb  cccc iiii iiii iiii
 	
+	DESCRIBE_AFFECTS_FLAGS
 	DESCRIBE_OP
 	DESCRIBE_RA
 	DESCRIBE_RB
@@ -674,10 +604,18 @@ GROUP_HEADER(3)
 		
 		
 		
+		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
+		INSTR_RA_RB(jumpx)
 		
-		RESERVED
-		RESERVED
-		RESERVED
+		// Add 4 to ARG_REG(B), then load from address in ARG_REG(B) into
+		// ARG_REG(A)
+		// LoaD Register, Add Before
+		INSTR_RA_RB(ldrab)
+		
+		// Store ARG_REG(A) to address in ARG_REG(B), then subtract 4 from
+		// ARG_REG(B)
+		// STore Register, Subtract After
+		INSTR_RA_RB(strsa)
 		RESERVED
 		
 		
@@ -721,11 +659,19 @@ GROUP_HEADER(3)
 		//// ARG_REG(A) = ARG_REG(C)
 		DESCRIBE_PSEUDO_INSTR_ENCODING(cpyp,ARG_REG(A)\, ARG_REG(0)\, ARG_REG(C))
 		//PSEUDO_INSTR_RA_RC(cpy)
+		
+		
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(B))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(jumpx,ARG_REG(B))
+		//PSEUDO_INSTR_RB(jump)
+		
 
 
-GROUP_HEADER(4)
-100o oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
+GROUP_HEADER(3)
+11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 	
+	DESCRIBE_AFFECTS_FLAGS
 	DESCRIBE_OP
 	DESCRIBE_RA
 	DESCRIBE_RB
@@ -798,18 +744,6 @@ GROUP_HEADER(4)
 		INSTR_IMM(jumpa,ARG_ABS)
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
-		//DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
-		DESCRIBE_PSEUDO_INSTR_ENCODING(jumpaxx,ARG_REG(A)\, ARG_REG(B)\, 0)
-		INSTR_RA_RB(jumpxx)
-		
-		DESCRIBE_PSEUDO_INSTRUCTION
-		//DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A)))
-		DESCRIBE_PSEUDO_INSTR_ENCODING(jumpaxx,ARG_REG(A)\, ARG_REG(0)\, 0)
-		INSTR_RA(jumpx)
-		
-		
-		
-		DESCRIBE_PSEUDO_INSTRUCTION
 		//DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_ABS))
 		//DESCRIBE_CALL_RETURN_ADDRESS
 		DESCRIBE_PSEUDO_INSTR_ENCODING(callaxx,ARG_REG(A)\, ARG_REG(0)\, ARG_ABS)
@@ -820,18 +754,6 @@ GROUP_HEADER(4)
 		//DESCRIBE_CALL_RETURN_ADDRESS
 		DESCRIBE_PSEUDO_INSTR_ENCODING(callaxx,ARG_REG(0)\, ARG_REG(0)\, ARG_ABS)
 		INSTR_IMM(calla,ARG_ABS)
-		
-		DESCRIBE_PSEUDO_INSTRUCTION
-		//DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
-		//DESCRIBE_CALL_RETURN_ADDRESS
-		DESCRIBE_PSEUDO_INSTR_ENCODING(callaxx,ARG_REG(A)\, ARG_REG(B)\, ARG_ABS)
-		INSTR_RA_RB(callxx)
-		
-		DESCRIBE_PSEUDO_INSTRUCTION
-		//DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_ABS))
-		//DESCRIBE_CALL_RETURN_ADDRESS
-		DESCRIBE_PSEUDO_INSTR_ENCODING(callaxx,ARG_REG(A)\, ARG_REG(0)\, 0)
-		INSTR_RA(callx)
 		
 		
 		

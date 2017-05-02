@@ -1,12 +1,16 @@
 Three instruction encoding sizes:  16-bit, 32-bit, and 48-bit
 
-The instruction group is a 3-bit field, the 3 most significant bits of the
+The instruction group is a 2-bit field, the 2 most significant bits of the
 first 16-bits.
 
 Group 0 Instructions, for example, use 000 as their group identifier.
 
 Group 0 Instructions
-000o oooo aaaa bbbb
+00fo oooo aaaa bbbb
+	
+	f:  1 if can affect flags (and instruction type supports it), 0 if 
+	flags unchanged.  Note that some instructions always affect the flags 
+	(basically just compare instructions), or don't affects flags at all. 
 	
 	o:  opcode
 	a:  rA (destination register usually)
@@ -65,11 +69,11 @@ Group 0 Instructions
 		ror rA, rB
 		
 		// Rotate rB left (THROUGH carry) by 1 bit, then store result in rA.
-		// This instruction only affects the C flag.
+		// This instruction can only affect the C flag.
 		rlc rA, rB
 		
 		// Rotate rB right (THROUGH carry) by 1 bit, then store result in rA.
-		// This instruction only affects the C flag.
+		// This instruction can only affect the C flag.
 		rrc rA, rB
 		
 		
@@ -98,27 +102,28 @@ Group 0 Instructions
 		// Pop 8-bit value from the stack and store low 4 bits to flags
 		popf
 		
-		// Reserved for future expansion.
+		// Clear rA, then CoPY FRom Flags to rA
+		cpyfrf rA
 		
-		// Copy pc to rA (this can be used for pc-relative loads
-		// and stores)
-		cpyfrpc rA
+		// Copy to flags from rA
+		// This instruction can affect N, V, Z, and C flags.
+		cpytof rA
 		
 		
-		
-		
-		// Set pc to destination address in (rA + rB).
-		jumpx rA, rB
-		
-		// Subroutine call using (rA + rB) as destination address. 
-		// The return address is stored in the link register (lr).
-		callx rA, rB
 		
 		// ENable Interrupts
 		eni
 		
 		// DIsable Interrupts
 		dii
+		
+		// Subroutine call using (rA + rB) as destination address. 
+		// The return address is stored in the link register (lr).
+		callx rA, rB
+		
+		// Copy pc to rA (this can be used for pc-relative loads
+		// and stores)
+		cpyfrpc rA
 		
 		
 		
@@ -136,117 +141,18 @@ Group 0 Instructions
 		cpyira rA
 		
 		
-		
-		// Pseudo instruction:
-		//// Set pc to destination address in rB.
-		//// Encoded like this:  jump r0, rB
-		//jump rB
-		
 		// Pseudo instruction:
 		//// Subroutine call using rB as destination address. 
-		//// Encoded like this:  call r0, rB
+		//// Encoded like this:  callx r0, rB
 		//call rB
-		
 
 
 Group 1 Instructions
-001o oooo aaaa bbbb
+01fo oooo aaaa bbbb  iiii iiii iiii iiii
 	
-	o:  opcode
-	a:  rA
-	b:  rB
-	
-	Instructions:
-		// Load 32-bit value from address in rB into rA. 
-		ldr rA, rB 
-		
-		// Load zero-extended 16-bit value from address in rB into rA. 
-		// This zero-extends the value. 
-		ldh rA, rB 
-		
-		// Load sign-extended 16-bit value from address in rB into rA. 
-		// This sign-extends the value. 
-		ldsh rA, rB 
-		
-		// Load zero-extended 8-bit value from address in rB into rA. 
-		// This zero-extends the value. 
-		ldb rA, rB 
-		
-		
-		
-		// Load sign-extended 8-bit value from address in rB into rA. 
-		// This sign-extends the value. 
-		ldsb rA, rB 
-		
-		// Store 32-bit value in rA to address in rB. 
-		str rA, rB 
-		
-		// Store low 16 bits of rA to address in rB. 
-		sth rA, rB 
-		
-		// Store low 8 bits of rA to address in rB. 
-		stb rA, rB
-		
-		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		
-		
-		
-		// Add 4 to rB, then load from address in rB into
-		// rA
-		// LoaD Register, Add Before
-		ldrab rA, rB
-		
-		// Store rA to address in rB, then subtract 4 from
-		// rB
-		// STore Register, Subtract After
-		strsa rA, rB
-		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		
-		
-		
-		// Clear rA, then CoPY FRom Flags to rA
-		cpyfrf rA
-		
-		// Copy to flags from rA
-		// This instruction affects N, V, Z, and C flags.
-		cpytof rA
-		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		
-		
-		
-		// Reserved for future expansion.
-		
-		// Reserved for future expansion.
-		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		
-		
-		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		
-		
-		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-
-
-Group 2 Instructions
-010o oooo aaaa bbbb  iiii iiii iiii iiii
+	f:  1 if can affect flags (and instruction type supports it), 0 if 
+	flags unchanged.  Note that some instructions always affect the flags 
+	(basically just compare instructions), or don't affects flags at all. 
 	
 	o:  opcode
 	a:  rA
@@ -255,44 +161,44 @@ Group 2 Instructions
 	
 	Instructions:
 		// rA = rB + (zero-extended imm)
-		// This instruction affects N, V, Z, and C flags.
+		// This instruction can affect N, V, Z, and C flags.
 		addi rA, rB, imm
 		
 		// rA = rB + (zero-extended imm) + carry_flag
 		// Add with carry
-		// This instruction affects N, V, Z, and C flags.
+		// This instruction can affect N, V, Z, and C flags.
 		adci rA, rB, imm
 		
 		// rA = rB - (zero-extended imm)
-		// This instruction affects N, V, Z, and C flags.
+		// This instruction can affect N, V, Z, and C flags.
 		subi rA, rB, imm
 		
 		// rA = rB + (~(zero-extended imm)) + carry_flag
 		// Subtract with borrow (6502 style)
-		// This instruction affects N, V, Z, and C flags.
+		// This instruction can affect N, V, Z, and C flags.
 		sbci rA, rB, imm
 		
 		
 		
 		// rA = (zero-extended imm) - rB
-		// This instruction affects N, V, Z, and C flags.
+		// This instruction can affect N, V, Z, and C flags.
 		rsbi rA, rB, imm
 		
 		// rA = rB * (zero-extended imm)
 		muli rA, rB, imm
 		
 		// rA = rB & (zero-extended imm)
-		// This instruction affects the N and Z flags.
+		// This instruction can affect the N and Z flags.
 		andi rA, rB, imm
 		
 		// rA = rB | (zero-extended imm)
-		// This instruction affects the N and Z flags.
+		// This instruction can affect the N and Z flags.
 		ori rA, rB, imm
 		
 		
 		
 		// rA = rB ^ (zero-extended imm)
-		// This instruction affects the N and Z flags.
+		// This instruction can affect the N and Z flags.
 		xori rA, rB, imm
 		
 		// Logical shift left, by (zero-extended imm) bits
@@ -397,15 +303,15 @@ Group 2 Instructions
 		ble imm
 		
 		// rA = rB & (sign-extended imm)
-		// This instruction affects the N and Z flags.
+		// This instruction can affect the N and Z flags.
 		andsi rA, rB, imm
 		
 		// rA = rB | (sign-extended imm)
-		// This instruction affects the N and Z flags.
+		// This instruction can affect the N and Z flags.
 		orsi rA, rB, imm
 		
 		// rA = rB ^ (sign-extended imm)
-		// This instruction affects the N and Z flags.
+		// This instruction can affect the N and Z flags.
 		xorsi rA, rB, imm
 		
 		
@@ -414,14 +320,14 @@ Group 2 Instructions
 		//// Compare rB to (zero-extended imm)
 		//// Encoded like this:  subi r0, rB, imm
 		//// temp = rB - (zero-extended imm)
-		//// This instruction affects N, V, Z, and C flags.
+		//// This instruction can affect N, V, Z, and C flags.
 		//cmpi rB, imm
 		
 		// Pseudo instruction:
 		//// Compare rB to negated (zero-extended imm)
 		//// Encoded like this:  addi r0, rB, imm
 		//// temp = rB - (-(zero-extended imm))
-		//// This instruction affects N, V, Z, and C flags.
+		//// This instruction can affect N, V, Z, and C flags.
 		//cmni rB, imm
 		
 		// Pseudo instruction:
@@ -434,7 +340,7 @@ Group 2 Instructions
 		//// Compare reversed with immediate value
 		//// Encoded like this:  rsbi r0, rB, imm
 		//// temp = (zero-extended imm) - rB
-		//// This instruction affects N, V, Z, and C flags.
+		//// This instruction can affect N, V, Z, and C flags.
 		//cmri rB, imm
 		
 		
@@ -442,12 +348,16 @@ Group 2 Instructions
 		// Pseudo instruction:
 		//// temp = rB & (zero-extended imm)
 		//// Encoded like this:  andi r0, rB, imm
-		//// This instruction affects the N and Z flags.
+		//// This instruction can affect the N and Z flags.
 		//tsti rB, imm
 
 
-Group 3 Instructions
-011o oooo aaaa bbbb  cccc iiii iiii iiii
+Group 2 Instructions
+10fo oooo aaaa bbbb  cccc iiii iiii iiii
+	
+	f:  1 if can affect flags (and instruction type supports it), 0 if 
+	flags unchanged.  Note that some instructions always affect the flags 
+	(basically just compare instructions), or don't affects flags at all. 
 	
 	o:  opcode
 	a:  rA
@@ -488,43 +398,43 @@ Group 3 Instructions
 		
 		
 		// rA = rB + rC
-		// This instruction affects N, V, Z, and C flags.
+		// This instruction can affect N, V, Z, and C flags.
 		addt rA, rB, rC
 		
 		// rA = rB + rC + carry_flag
-		// This instruction affects N, V, Z, and C flags.
+		// This instruction can affect N, V, Z, and C flags.
 		adct rA, rB, rC
 		
 		// rA = rB - rC
-		// This instruction affects N, V, Z, and C flags.
+		// This instruction can affect N, V, Z, and C flags.
 		subt rA, rB, rC
 		
 		// rA = rB + (~rC) + carry_flag
 		// Subtract with borrow (6502 style)
-		// This instruction affects N, V, Z, and C flags.
+		// This instruction can affect N, V, Z, and C flags.
 		sbct rA, rB, rC
 		
 		
 		
 		// rA = rC - rB
-		// This instruction affects N, V, Z, and C flags.
+		// This instruction can affect N, V, Z, and C flags.
 		rsbt rA, rB, rC
 		
 		// rA = rB * rC
 		mult rA, rB, rC
 		
 		// rA = rB & rC
-		// This instruction affects the N and Z flags.
+		// This instruction can affect the N and Z flags.
 		andt rA, rB, rC
 		
 		// rA = rB | rC
-		// This instruction affects the N and Z flags.
+		// This instruction can affect the N and Z flags.
 		ort rA, rB, rC
 		
 		
 		
 		// rA = rB ^ rC
-		// This instruction affects the N and Z flags.
+		// This instruction can affect the N and Z flags.
 		xort rA, rB, rC
 		
 		// Logical shift left
@@ -554,10 +464,18 @@ Group 3 Instructions
 		
 		
 		
+		// Set pc to destination address in (rA + rB).
+		jumpx rA, rB
 		
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// Add 4 to rB, then load from address in rB into
+		// rA
+		// LoaD Register, Add Before
+		ldrab rA, rB
+		
+		// Store rA to address in rB, then subtract 4 from
+		// rB
+		// STore Register, Subtract After
+		strsa rA, rB
 		// Reserved for future expansion.
 		
 		
@@ -571,19 +489,19 @@ Group 3 Instructions
 		
 		// Pseudo instruction:
 		//// temp = rB - rC
-		//// This instruction affects N, V, Z, and C flags.
+		//// This instruction can affect N, V, Z, and C flags.
 		//// Encoded like this:  subt r0, rB, rC
 		//cmp rB, rC
 		
 		// Pseudo instruction:
 		//// temp = rB - (-rC)
-		//// This instruction affects N, V, Z, and C flags.
+		//// This instruction can affect N, V, Z, and C flags.
 		//// Encoded like this:  addt r0, rB, rC
 		//cmn rB, rC
 		
 		// Pseudo instruction:
 		//// temp = rC - rB
-		//// This instruction affects N, V, Z, and C flags.
+		//// This instruction can affect N, V, Z, and C flags.
 		//// Encoded like this:  rsbt r0, rB, rC
 		//cmr rB, rC
 		
@@ -591,7 +509,7 @@ Group 3 Instructions
 		// Pseudo instruction:
 		//// temp = rB & rC
 		//// Encoded like this:  andt r0, rB, rC
-		//// This instruction affects the N and Z flags.
+		//// This instruction can affect the N and Z flags.
 		//tst rB, rC
 		
 		
@@ -601,10 +519,21 @@ Group 3 Instructions
 		//// rA = rC
 		//// Encoded like this:  cpyp rA, r0, rC
 		//cpy rA, rC
+		
+		
+		// Pseudo instruction:
+		//// Set pc to destination address in rB.
+		//// Encoded like this:  jumpx r0, rB
+		//jump rB
+		
 
 
-Group 4 Instructions
-100o oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
+Group 3 Instructions
+11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
+	
+	f:  1 if can affect flags (and instruction type supports it), 0 if 
+	flags unchanged.  Note that some instructions always affect the flags 
+	(basically just compare instructions), or don't affects flags at all. 
 	
 	o:  opcode
 	a:  rA
@@ -704,18 +633,6 @@ Group 4 Instructions
 		jumpa absolute_addr
 		
 		// Pseudo instruction:
-		//// Set pc to destination address in (rA + rB).
-		//// Encoded like this:  jumpaxx rA, rB, 0
-		jumpxx rA, rB
-		
-		// Pseudo instruction:
-		//// Set pc to destination address in (rA).
-		//// Encoded like this:  jumpaxx rA, r0, 0
-		jumpx rA
-		
-		
-		
-		// Pseudo instruction:
 		//// Subroutine call using (rA + absolute_addr) as destination address. 
 		//// The return address is stored in the link register (lr).
 		//// Encoded like this:  callaxx rA, r0, absolute_addr
@@ -726,18 +643,6 @@ Group 4 Instructions
 		//// The return address is stored in the link register (lr).
 		//// Encoded like this:  callaxx r0, r0, absolute_addr
 		calla absolute_addr
-		
-		// Pseudo instruction:
-		//// Subroutine call using (rA + rB) as destination address. 
-		//// The return address is stored in the link register (lr).
-		//// Encoded like this:  callaxx rA, rB, absolute_addr
-		callxx rA, rB
-		
-		// Pseudo instruction:
-		//// Subroutine call using (absolute_addr) as destination address. 
-		//// The return address is stored in the link register (lr).
-		//// Encoded like this:  callaxx rA, r0, 0
-		callx rA
 		
 		
 		
