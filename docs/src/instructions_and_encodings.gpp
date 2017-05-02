@@ -123,36 +123,7 @@
 
 
 #endif
-#define GEN_LDST_NO_SUFFIX( arg_address ) DESCRIBE_LOAD_32(arg_address) \
-		__TEMP_LDST_INSTR_TYPE(ldr) \
-		\
-		DESCRIBE_LOAD_16_UNSIGNED(arg_address) \
-		DESCRIBE_ZERO_EXTEND \
-		__TEMP_LDST_INSTR_TYPE(ldh) \
-		\
-		DESCRIBE_LOAD_16_SIGNED(arg_address) \
-		DESCRIBE_SIGN_EXTEND \
-		__TEMP_LDST_INSTR_TYPE(ldsh) \
-		\
-		DESCRIBE_LOAD_8_UNSIGNED(arg_address) \
-		DESCRIBE_ZERO_EXTEND \
-		__TEMP_LDST_INSTR_TYPE(ldb) \
-		\
-		\
-		\
-		DESCRIBE_LOAD_8_SIGNED(arg_address) \
-		DESCRIBE_SIGN_EXTEND \
-		__TEMP_LDST_INSTR_TYPE(ldsb) \
-		\
-		DESCRIBE_STORE_32(arg_address) \
-		__TEMP_LDST_INSTR_TYPE(str) \
-		\
-		DESCRIBE_STORE_16(arg_address) \
-		__TEMP_LDST_INSTR_TYPE(sth) \
-		\
-		DESCRIBE_STORE_8(arg_address) \
-		__TEMP_LDST_INSTR_TYPE(stb)
-#define GEN_LDST_WITH_SUFFIX( arg_address, suffix ) DESCRIBE_LOAD_32(arg_address) \
+#define GEN_MOST_LDST( arg_address, suffix ) DESCRIBE_LOAD_32(arg_address) \
 		__TEMP_LDST_INSTR_TYPE(concat(ldr,suffix)) \
 		\
 		DESCRIBE_LOAD_16_UNSIGNED(arg_address) \
@@ -181,6 +152,64 @@
 		\
 		DESCRIBE_STORE_8(arg_address) \
 		__TEMP_LDST_INSTR_TYPE(concat(stb,suffix))
+#define GEN_MOST_ARITH_LOG( arg_0, arg_1, arg_2, suffix ) // arg_0 = arg_1 + arg_2 \
+		FLAGS_ALL \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(add,suffix)) \
+		\
+		// arg_0 = arg_1 + arg_2 + ARG_CARRY \
+		// Add with carry \
+		FLAGS_ALL \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(adc,suffix)) \
+		\
+		// arg_0 = arg_1 - arg_2 \
+		FLAGS_ALL \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(sub,suffix)) \
+		\
+		// arg_0 = arg_1 + (~arg_2) + ARG_CARRY \
+		// Subtract with borrow (6502 style) \
+		FLAGS_ALL \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(sbc,suffix)) \
+		\
+		\
+		\
+		// arg_0 = arg_2 - arg_1 \
+		FLAGS_ALL \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(rsb,suffix)) \
+		\
+		// arg_0 = arg_1 * arg_2 \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(mul,suffix)) \
+		\
+		// arg_0 = arg_1 & arg_2 \
+		FLAGS_N_AND_Z \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(and,suffix)) \
+		\
+		// arg_0 = arg_1 | arg_2 \
+		FLAGS_N_AND_Z \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(or,suffix)) \
+		\
+		\
+		\
+		// arg_0 = arg_1 ^ arg_2 \
+		FLAGS_N_AND_Z \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(xor,suffix)) \
+		\
+		// Logical shift left \
+		// arg_0 = arg_1 << arg_2 \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(lsl,suffix)) \
+		\
+		// Logical shift right \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(lsr,suffix)) \
+		\
+		// Arithmetic shift right \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(asr,suffix)) \
+		\
+		\
+		\
+		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(left,arg_2) \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(rol,suffix)) \
+		\
+		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(right,arg_2) \
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(ror,suffix))
 #if 0
 
 You won't see this sentence in the final .txt file.
@@ -203,56 +232,9 @@ GROUP_HEADER(0)
 	DESCRIBE_RB
 	
 	DESCRIBE_INSTRUCTIONS
-		// ARG_REG(A) = ARG_REG(A) + ARG_REG(B)
-		INSTR_RA_RB(add)
-		
-		// ARG_REG(A) = ARG_REG(A) + ARG_REG(B) + ARG_CARRY
-		// Add with carry
-		INSTR_RA_RB(adc)
-		
-		// ARG_REG(A) = ARG_REG(A) - ARG_REG(B)
-		INSTR_RA_RB(sub)
-		
-		// ARG_REG(A) = ARG_REG(A) + (~ARG_REG(B)) + ARG_CARRY
-		// Subtract with borrow (6502 style)
-		INSTR_RA_RB(sbc)
-		
-		
-		
-		// ARG_REG(A) = ARG_REG(B) - ARG_REG(A)
-		INSTR_RA_RB(rsb)
-		
-		// ARG_REG(A) = ARG_REG(A) * ARG_REG(B)
-		INSTR_RA_RB(mul)
-		
-		// ARG_REG(A) &= ARG_REG(B)
-		INSTR_RA_RB(and)
-		
-		// ARG_REG(A) |= ARG_REG(B)
-		INSTR_RA_RB(or)
-		
-		
-		
-		// ARG_REG(A) ^= ARG_REG(B)
-		INSTR_RA_RB(xor)
-		
-		// Logical shift left
-		// ARG_REG(A) <<= ARG_REG(B)
-		INSTR_RA_RB(lsl)
-		
-		// Logical shift right
-		INSTR_RA_RB(lsr)
-		
-		// Arithmetic shift right
-		INSTR_RA_RB(asr)
-		
-		
-		
-		DESCRIBE_ROTATE_NOT_THROUGH_CARRY(left,ARG_REG(B))
-		INSTR_RA_RB(rol)
-		
-		DESCRIBE_ROTATE_NOT_THROUGH_CARRY(right,ARG_REG(B))
-		INSTR_RA_RB(ror)
+#define __TEMP_ARITH_LOG_INSTR_TYPE INSTR_RA_RB
+		GEN_MOST_ARITH_LOG(ARG_REG(A),ARG_REG(A),ARG_REG(B))
+#undef __TEMP_ARITH_LOG_INSTR_TYPE
 		
 		DESCRIBE_ROTATE_THROUGH_CARRY(left)
 		FLAGS_ONLY(C)
@@ -343,64 +325,9 @@ GROUP_HEADER(1)
 	DESCRIBE_IMM(16)
 	
 	DESCRIBE_INSTRUCTIONS
-		// ARG_REG(A) = ARG_REG(B) + IMM_ZERO_EXTENDED
-		FLAGS_ALL
-		INSTR_RA_RB_IMM(addi,ARG_IMM)
-		
-		// ARG_REG(A) = ARG_REG(B) + IMM_ZERO_EXTENDED + ARG_CARRY
-		// Add with carry
-		FLAGS_ALL
-		INSTR_RA_RB_IMM(adci,ARG_IMM)
-		
-		// ARG_REG(A) = ARG_REG(B) - IMM_ZERO_EXTENDED
-		FLAGS_ALL
-		INSTR_RA_RB_IMM(subi,ARG_IMM)
-		
-		// ARG_REG(A) = ARG_REG(B) + (~IMM_ZERO_EXTENDED) + ARG_CARRY
-		// Subtract with borrow (6502 style)
-		FLAGS_ALL
-		INSTR_RA_RB_IMM(sbci,ARG_IMM)
-		
-		
-		
-		// ARG_REG(A) = IMM_ZERO_EXTENDED - ARG_REG(B)
-		FLAGS_ALL
-		INSTR_RA_RB_IMM(rsbi,ARG_IMM)
-		
-		// ARG_REG(A) = ARG_REG(B) * IMM_ZERO_EXTENDED
-		INSTR_RA_RB_IMM(muli,ARG_IMM)
-		
-		// ARG_REG(A) = ARG_REG(B) & IMM_ZERO_EXTENDED
-		FLAGS_N_AND_Z
-		INSTR_RA_RB_IMM(andi,ARG_IMM)
-		
-		// ARG_REG(A) = ARG_REG(B) | IMM_ZERO_EXTENDED
-		FLAGS_N_AND_Z
-		INSTR_RA_RB_IMM(ori,ARG_IMM)
-		
-		
-		
-		// ARG_REG(A) = ARG_REG(B) ^ IMM_ZERO_EXTENDED
-		FLAGS_N_AND_Z
-		INSTR_RA_RB_IMM(xori,ARG_IMM)
-		
-		// Logical shift left, by IMM_ZERO_EXTENDED bits
-		ARG_REG(A) = ARG_REG(B) << IMM_ZERO_EXTENDED
-		INSTR_RA_RB_IMM(lsli,ARG_IMM)
-		
-		// Logical shift right, by IMM_ZERO_EXTENDED bits
-		INSTR_RA_RB_IMM(lsri,ARG_IMM)
-		
-		// Arithmetic shift right, by IMM_ZERO_EXTENDED bits
-		INSTR_RA_RB_IMM(asri,ARG_IMM)
-		
-		
-		
-		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(left,IMM_ZERO_EXTENDED)
-		INSTR_RA_RB_IMM(roli,ARG_IMM)
-		
-		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(right,IMM_ZERO_EXTENDED)
-		INSTR_RA_RB_IMM(rori,ARG_IMM)
+#define __TEMP_ARITH_LOG_INSTR_TYPE INSTR_RA_RB_IMM
+		GEN_MOST_ARITH_LOG(ARG_REG(A),ARG_REG(B),IMM_ZERO_EXTENDED,i\,ARG_IMM)
+#undef __TEMP_ARITH_LOG_INSTR_TYPE
 		
 		// Branch always, 
 		// DESCRIBE_BRANCH_TARGET
@@ -532,67 +459,13 @@ GROUP_HEADER(2)
 	
 	DESCRIBE_INSTRUCTIONS
 #define __TEMP_LDST_INSTR_TYPE INSTR_RA_RB_RC_IMM
-		GEN_LDST_WITH_SUFFIX(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED),xx\,ARG_IMM)
+		GEN_MOST_LDST(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED),xx\,ARG_IMM)
 #undef __TEMP_LDST_INSTR_TYPE
 		
 		
-		// ARG_REG(A) = ARG_REG(B) + ARG_REG(C)
-		FLAGS_ALL
-		INSTR_RA_RB_RC(addt)
-		
-		// ARG_REG(A) = ARG_REG(B) + ARG_REG(C) + ARG_CARRY
-		FLAGS_ALL
-		INSTR_RA_RB_RC(adct)
-		
-		// ARG_REG(A) = ARG_REG(B) - ARG_REG(C)
-		FLAGS_ALL
-		INSTR_RA_RB_RC(subt)
-		
-		// ARG_REG(A) = ARG_REG(B) + (~ARG_REG(C)) + ARG_CARRY
-		// Subtract with borrow (6502 style)
-		FLAGS_ALL
-		INSTR_RA_RB_RC(sbct)
-		
-		
-		
-		// ARG_REG(A) = ARG_REG(C) - ARG_REG(B)
-		FLAGS_ALL
-		INSTR_RA_RB_RC(rsbt)
-		
-		// ARG_REG(A) = ARG_REG(B) * ARG_REG(C)
-		INSTR_RA_RB_RC(mult)
-		
-		// ARG_REG(A) = ARG_REG(B) & ARG_REG(C)
-		FLAGS_N_AND_Z
-		INSTR_RA_RB_RC(andt)
-		
-		// ARG_REG(A) = ARG_REG(B) | ARG_REG(C)
-		FLAGS_N_AND_Z
-		INSTR_RA_RB_RC(ort)
-		
-		
-		
-		// ARG_REG(A) = ARG_REG(B) ^ ARG_REG(C)
-		FLAGS_N_AND_Z
-		INSTR_RA_RB_RC(xort)
-		
-		// Logical shift left
-		// ARG_REG(A) = ARG_REG(B) << ARG_REG(C)
-		INSTR_RA_RB_RC(lslt)
-		
-		// Logical shift right
-		INSTR_RA_RB_RC(lsrt)
-		
-		// Arithmetic shift right
-		INSTR_RA_RB_RC(asrt)
-		
-		
-		
-		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(left,ARG_REG(C))
-		INSTR_RA_RB_RC(rolt)
-		
-		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(right,ARG_REG(C))
-		INSTR_RA_RB_RC(rort)
+#define __TEMP_ARITH_LOG_INSTR_TYPE INSTR_RA_RB_RC
+		GEN_MOST_ARITH_LOG(ARG_REG(A),ARG_REG(B),ARG_REG(C),t)
+#undef __TEMP_ARITH_LOG_INSTR_TYPE
 		
 		// Fused multiply-add
 		// ARG_REG(A) = ARG_REG(A) + (ARG_REG(B) * ARG_REG(C))
@@ -678,7 +551,7 @@ GROUP_HEADER(3)
 	
 	DESCRIBE_INSTRUCTIONS
 #define __TEMP_LDST_INSTR_TYPE INSTR_RA_RB_IMM
-		GEN_LDST_WITH_SUFFIX(ARG_FOR_LDST_ABS_INDEXED,ax\,ARG_ABS)
+		GEN_MOST_LDST(ARG_FOR_LDST_ABS_INDEXED,ax\,ARG_ABS)
 #undef __TEMP_LDST_INSTR_TYPE
 		
 		

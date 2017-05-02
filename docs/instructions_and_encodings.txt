@@ -16,55 +16,63 @@ Group 0 Instructions
 	b:  rB
 	
 	Instructions:
-		// rA = rA + rB
-		add rA, rB
+		// rA = rA + rB 
+		// This instruction can affect N, V, Z, and C flags. 
+		add rA, rB 
 		
-		// rA = rA + rB + carry_flag
-		// Add with carry
-		adc rA, rB
+		// rA = rA + rB + carry_flag 
+		// Add with carry 
+		// This instruction can affect N, V, Z, and C flags. 
+		adc rA, rB 
 		
-		// rA = rA - rB
-		sub rA, rB
+		// rA = rA - rB 
+		// This instruction can affect N, V, Z, and C flags. 
+		sub rA, rB 
 		
-		// rA = rA + (~rB) + carry_flag
-		// Subtract with borrow (6502 style)
-		sbc rA, rB
-		
-		
-		
-		// rA = rB - rA
-		rsb rA, rB
-		
-		// rA = rA * rB
-		mul rA, rB
-		
-		// rA &= rB
-		and rA, rB
-		
-		// rA |= rB
-		or rA, rB
+		// rA = rA + (~rB) + carry_flag 
+		// Subtract with borrow (6502 style) 
+		// This instruction can affect N, V, Z, and C flags. 
+		sbc rA, rB 
 		
 		
 		
-		// rA ^= rB
-		xor rA, rB
+		// rA = rB - rA 
+		// This instruction can affect N, V, Z, and C flags. 
+		rsb rA, rB 
 		
-		// Logical shift left
-		// rA <<= rB
-		lsl rA, rB
+		// rA = rA * rB 
+		mul rA, rB 
 		
-		// Logical shift right
-		lsr rA, rB
+		// rA = rA & rB 
+		// This instruction can affect the N and Z flags. 
+		and rA, rB 
 		
-		// Arithmetic shift right
-		asr rA, rB
+		// rA = rA | rB 
+		// This instruction can affect the N and Z flags. 
+		or rA, rB 
 		
 		
 		
-		// Rotate rA left (NOT through carry) by rB bits, then store result in rA.
-		rol rA, rB
+		// rA = rA ^ rB 
+		// This instruction can affect the N and Z flags. 
+		xor rA, rB 
 		
-		// Rotate rA right (NOT through carry) by rB bits, then store result in rA.
+		// Logical shift left 
+		// rA = rA << rB 
+		lsl rA, rB 
+		
+		// Logical shift right 
+		lsr rA, rB 
+		
+		// Arithmetic shift right 
+		asr rA, rB 
+		
+		
+		
+		// Rotate rB left by rB bits, then store result in rA. 
+		rol rA, rB 
+		
+		// Rotate rB right by rB bits, then store result in rA. 
 		ror rA, rB
 		
 		// Rotate rB left (THROUGH carry) by 1 bit, then store result in rA.
@@ -158,63 +166,63 @@ Group 1 Instructions
 	i:  16-bit immediate value
 	
 	Instructions:
-		// rA = rB + (zero-extended imm)
-		// This instruction can affect N, V, Z, and C flags.
-		addi rA, rB, imm
+		// rA = rB + (zero-extended imm) 
+		// This instruction can affect N, V, Z, and C flags. 
+		addi rA, rB, imm 
 		
-		// rA = rB + (zero-extended imm) + carry_flag
-		// Add with carry
-		// This instruction can affect N, V, Z, and C flags.
-		adci rA, rB, imm
+		// rA = rB + (zero-extended imm) + carry_flag 
+		// Add with carry 
+		// This instruction can affect N, V, Z, and C flags. 
+		adci rA, rB, imm 
 		
-		// rA = rB - (zero-extended imm)
-		// This instruction can affect N, V, Z, and C flags.
-		subi rA, rB, imm
+		// rA = rB - (zero-extended imm) 
+		// This instruction can affect N, V, Z, and C flags. 
+		subi rA, rB, imm 
 		
-		// rA = rB + (~(zero-extended imm)) + carry_flag
-		// Subtract with borrow (6502 style)
-		// This instruction can affect N, V, Z, and C flags.
-		sbci rA, rB, imm
-		
-		
-		
-		// rA = (zero-extended imm) - rB
-		// This instruction can affect N, V, Z, and C flags.
-		rsbi rA, rB, imm
-		
-		// rA = rB * (zero-extended imm)
-		muli rA, rB, imm
-		
-		// rA = rB & (zero-extended imm)
-		// This instruction can affect the N and Z flags.
-		andi rA, rB, imm
-		
-		// rA = rB | (zero-extended imm)
-		// This instruction can affect the N and Z flags.
-		ori rA, rB, imm
+		// rA = rB + (~(zero-extended imm)) + carry_flag 
+		// Subtract with borrow (6502 style) 
+		// This instruction can affect N, V, Z, and C flags. 
+		sbci rA, rB, imm 
 		
 		
 		
-		// rA = rB ^ (zero-extended imm)
-		// This instruction can affect the N and Z flags.
-		xori rA, rB, imm
+		// rA = (zero-extended imm) - rB 
+		// This instruction can affect N, V, Z, and C flags. 
+		rsbi rA, rB, imm 
 		
-		// Logical shift left, by (zero-extended imm) bits
-		rA = rB << (zero-extended imm)
-		lsli rA, rB, imm
+		// rA = rB * (zero-extended imm) 
+		muli rA, rB, imm 
 		
-		// Logical shift right, by (zero-extended imm) bits
-		lsri rA, rB, imm
+		// rA = rB & (zero-extended imm) 
+		// This instruction can affect the N and Z flags. 
+		andi rA, rB, imm 
 		
-		// Arithmetic shift right, by (zero-extended imm) bits
-		asri rA, rB, imm
+		// rA = rB | (zero-extended imm) 
+		// This instruction can affect the N and Z flags. 
+		ori rA, rB, imm 
 		
 		
 		
-		// Rotate rB left by (zero-extended imm) bits, then store result in rA.
-		roli rA, rB, imm
+		// rA = rB ^ (zero-extended imm) 
+		// This instruction can affect the N and Z flags. 
+		xori rA, rB, imm 
 		
-		// Rotate rB right by (zero-extended imm) bits, then store result in rA.
+		// Logical shift left 
+		// rA = rB << (zero-extended imm) 
+		lsli rA, rB, imm 
+		
+		// Logical shift right 
+		lsri rA, rB, imm 
+		
+		// Arithmetic shift right 
+		asri rA, rB, imm 
+		
+		
+		
+		// Rotate rB left by (zero-extended imm) bits, then store result in rA. 
+		roli rA, rB, imm 
+		
+		// Rotate rB right by (zero-extended imm) bits, then store result in rA. 
 		rori rA, rB, imm
 		
 		// Branch always, 
@@ -394,62 +402,63 @@ Group 2 Instructions
 		stbxx rA, rB, rC, imm
 		
 		
-		// rA = rB + rC
-		// This instruction can affect N, V, Z, and C flags.
-		addt rA, rB, rC
+		// rA = rB + rC 
+		// This instruction can affect N, V, Z, and C flags. 
+		addt rA, rB, rC 
 		
-		// rA = rB + rC + carry_flag
-		// This instruction can affect N, V, Z, and C flags.
-		adct rA, rB, rC
+		// rA = rB + rC + carry_flag 
+		// Add with carry 
+		// This instruction can affect N, V, Z, and C flags. 
+		adct rA, rB, rC 
 		
-		// rA = rB - rC
-		// This instruction can affect N, V, Z, and C flags.
-		subt rA, rB, rC
+		// rA = rB - rC 
+		// This instruction can affect N, V, Z, and C flags. 
+		subt rA, rB, rC 
 		
-		// rA = rB + (~rC) + carry_flag
-		// Subtract with borrow (6502 style)
-		// This instruction can affect N, V, Z, and C flags.
-		sbct rA, rB, rC
-		
-		
-		
-		// rA = rC - rB
-		// This instruction can affect N, V, Z, and C flags.
-		rsbt rA, rB, rC
-		
-		// rA = rB * rC
-		mult rA, rB, rC
-		
-		// rA = rB & rC
-		// This instruction can affect the N and Z flags.
-		andt rA, rB, rC
-		
-		// rA = rB | rC
-		// This instruction can affect the N and Z flags.
-		ort rA, rB, rC
+		// rA = rB + (~rC) + carry_flag 
+		// Subtract with borrow (6502 style) 
+		// This instruction can affect N, V, Z, and C flags. 
+		sbct rA, rB, rC 
 		
 		
 		
-		// rA = rB ^ rC
-		// This instruction can affect the N and Z flags.
-		xort rA, rB, rC
+		// rA = rC - rB 
+		// This instruction can affect N, V, Z, and C flags. 
+		rsbt rA, rB, rC 
 		
-		// Logical shift left
-		// rA = rB << rC
-		lslt rA, rB, rC
+		// rA = rB * rC 
+		mult rA, rB, rC 
 		
-		// Logical shift right
-		lsrt rA, rB, rC
+		// rA = rB & rC 
+		// This instruction can affect the N and Z flags. 
+		andt rA, rB, rC 
 		
-		// Arithmetic shift right
-		asrt rA, rB, rC
+		// rA = rB | rC 
+		// This instruction can affect the N and Z flags. 
+		ort rA, rB, rC 
 		
 		
 		
-		// Rotate rB left by rC bits, then store result in rA.
-		rolt rA, rB, rC
+		// rA = rB ^ rC 
+		// This instruction can affect the N and Z flags. 
+		xort rA, rB, rC 
 		
-		// Rotate rB right by rC bits, then store result in rA.
+		// Logical shift left 
+		// rA = rB << rC 
+		lslt rA, rB, rC 
+		
+		// Logical shift right 
+		lsrt rA, rB, rC 
+		
+		// Arithmetic shift right 
+		asrt rA, rB, rC 
+		
+		
+		
+		// Rotate rB left by rC bits, then store result in rA. 
+		rolt rA, rB, rC 
+		
+		// Rotate rB right by rC bits, then store result in rA. 
 		rort rA, rB, rC
 		
 		// Fused multiply-add
