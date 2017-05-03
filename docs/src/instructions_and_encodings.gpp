@@ -10,8 +10,8 @@
 
 
 #endif
-#define DESCRIBE_AFFECTS_FLAGS f:  1 if can affect flags (and instruction type supports it), 0 if \
-	flags unchanged. \
+#define DESCRIBE_AFFECTS_FLAGS f:  1 if can affect flags (and instruction type supports it), 0 if\
+	flags unchanged.\
 	
 #define DESCRIBE_OP o:  opcode
 #define DESCRIBE_RA a:  rA
@@ -63,17 +63,8 @@
 #define DESCRIBE_JUMP_DESTINATION_ADDRESS(addr) // Set pc to destination address in addr.
 #define DESCRIBE_CALL_DESTINATION_ADDRESS(addr) // Subroutine call using addr as destination address. 
 #define DESCRIBE_CALL_RETURN_ADDRESS // The return address is stored in the link register (lr).
-#define DESCRIBE_BRANCH_TARGET to ( (pc when instruction starts) \
+#define DESCRIBE_BRANCH_TARGET to ( (pc when instruction starts)\
 		// + (sign-extended 16-bit immediate value) )
-#if 0
-
-
-#endif
-#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1(op) // op two registers,
-#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_1_TYPE_2(op) // op ARG_REG(B) by ARG_REG(C),
-#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_2 // and then add sign extended immediate \(can set immediate to zero
-#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_3 // if needed\)
-#define DESCRIBE_RB_OP_RC_PLUS_SE_IMM_LINE_4(op,B,C) // ARG_REG(A) = (ARG_REG(B) op ARG_REG(C)) + IMM_SIGN_EXTENDED
 #if 0
 
 
@@ -84,6 +75,9 @@
 
 #endif
 #define ARG_REG(x) concat(r,x)
+#define ARG_IRA ira
+#define ARG_PC pc
+#define ARG_FLAGS flags
 #define ARG_TEMP temp
 #define ARG_IMM imm
 #define IMM_ZERO_EXTENDED (zero-extended ARG_IMM)
@@ -110,6 +104,12 @@
 #define INSTR_RA_RB_IMM( instr, immediate ) INSTR_RA_RB(instr), immediate
 #define INSTR_RA_RB_RC(instr) INSTR_RA_RB(instr), ARG_REG(C)
 #define INSTR_RA_RB_RC_IMM( instr, immediate ) INSTR_RA_RB_RC(instr), immediate
+#define INSTR_IRA(instr) INSTR_ONE_ARG(instr,ARG_IRA)
+#define INSTR_RA_IRA(instr) INSTR_RA(instr), ARG_IRA
+#define INSTR_RA_FLAGS(instr) INSTR_RA(instr), ARG_FLAGS
+#define INSTR_FLAGS(instr) INSTR_ONE_ARG(instr,ARG_FLAGS)
+#define INSTR_FLAGS_RA(instr) INSTR_FLAGS(instr), ARG_REG(A)
+#define INSTR_RA_PC(instr) INSTR_RA(instr), ARG_PC
 #define PSEUDO_INSTR_RB(instr) INSTR_WITH_REG(instr,B)
 #define PSEUDO_INSTR_RB_IMM( instr, immediate ) PSEUDO_INSTR_RB(instr), immediate
 #define PSEUDO_INSTR_RB_RC(instr) PSEUDO_INSTR_RB(instr), ARG_REG(C)
@@ -123,92 +123,121 @@
 
 
 #endif
-#define GEN_MOST_LDST( arg_address, suffix ) DESCRIBE_LOAD_32(arg_address) \
-		__TEMP_LDST_INSTR_TYPE(concat(ldr,suffix)) \
+#define GEN_MOST_LDST( arg_address, suffix ) DESCRIBE_LOAD_32(arg_address)\
+		__TEMP_LDST_INSTR_TYPE(concat(ldr,suffix))\
 		\
-		DESCRIBE_LOAD_16_UNSIGNED(arg_address) \
-		DESCRIBE_ZERO_EXTEND \
-		__TEMP_LDST_INSTR_TYPE(concat(ldh,suffix)) \
+		DESCRIBE_LOAD_16_UNSIGNED(arg_address)\
+		DESCRIBE_ZERO_EXTEND\
+		__TEMP_LDST_INSTR_TYPE(concat(ldh,suffix))\
 		\
-		DESCRIBE_LOAD_16_SIGNED(arg_address) \
-		DESCRIBE_SIGN_EXTEND \
-		__TEMP_LDST_INSTR_TYPE(concat(ldsh,suffix)) \
+		DESCRIBE_LOAD_16_SIGNED(arg_address)\
+		DESCRIBE_SIGN_EXTEND\
+		__TEMP_LDST_INSTR_TYPE(concat(ldsh,suffix))\
 		\
-		DESCRIBE_LOAD_8_UNSIGNED(arg_address) \
-		DESCRIBE_ZERO_EXTEND \
-		__TEMP_LDST_INSTR_TYPE(concat(ldb,suffix)) \
+		DESCRIBE_LOAD_8_UNSIGNED(arg_address)\
+		DESCRIBE_ZERO_EXTEND\
+		__TEMP_LDST_INSTR_TYPE(concat(ldb,suffix))\
 		\
 		\
 		\
-		DESCRIBE_LOAD_8_SIGNED(arg_address) \
-		DESCRIBE_SIGN_EXTEND \
-		__TEMP_LDST_INSTR_TYPE(concat(ldsb,suffix)) \
+		DESCRIBE_LOAD_8_SIGNED(arg_address)\
+		DESCRIBE_SIGN_EXTEND\
+		__TEMP_LDST_INSTR_TYPE(concat(ldsb,suffix))\
 		\
-		DESCRIBE_STORE_32(arg_address) \
-		__TEMP_LDST_INSTR_TYPE(concat(str,suffix)) \
+		DESCRIBE_STORE_32(arg_address)\
+		__TEMP_LDST_INSTR_TYPE(concat(str,suffix))\
 		\
-		DESCRIBE_STORE_16(arg_address) \
-		__TEMP_LDST_INSTR_TYPE(concat(sth,suffix)) \
+		DESCRIBE_STORE_16(arg_address)\
+		__TEMP_LDST_INSTR_TYPE(concat(sth,suffix))\
 		\
-		DESCRIBE_STORE_8(arg_address) \
+		DESCRIBE_STORE_8(arg_address)\
 		__TEMP_LDST_INSTR_TYPE(concat(stb,suffix))
-#define GEN_MOST_ARITH_LOG( arg_0, arg_1, arg_2, suffix ) // arg_0 = arg_1 + arg_2 \
-		FLAGS_ALL \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(add,suffix)) \
+#define GEN_MOST_PSEUDO_LDST( arg_address, suffix ) DESCRIBE_LOAD_32(arg_address)\
+		__TEMP_LDST_INSTR_TYPE(concat(ldr,suffix))\
 		\
-		// arg_0 = arg_1 + arg_2 + ARG_CARRY \
-		// Add with carry \
-		FLAGS_ALL \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(adc,suffix)) \
+		DESCRIBE_LOAD_16_UNSIGNED(arg_address)\
+		DESCRIBE_ZERO_EXTEND\
+		__TEMP_LDST_INSTR_TYPE(concat(ldh,suffix))\
 		\
-		// arg_0 = arg_1 - arg_2 \
-		FLAGS_ALL \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(sub,suffix)) \
+		DESCRIBE_LOAD_16_SIGNED(arg_address)\
+		DESCRIBE_SIGN_EXTEND\
+		__TEMP_LDST_INSTR_TYPE(concat(ldsh,suffix))\
 		\
-		// arg_0 = arg_1 + (~arg_2) + ARG_CARRY \
-		// Subtract with borrow (6502 style) \
-		FLAGS_ALL \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(sbc,suffix)) \
+		DESCRIBE_LOAD_8_UNSIGNED(arg_address)\
+		DESCRIBE_ZERO_EXTEND\
+		__TEMP_LDST_INSTR_TYPE(concat(ldb,suffix))\
 		\
 		\
 		\
-		// arg_0 = arg_2 - arg_1 \
-		FLAGS_ALL \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(rsb,suffix)) \
+		DESCRIBE_LOAD_8_SIGNED(arg_address)\
+		DESCRIBE_SIGN_EXTEND\
+		__TEMP_LDST_INSTR_TYPE(concat(ldsb,suffix))\
 		\
-		// arg_0 = arg_1 * arg_2 \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(mul,suffix)) \
+		DESCRIBE_STORE_32(arg_address)\
+		__TEMP_LDST_INSTR_TYPE(concat(str,suffix))\
 		\
-		// arg_0 = arg_1 & arg_2 \
-		FLAGS_N_AND_Z \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(and,suffix)) \
+		DESCRIBE_STORE_16(arg_address)\
+		__TEMP_LDST_INSTR_TYPE(concat(sth,suffix))\
 		\
-		// arg_0 = arg_1 | arg_2 \
-		FLAGS_N_AND_Z \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(or,suffix)) \
+		DESCRIBE_STORE_8(arg_address)\
+		__TEMP_LDST_INSTR_TYPE(concat(stb,suffix))
+#define GEN_MOST_ARITH_LOG( arg_0, arg_1, arg_2, suffix ) // arg_0 = arg_1 + arg_2\
+		FLAGS_ALL\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(add,suffix))\
 		\
+		// arg_0 = arg_1 + arg_2 + ARG_CARRY\
+		// Add with carry\
+		FLAGS_ALL\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(adc,suffix))\
 		\
+		// arg_0 = arg_1 - arg_2\
+		FLAGS_ALL\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(sub,suffix))\
 		\
-		// arg_0 = arg_1 ^ arg_2 \
-		FLAGS_N_AND_Z \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(xor,suffix)) \
-		\
-		// Logical shift left \
-		// arg_0 = arg_1 << arg_2 \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(lsl,suffix)) \
-		\
-		// Logical shift right \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(lsr,suffix)) \
-		\
-		// Arithmetic shift right \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(asr,suffix)) \
-		\
+		// arg_0 = arg_1 + (~arg_2) + ARG_CARRY\
+		// Subtract with borrow (6502 style)\
+		FLAGS_ALL\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(sbc,suffix))\
 		\
 		\
-		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(left,arg_2) \
-		__TEMP_ARITH_LOG_INSTR_TYPE(concat(rol,suffix)) \
 		\
-		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(right,arg_2) \
+		// arg_0 = arg_2 - arg_1\
+		FLAGS_ALL\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(rsb,suffix))\
+		\
+		// arg_0 = arg_1 * arg_2\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(mul,suffix))\
+		\
+		// arg_0 = arg_1 & arg_2\
+		FLAGS_N_AND_Z\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(and,suffix))\
+		\
+		// arg_0 = arg_1 | arg_2\
+		FLAGS_N_AND_Z\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(or,suffix))\
+		\
+		\
+		\
+		// arg_0 = arg_1 ^ arg_2\
+		FLAGS_N_AND_Z\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(xor,suffix))\
+		\
+		// Logical shift left\
+		// arg_0 = arg_1 << arg_2\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(lsl,suffix))\
+		\
+		// Logical shift right\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(lsr,suffix))\
+		\
+		// Arithmetic shift right\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(asr,suffix))\
+		\
+		\
+		\
+		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(left,arg_2)\
+		__TEMP_ARITH_LOG_INSTR_TYPE(concat(rol,suffix))\
+		\
+		DESCRIBE_THREE_ARG_ROTATE_NOT_THROUGH_CARRY(right,arg_2)\
 		__TEMP_ARITH_LOG_INSTR_TYPE(concat(ror,suffix))
 #if 0
 
@@ -222,6 +251,10 @@ The instruction group is a 2-bit field, the 2 most significant bits of the
 first 16-bits.
 
 Group 0 Instructions, for example, use 000 as their group identifier.
+
+To specify that an instruction is permitted to affect flags, append ".f"
+(without quotes) to the end of the instruction name.  
+Example:  "addt" becomes "addt.f"
 
 GROUP_HEADER(0)
 00fo oooo aaaa bbbb
@@ -255,27 +288,27 @@ GROUP_HEADER(0)
 		
 		// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
 		// stack (in that order)
-		INSTR_RA_RB(pushp)
+		INSTR_RA_RB(push)
 		
 		// Pop two 32-bit values off the stack, storing the first popped
 		// value into ARG_REG(B) and the second popped value into ARG_REG(A)
-		INSTR_RA_RB(popp)
+		INSTR_RA_RB(pop)
 		
 		
 		
 		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
 		// value are set to zero before the push)
-		INSTR_NO_ARGS(pushf)
+		INSTR_FLAGS(push)
 		
 		// Pop 8-bit value from the stack and store low 4 bits to flags
-		INSTR_NO_ARGS(popf)
+		INSTR_FLAGS(pop)
 		
 		// Clear ARG_REG(A), then CoPY FRom Flags to ARG_REG(A)
-		INSTR_RA(cpyfrf)
+		INSTR_RA_FLAGS(cpy)
 		
 		// Copy to flags from ARG_REG(A)
 		FLAGS_ALL
-		INSTR_RA(cpytof)
+		INSTR_FLAGS_RA(cpy)
 		
 		
 		
@@ -291,7 +324,7 @@ GROUP_HEADER(0)
 		
 		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
 		// and stores)
-		INSTR_RA(cpyfrpc)
+		INSTR_RA_PC(cpy)
 		
 		
 		
@@ -300,19 +333,21 @@ GROUP_HEADER(0)
 		
 		// Set the PC to the Interrupt Return Address, but DON'T enable
 		// interrupts
-		INSTR_NO_ARGS(jumpira)
+		INSTR_IRA(jump)
 		
 		// Swap the Interrupt Return Address and ARG_REG(A)
-		INSTR_RA(swpira)
+		INSTR_RA_IRA(swp)
 		
 		// Copy the Interrupt Return Address to ARG_REG(A)
-		INSTR_RA(cpyira)
+		INSTR_RA_IRA(cpy)
 		
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_REG(B))
 		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(callx,ARG_REG(B))
 		//PSEUDO_INSTR_RB(call)
+		
+		
 
 
 GROUP_HEADER(1)
@@ -459,7 +494,7 @@ GROUP_HEADER(2)
 	
 	DESCRIBE_INSTRUCTIONS
 #define __TEMP_LDST_INSTR_TYPE INSTR_RA_RB_RC_IMM
-		GEN_MOST_LDST(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED),xx\,ARG_IMM)
+		GEN_MOST_LDST(ARG_FOR_LDST_GENERIC_INDEXED(IMM_SIGN_EXTENDED),\,ARG_IMM)
 #undef __TEMP_LDST_INSTR_TYPE
 		
 		
@@ -504,25 +539,25 @@ GROUP_HEADER(2)
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_TEMP = ARG_REG(B) - ARG_REG(C)
 		//FLAGS_ALL
-		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(subt,ARG_REG(B)\, ARG_REG(C))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(subt.f,ARG_REG(B)\, ARG_REG(C))
 		//PSEUDO_INSTR_RB_RC(cmp)
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_TEMP = ARG_REG(B) - (-ARG_REG(C))
 		//FLAGS_ALL
-		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(addt,ARG_REG(B)\, ARG_REG(C))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(addt.f,ARG_REG(B)\, ARG_REG(C))
 		//PSEUDO_INSTR_RB_RC(cmn)
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_TEMP = ARG_REG(C) - ARG_REG(B)
 		//FLAGS_ALL
-		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(rsbt,ARG_REG(B)\, ARG_REG(C))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(rsbt.f,ARG_REG(B)\, ARG_REG(C))
 		//PSEUDO_INSTR_RB_RC(cmr)
 		
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_TEMP = ARG_REG(B) & ARG_REG(C)
-		DESCRIBE_PSEUDO_INSTR_T_ENCODING(andt,ARG_REG(B),ARG_REG(C))
+		DESCRIBE_PSEUDO_INSTR_T_ENCODING(andt.f,ARG_REG(B),ARG_REG(C))
 		//FLAGS_N_AND_Z
 		//PSEUDO_INSTR_RB_RC(tst)
 		
@@ -553,7 +588,7 @@ GROUP_HEADER(3)
 	
 	DESCRIBE_INSTRUCTIONS
 #define __TEMP_LDST_INSTR_TYPE INSTR_RA_RB_IMM
-		GEN_MOST_LDST(ARG_FOR_LDST_ABS_INDEXED,ax\,ARG_ABS)
+		GEN_MOST_LDST(ARG_FOR_LDST_ABS_INDEXED,a\,ARG_ABS)
 #undef __TEMP_LDST_INSTR_TYPE
 		
 		

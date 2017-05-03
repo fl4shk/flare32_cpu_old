@@ -5,6 +5,10 @@ first 16-bits.
 
 Group 0 Instructions, for example, use 000 as their group identifier.
 
+To specify that an instruction is permitted to affect flags, append ".f"
+(without quotes) to the end of the instruction name.  
+Example:  "addt" becomes "addt.f"
+
 Group 0 Instructions
 00fo oooo aaaa bbbb
 	
@@ -94,27 +98,27 @@ Group 0 Instructions
 		
 		// Push registers rA and rb (as a pair) onto the 
 		// stack (in that order)
-		pushp rA, rB
+		push rA, rB
 		
 		// Pop two 32-bit values off the stack, storing the first popped
 		// value into rB and the second popped value into rA
-		popp rA, rB
+		pop rA, rB
 		
 		
 		
 		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
 		// value are set to zero before the push)
-		pushf
+		push flags
 		
 		// Pop 8-bit value from the stack and store low 4 bits to flags
-		popf
+		pop flags
 		
 		// Clear rA, then CoPY FRom Flags to rA
-		cpyfrf rA
+		cpy rA, flags
 		
 		// Copy to flags from rA
 		// This instruction can affect N, V, Z, and C flags.
-		cpytof rA
+		cpy flags, rA
 		
 		
 		
@@ -130,7 +134,7 @@ Group 0 Instructions
 		
 		// Copy pc to rA (this can be used for pc-relative loads
 		// and stores)
-		cpyfrpc rA
+		cpy rA, pc
 		
 		
 		
@@ -139,19 +143,21 @@ Group 0 Instructions
 		
 		// Set the PC to the Interrupt Return Address, but DON'T enable
 		// interrupts
-		jumpira
+		jump ira
 		
 		// Swap the Interrupt Return Address and rA
-		swpira rA
+		swp rA, ira
 		
 		// Copy the Interrupt Return Address to rA
-		cpyira rA
+		cpy rA, ira
 		
 		
 		// Pseudo instruction:
 		//// Subroutine call using rB as destination address. 
 		//// Encoded like this:  callx r0, rB
 		//call rB
+		
+		
 
 
 Group 1 Instructions
@@ -372,34 +378,34 @@ Group 2 Instructions
 	
 	Instructions:
 		// Load 32-bit value from address (rB + rC + (sign-extended imm)) into rA. 
-		ldrxx rA, rB, rC, imm 
+		ldr rA, rB, rC, imm 
 		
 		// Load zero-extended 16-bit value from address (rB + rC + (sign-extended imm)) into rA. 
 		// This zero-extends the value. 
-		ldhxx rA, rB, rC, imm 
+		ldh rA, rB, rC, imm 
 		
 		// Load sign-extended 16-bit value from address (rB + rC + (sign-extended imm)) into rA. 
 		// This sign-extends the value. 
-		ldshxx rA, rB, rC, imm 
+		ldsh rA, rB, rC, imm 
 		
 		// Load zero-extended 8-bit value from address (rB + rC + (sign-extended imm)) into rA. 
 		// This zero-extends the value. 
-		ldbxx rA, rB, rC, imm 
+		ldb rA, rB, rC, imm 
 		
 		
 		
 		// Load sign-extended 8-bit value from address (rB + rC + (sign-extended imm)) into rA. 
 		// This sign-extends the value. 
-		ldsbxx rA, rB, rC, imm 
+		ldsb rA, rB, rC, imm 
 		
 		// Store 32-bit value in rA to address (rB + rC + (sign-extended imm)). 
-		strxx rA, rB, rC, imm 
+		str rA, rB, rC, imm 
 		
 		// Store low 16 bits of rA to address (rB + rC + (sign-extended imm)). 
-		sthxx rA, rB, rC, imm 
+		sth rA, rB, rC, imm 
 		
 		// Store low 8 bits of rA to address (rB + rC + (sign-extended imm)). 
-		stbxx rA, rB, rC, imm
+		stb rA, rB, rC, imm
 		
 		
 		// rA = rB + rC 
@@ -498,25 +504,25 @@ Group 2 Instructions
 		// Pseudo instruction:
 		//// temp = rB - rC
 		//// This instruction can affect N, V, Z, and C flags.
-		//// Encoded like this:  subt r0, rB, rC
+		//// Encoded like this:  subt.f r0, rB, rC
 		//cmp rB, rC
 		
 		// Pseudo instruction:
 		//// temp = rB - (-rC)
 		//// This instruction can affect N, V, Z, and C flags.
-		//// Encoded like this:  addt r0, rB, rC
+		//// Encoded like this:  addt.f r0, rB, rC
 		//cmn rB, rC
 		
 		// Pseudo instruction:
 		//// temp = rC - rB
 		//// This instruction can affect N, V, Z, and C flags.
-		//// Encoded like this:  rsbt r0, rB, rC
+		//// Encoded like this:  rsbt.f r0, rB, rC
 		//cmr rB, rC
 		
 		
 		// Pseudo instruction:
 		//// temp = rB & rC
-		//// Encoded like this:  andt r0, rB, rC
+		//// Encoded like this:  andt.f r0, rB, rC
 		//// This instruction can affect the N and Z flags.
 		//tst rB, rC
 		
@@ -549,34 +555,34 @@ Group 3 Instructions
 	
 	Instructions:
 		// Load 32-bit value from address (absolute_addr + rB) into rA. 
-		ldrax rA, rB, absolute_addr 
+		ldra rA, rB, absolute_addr 
 		
 		// Load zero-extended 16-bit value from address (absolute_addr + rB) into rA. 
 		// This zero-extends the value. 
-		ldhax rA, rB, absolute_addr 
+		ldha rA, rB, absolute_addr 
 		
 		// Load sign-extended 16-bit value from address (absolute_addr + rB) into rA. 
 		// This sign-extends the value. 
-		ldshax rA, rB, absolute_addr 
+		ldsha rA, rB, absolute_addr 
 		
 		// Load zero-extended 8-bit value from address (absolute_addr + rB) into rA. 
 		// This zero-extends the value. 
-		ldbax rA, rB, absolute_addr 
+		ldba rA, rB, absolute_addr 
 		
 		
 		
 		// Load sign-extended 8-bit value from address (absolute_addr + rB) into rA. 
 		// This sign-extends the value. 
-		ldsbax rA, rB, absolute_addr 
+		ldsba rA, rB, absolute_addr 
 		
 		// Store 32-bit value in rA to address (absolute_addr + rB). 
-		strax rA, rB, absolute_addr 
+		stra rA, rB, absolute_addr 
 		
 		// Store low 16 bits of rA to address (absolute_addr + rB). 
-		sthax rA, rB, absolute_addr 
+		stha rA, rB, absolute_addr 
 		
 		// Store low 8 bits of rA to address (absolute_addr + rB). 
-		stbax rA, rB, absolute_addr
+		stba rA, rB, absolute_addr
 		
 		
 		
