@@ -619,7 +619,6 @@ Group 2 Instructions
 		//// Encoded like this:  rsb.f r0, rB, rC
 		//cmr rB, rC
 		
-		
 		// Pseudo instruction:
 		//// temp = rB & rC
 		//// Encoded like this:  and.f r0, rB, rC
@@ -634,7 +633,6 @@ Group 2 Instructions
 		//// Encoded like this:  cpyp rA, rA, rC
 		//cpy rA, rC
 		
-		
 		// Pseudo instruction:
 		//// Set pc to destination address in rB.
 		//// Encoded like this:  jumpx r0, rB
@@ -644,6 +642,18 @@ Group 2 Instructions
 		//// Set pc to destination address in rB.
 		//// Encoded like this:  jumpx r0, rB
 		//cpy pc, rB
+		
+		// Pseudo instruction:
+		//// Push register rA onto the stack
+		//// Encoded like this:  strma rA, sp
+		//push rA
+		
+		
+		
+		// Pseudo instruction:
+		//// Pop 32-bit value off the stack into register rA
+		//// Encoded like this:  ldrpb rA, sp
+		//pop rA
 		
 
 
