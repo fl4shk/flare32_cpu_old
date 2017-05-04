@@ -156,21 +156,25 @@
 		__TEMP_LDST_INSTR_TYPE(concat(stb,suffix))
 #define GEN_MOST_PSEUDO_LDST( arg_address, suffix, encoding_suffix ) DESCRIBE_PSEUDO_INSTRUCTION\
 		//DESCRIBE_LOAD_32(arg_address)\
+		DESCRIBE_PSEUDO_INSTR_ENCODING(concat(ldr,encoding_suffix))\
 		//__TEMP_LDST_INSTR_TYPE(concat(ldr,suffix))\
 		\
 		DESCRIBE_PSEUDO_INSTRUCTION\
 		//DESCRIBE_LOAD_16_UNSIGNED(arg_address)\
 		//DESCRIBE_ZERO_EXTEND\
+		DESCRIBE_PSEUDO_INSTR_ENCODING(concat(ldh,encoding_suffix))\
 		//__TEMP_LDST_INSTR_TYPE(concat(ldh,suffix))\
 		\
 		DESCRIBE_PSEUDO_INSTRUCTION\
 		//DESCRIBE_LOAD_16_SIGNED(arg_address)\
 		//DESCRIBE_SIGN_EXTEND\
+		DESCRIBE_PSEUDO_INSTR_ENCODING(concat(ldsh,encoding_suffix))\
 		//__TEMP_LDST_INSTR_TYPE(concat(ldsh,suffix))\
 		\
 		DESCRIBE_PSEUDO_INSTRUCTION\
 		//DESCRIBE_LOAD_8_UNSIGNED(arg_address)\
 		//DESCRIBE_ZERO_EXTEND\
+		DESCRIBE_PSEUDO_INSTR_ENCODING(concat(ldb,encoding_suffix))\
 		//__TEMP_LDST_INSTR_TYPE(concat(ldb,suffix))\
 		\
 		\
@@ -178,18 +182,22 @@
 		DESCRIBE_PSEUDO_INSTRUCTION\
 		//DESCRIBE_LOAD_8_SIGNED(arg_address)\
 		//DESCRIBE_SIGN_EXTEND\
+		DESCRIBE_PSEUDO_INSTR_ENCODING(concat(ldsb,encoding_suffix))\
 		//__TEMP_LDST_INSTR_TYPE(concat(ldsb,suffix))\
 		\
 		DESCRIBE_PSEUDO_INSTRUCTION\
 		//DESCRIBE_STORE_32(arg_address)\
+		DESCRIBE_PSEUDO_INSTR_ENCODING(concat(str,encoding_suffix))\
 		//__TEMP_LDST_INSTR_TYPE(concat(str,suffix))\
 		\
 		DESCRIBE_PSEUDO_INSTRUCTION\
 		//DESCRIBE_STORE_16(arg_address)\
+		DESCRIBE_PSEUDO_INSTR_ENCODING(concat(sth,encoding_suffix))\
 		//__TEMP_LDST_INSTR_TYPE(concat(sth,suffix))\
 		\
 		DESCRIBE_PSEUDO_INSTRUCTION\
 		//DESCRIBE_STORE_8(arg_address)\
+		DESCRIBE_PSEUDO_INSTR_ENCODING(concat(stb,encoding_suffix))\
 		//__TEMP_LDST_INSTR_TYPE(concat(stb,suffix))
 #define GEN_MOST_ARITH_LOG( arg_0, arg_1, arg_2, suffix ) // arg_0 = arg_1 + arg_2\
 		FLAGS_ALL\
@@ -543,6 +551,16 @@ GROUP_HEADER(2)
 		RESERVED
 		RESERVED
 		RESERVED
+		
+		
+		
+#define __TEMP_LDST_INSTR_TYPE INSTR_RA_RB
+		GEN_MOST_PSEUDO_LDST(ARG_FOR_LDST_NON_INDEXED,, ARG_REG(A)\, ARG_REG(B)\, ARG_REG(0)\, 0)
+#undef __TEMP_LDST_INSTR_TYPE
+		
+#define __TEMP_LDST_INSTR_TYPE INSTR_RA_RB
+		GEN_MOST_PSEUDO_LDST(ARG_FOR_LDST_NON_INDEXED,, ARG_REG(A)\, ARG_REG(B)\, ARG_REG(C)\, 0)
+#undef __TEMP_LDST_INSTR_TYPE
 		
 		
 		
