@@ -3,7 +3,7 @@ Three instruction encoding sizes:  16-bit, 32-bit, and 48-bit
 The instruction group is a 2-bit field, the 2 most significant bits of the
 first 16-bits.
 
-Group 0 Instructions, for example, use 000 as their group identifier.
+Group 0 Instructions, for example, use 00 as their group identifier.
 
 To specify that an instruction is permitted to affect flags, append ".f"
 (without quotes) to the end of the instruction name.  
