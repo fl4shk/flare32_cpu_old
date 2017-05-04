@@ -12,71 +12,71 @@ Example:  "addt" becomes "addt.f"
 Group 0 Instructions
 00fo oooo aaaa bbbb
 	
-	f:  1 if can affect flags (and instruction type supports it), 0 if 
-	flags unchanged. 
+	f:  1 if can affect flags (and instruction type supports it), 0 if
+	flags unchanged.
 	
 	o:  opcode
 	a:  rA (destination register usually)
 	b:  rB
 	
 	Instructions:
-		// rA = rA + rB 
-		// This instruction can affect N, V, Z, and C flags. 
-		add rA, rB 
+		// rA = rA + rB
+		// This instruction can affect N, V, Z, and C flags.
+		add rA, rB
 		
-		// rA = rA + rB + carry_flag 
-		// Add with carry 
-		// This instruction can affect N, V, Z, and C flags. 
-		adc rA, rB 
+		// rA = rA + rB + carry_flag
+		// Add with carry
+		// This instruction can affect N, V, Z, and C flags.
+		adc rA, rB
 		
-		// rA = rA - rB 
-		// This instruction can affect N, V, Z, and C flags. 
-		sub rA, rB 
+		// rA = rA - rB
+		// This instruction can affect N, V, Z, and C flags.
+		sub rA, rB
 		
-		// rA = rA + (~rB) + carry_flag 
-		// Subtract with borrow (6502 style) 
-		// This instruction can affect N, V, Z, and C flags. 
-		sbc rA, rB 
-		
-		
-		
-		// rA = rB - rA 
-		// This instruction can affect N, V, Z, and C flags. 
-		rsb rA, rB 
-		
-		// rA = rA * rB 
-		mul rA, rB 
-		
-		// rA = rA & rB 
-		// This instruction can affect the N and Z flags. 
-		and rA, rB 
-		
-		// rA = rA | rB 
-		// This instruction can affect the N and Z flags. 
-		or rA, rB 
+		// rA = rA + (~rB) + carry_flag
+		// Subtract with borrow (6502 style)
+		// This instruction can affect N, V, Z, and C flags.
+		sbc rA, rB
 		
 		
 		
-		// rA = rA ^ rB 
-		// This instruction can affect the N and Z flags. 
-		xor rA, rB 
+		// rA = rB - rA
+		// This instruction can affect N, V, Z, and C flags.
+		rsb rA, rB
 		
-		// Logical shift left 
-		// rA = rA << rB 
-		lsl rA, rB 
+		// rA = rA * rB
+		mul rA, rB
 		
-		// Logical shift right 
-		lsr rA, rB 
+		// rA = rA & rB
+		// This instruction can affect the N and Z flags.
+		and rA, rB
 		
-		// Arithmetic shift right 
-		asr rA, rB 
+		// rA = rA | rB
+		// This instruction can affect the N and Z flags.
+		or rA, rB
 		
 		
 		
-		// Rotate rB left by rB bits, then store result in rA. 
-		rol rA, rB 
+		// rA = rA ^ rB
+		// This instruction can affect the N and Z flags.
+		xor rA, rB
 		
-		// Rotate rB right by rB bits, then store result in rA. 
+		// Logical shift left
+		// rA = rA << rB
+		lsl rA, rB
+		
+		// Logical shift right
+		lsr rA, rB
+		
+		// Arithmetic shift right
+		asr rA, rB
+		
+		
+		
+		// Rotate rB left by rB bits, then store result in rA.
+		rol rA, rB
+		
+		// Rotate rB right by rB bits, then store result in rA.
 		ror rA, rB
 		
 		// Rotate rB left (THROUGH carry) by 1 bit, then store result in rA.
@@ -163,8 +163,8 @@ Group 0 Instructions
 Group 1 Instructions
 01fo oooo aaaa bbbb  iiii iiii iiii iiii
 	
-	f:  1 if can affect flags (and instruction type supports it), 0 if 
-	flags unchanged. 
+	f:  1 if can affect flags (and instruction type supports it), 0 if
+	flags unchanged.
 	
 	o:  opcode
 	a:  rA
@@ -172,145 +172,145 @@ Group 1 Instructions
 	i:  16-bit immediate value
 	
 	Instructions:
-		// rA = rB + (zero-extended imm) 
-		// This instruction can affect N, V, Z, and C flags. 
-		addi rA, rB, imm 
+		// rA = rB + (zero-extended imm)
+		// This instruction can affect N, V, Z, and C flags.
+		addi rA, rB, imm
 		
-		// rA = rB + (zero-extended imm) + carry_flag 
-		// Add with carry 
-		// This instruction can affect N, V, Z, and C flags. 
-		adci rA, rB, imm 
+		// rA = rB + (zero-extended imm) + carry_flag
+		// Add with carry
+		// This instruction can affect N, V, Z, and C flags.
+		adci rA, rB, imm
 		
-		// rA = rB - (zero-extended imm) 
-		// This instruction can affect N, V, Z, and C flags. 
-		subi rA, rB, imm 
+		// rA = rB - (zero-extended imm)
+		// This instruction can affect N, V, Z, and C flags.
+		subi rA, rB, imm
 		
-		// rA = rB + (~(zero-extended imm)) + carry_flag 
-		// Subtract with borrow (6502 style) 
-		// This instruction can affect N, V, Z, and C flags. 
-		sbci rA, rB, imm 
-		
-		
-		
-		// rA = (zero-extended imm) - rB 
-		// This instruction can affect N, V, Z, and C flags. 
-		rsbi rA, rB, imm 
-		
-		// rA = rB * (zero-extended imm) 
-		muli rA, rB, imm 
-		
-		// rA = rB & (zero-extended imm) 
-		// This instruction can affect the N and Z flags. 
-		andi rA, rB, imm 
-		
-		// rA = rB | (zero-extended imm) 
-		// This instruction can affect the N and Z flags. 
-		ori rA, rB, imm 
+		// rA = rB + (~(zero-extended imm)) + carry_flag
+		// Subtract with borrow (6502 style)
+		// This instruction can affect N, V, Z, and C flags.
+		sbci rA, rB, imm
 		
 		
 		
-		// rA = rB ^ (zero-extended imm) 
-		// This instruction can affect the N and Z flags. 
-		xori rA, rB, imm 
+		// rA = (zero-extended imm) - rB
+		// This instruction can affect N, V, Z, and C flags.
+		rsbi rA, rB, imm
 		
-		// Logical shift left 
-		// rA = rB << (zero-extended imm) 
-		lsli rA, rB, imm 
+		// rA = rB * (zero-extended imm)
+		muli rA, rB, imm
 		
-		// Logical shift right 
-		lsri rA, rB, imm 
+		// rA = rB & (zero-extended imm)
+		// This instruction can affect the N and Z flags.
+		andi rA, rB, imm
 		
-		// Arithmetic shift right 
-		asri rA, rB, imm 
+		// rA = rB | (zero-extended imm)
+		// This instruction can affect the N and Z flags.
+		ori rA, rB, imm
 		
 		
 		
-		// Rotate rB left by (zero-extended imm) bits, then store result in rA. 
-		roli rA, rB, imm 
+		// rA = rB ^ (zero-extended imm)
+		// This instruction can affect the N and Z flags.
+		xori rA, rB, imm
 		
-		// Rotate rB right by (zero-extended imm) bits, then store result in rA. 
+		// Logical shift left
+		// rA = rB << (zero-extended imm)
+		lsli rA, rB, imm
+		
+		// Logical shift right
+		lsri rA, rB, imm
+		
+		// Arithmetic shift right
+		asri rA, rB, imm
+		
+		
+		
+		// Rotate rB left by (zero-extended imm) bits, then store result in rA.
+		roli rA, rB, imm
+		
+		// Rotate rB right by (zero-extended imm) bits, then store result in rA.
 		rori rA, rB, imm
 		
 		// Branch always, 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bra imm
 		
 		// Branch when Z == 0, 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bne imm
 		
 		
 		
 		// Branch when Z == 1, 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		beq imm
 		
 		// Branch when C == 0 [unsigned less than], 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bcc imm
 		
 		// Branch when C == 1 [unsigned greater than or equal], 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bcs imm
 		
 		// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bls imm
 		
 		
 		
 		// Branch when ( C == 1 and Z == 0 ) [unsigned greater than], 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bhi imm
 		
 		// Branch when N == 0, 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bpl imm
 		
 		// Branch when N == 1, 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bmi imm
 		
 		// Branch when V == 0, 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bvc imm
 		
 		
 		
 		// Branch when V == 1, 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bvs imm
 		
 		// Branch when N == V [signed greater than or equal], 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bge imm
 		
 		// Branch when N != V [signed less than], 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		blt imm
 		
 		// Branch when ( N == V and Z == 0 ) [signed greater than], 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		bgt imm
 		
 		
 		
 		// Branch when ( N != V or Z == 1 ) [signed less than or equal], 
-		// to ( (pc when instruction starts) 
+		// to ( (pc when instruction starts)
 		// + (sign-extended 16-bit immediate value) )
 		ble imm
 		
@@ -330,30 +330,31 @@ Group 1 Instructions
 		
 		// Pseudo instruction:
 		//// Compare rB to (zero-extended imm)
-		//// Encoded like this:  subi r0, rB, imm
+		//// Encoded like this:  subi.f r0, rB, imm
 		//// temp = rB - (zero-extended imm)
 		//// This instruction can affect N, V, Z, and C flags.
 		//cmpi rB, imm
 		
 		// Pseudo instruction:
 		//// Compare rB to negated (zero-extended imm)
-		//// Encoded like this:  addi r0, rB, imm
+		//// Encoded like this:  addi.f r0, rB, imm
 		//// temp = rB - (-(zero-extended imm))
 		//// This instruction can affect N, V, Z, and C flags.
 		//cmni rB, imm
 		
+		// Pseudo instruction:
+		//// Compare reversed with immediate value
+		//// Encoded like this:  rsbi.f r0, rB, imm
+		//// temp = (zero-extended imm) - rB
+		//// This instruction can affect N, V, Z, and C flags.
+		//cmri rB, imm
+	
 		// Pseudo instruction:
 		//// Copy Negated
 		//// Encoded like this:  rsbi rA, rB, 0
 		//// rA = -rB
 		//cpn rA, rB
 		
-		// Pseudo instruction:
-		//// Compare reversed with immediate value
-		//// Encoded like this:  rsbi r0, rB, imm
-		//// temp = (zero-extended imm) - rB
-		//// This instruction can affect N, V, Z, and C flags.
-		//cmri rB, imm
 		
 		
 		
@@ -367,8 +368,8 @@ Group 1 Instructions
 Group 2 Instructions
 10fo oooo aaaa bbbb  cccc iiii iiii iiii
 	
-	f:  1 if can affect flags (and instruction type supports it), 0 if 
-	flags unchanged. 
+	f:  1 if can affect flags (and instruction type supports it), 0 if
+	flags unchanged.
 	
 	o:  opcode
 	a:  rA
@@ -377,94 +378,94 @@ Group 2 Instructions
 	i:  12-bit immediate value
 	
 	Instructions:
-		// Load 32-bit value from address (rB + rC + (sign-extended imm)) into rA. 
-		ldr rA, rB, rC, imm 
+		// Load 32-bit value from address (rB + rC + (sign-extended imm)) into rA.
+		ldr rA, rB, rC, imm
 		
-		// Load zero-extended 16-bit value from address (rB + rC + (sign-extended imm)) into rA. 
-		// This zero-extends the value. 
-		ldh rA, rB, rC, imm 
+		// Load zero-extended 16-bit value from address (rB + rC + (sign-extended imm)) into rA.
+		// This zero-extends the value.
+		ldh rA, rB, rC, imm
 		
-		// Load sign-extended 16-bit value from address (rB + rC + (sign-extended imm)) into rA. 
-		// This sign-extends the value. 
-		ldsh rA, rB, rC, imm 
+		// Load sign-extended 16-bit value from address (rB + rC + (sign-extended imm)) into rA.
+		// This sign-extends the value.
+		ldsh rA, rB, rC, imm
 		
-		// Load zero-extended 8-bit value from address (rB + rC + (sign-extended imm)) into rA. 
-		// This zero-extends the value. 
-		ldb rA, rB, rC, imm 
+		// Load zero-extended 8-bit value from address (rB + rC + (sign-extended imm)) into rA.
+		// This zero-extends the value.
+		ldb rA, rB, rC, imm
 		
 		
 		
-		// Load sign-extended 8-bit value from address (rB + rC + (sign-extended imm)) into rA. 
-		// This sign-extends the value. 
-		ldsb rA, rB, rC, imm 
+		// Load sign-extended 8-bit value from address (rB + rC + (sign-extended imm)) into rA.
+		// This sign-extends the value.
+		ldsb rA, rB, rC, imm
 		
-		// Store 32-bit value in rA to address (rB + rC + (sign-extended imm)). 
-		str rA, rB, rC, imm 
+		// Store 32-bit value in rA to address (rB + rC + (sign-extended imm)).
+		str rA, rB, rC, imm
 		
-		// Store low 16 bits of rA to address (rB + rC + (sign-extended imm)). 
-		sth rA, rB, rC, imm 
+		// Store low 16 bits of rA to address (rB + rC + (sign-extended imm)).
+		sth rA, rB, rC, imm
 		
-		// Store low 8 bits of rA to address (rB + rC + (sign-extended imm)). 
+		// Store low 8 bits of rA to address (rB + rC + (sign-extended imm)).
 		stb rA, rB, rC, imm
 		
 		
-		// rA = rB + rC 
-		// This instruction can affect N, V, Z, and C flags. 
-		addt rA, rB, rC 
+		// rA = rB + rC
+		// This instruction can affect N, V, Z, and C flags.
+		addt rA, rB, rC
 		
-		// rA = rB + rC + carry_flag 
-		// Add with carry 
-		// This instruction can affect N, V, Z, and C flags. 
-		adct rA, rB, rC 
+		// rA = rB + rC + carry_flag
+		// Add with carry
+		// This instruction can affect N, V, Z, and C flags.
+		adct rA, rB, rC
 		
-		// rA = rB - rC 
-		// This instruction can affect N, V, Z, and C flags. 
-		subt rA, rB, rC 
+		// rA = rB - rC
+		// This instruction can affect N, V, Z, and C flags.
+		subt rA, rB, rC
 		
-		// rA = rB + (~rC) + carry_flag 
-		// Subtract with borrow (6502 style) 
-		// This instruction can affect N, V, Z, and C flags. 
-		sbct rA, rB, rC 
-		
-		
-		
-		// rA = rC - rB 
-		// This instruction can affect N, V, Z, and C flags. 
-		rsbt rA, rB, rC 
-		
-		// rA = rB * rC 
-		mult rA, rB, rC 
-		
-		// rA = rB & rC 
-		// This instruction can affect the N and Z flags. 
-		andt rA, rB, rC 
-		
-		// rA = rB | rC 
-		// This instruction can affect the N and Z flags. 
-		ort rA, rB, rC 
+		// rA = rB + (~rC) + carry_flag
+		// Subtract with borrow (6502 style)
+		// This instruction can affect N, V, Z, and C flags.
+		sbct rA, rB, rC
 		
 		
 		
-		// rA = rB ^ rC 
-		// This instruction can affect the N and Z flags. 
-		xort rA, rB, rC 
+		// rA = rC - rB
+		// This instruction can affect N, V, Z, and C flags.
+		rsbt rA, rB, rC
 		
-		// Logical shift left 
-		// rA = rB << rC 
-		lslt rA, rB, rC 
+		// rA = rB * rC
+		mult rA, rB, rC
 		
-		// Logical shift right 
-		lsrt rA, rB, rC 
+		// rA = rB & rC
+		// This instruction can affect the N and Z flags.
+		andt rA, rB, rC
 		
-		// Arithmetic shift right 
-		asrt rA, rB, rC 
+		// rA = rB | rC
+		// This instruction can affect the N and Z flags.
+		ort rA, rB, rC
 		
 		
 		
-		// Rotate rB left by rC bits, then store result in rA. 
-		rolt rA, rB, rC 
+		// rA = rB ^ rC
+		// This instruction can affect the N and Z flags.
+		xort rA, rB, rC
 		
-		// Rotate rB right by rC bits, then store result in rA. 
+		// Logical shift left
+		// rA = rB << rC
+		lslt rA, rB, rC
+		
+		// Logical shift right
+		lsrt rA, rB, rC
+		
+		// Arithmetic shift right
+		asrt rA, rB, rC
+		
+		
+		
+		// Rotate rB left by rC bits, then store result in rA.
+		rolt rA, rB, rC
+		
+		// Rotate rB right by rC bits, then store result in rA.
 		rort rA, rB, rC
 		
 		// Fused multiply-add
@@ -540,13 +541,18 @@ Group 2 Instructions
 		//// Encoded like this:  jumpx r0, rB
 		//jump rB
 		
+		// Pseudo instruction:
+		//// Set pc to destination address in rB.
+		//// Encoded like this:  jumpx r0, rB
+		//cpy pc, rB
+		
 
 
 Group 3 Instructions
 11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 	
-	f:  1 if can affect flags (and instruction type supports it), 0 if 
-	flags unchanged. 
+	f:  1 if can affect flags (and instruction type supports it), 0 if
+	flags unchanged.
 	
 	o:  opcode
 	a:  rA
@@ -554,44 +560,44 @@ Group 3 Instructions
 	i:  32-bit immediate value
 	
 	Instructions:
-		// Load 32-bit value from address (absolute_addr + rB) into rA. 
-		ldra rA, rB, absolute_addr 
+		// Load 32-bit value from address (absolute_addr + rB) into rA.
+		ldra rA, rB, absolute_addr
 		
-		// Load zero-extended 16-bit value from address (absolute_addr + rB) into rA. 
-		// This zero-extends the value. 
-		ldha rA, rB, absolute_addr 
+		// Load zero-extended 16-bit value from address (absolute_addr + rB) into rA.
+		// This zero-extends the value.
+		ldha rA, rB, absolute_addr
 		
-		// Load sign-extended 16-bit value from address (absolute_addr + rB) into rA. 
-		// This sign-extends the value. 
-		ldsha rA, rB, absolute_addr 
+		// Load sign-extended 16-bit value from address (absolute_addr + rB) into rA.
+		// This sign-extends the value.
+		ldsha rA, rB, absolute_addr
 		
-		// Load zero-extended 8-bit value from address (absolute_addr + rB) into rA. 
-		// This zero-extends the value. 
-		ldba rA, rB, absolute_addr 
+		// Load zero-extended 8-bit value from address (absolute_addr + rB) into rA.
+		// This zero-extends the value.
+		ldba rA, rB, absolute_addr
 		
 		
 		
-		// Load sign-extended 8-bit value from address (absolute_addr + rB) into rA. 
-		// This sign-extends the value. 
-		ldsba rA, rB, absolute_addr 
+		// Load sign-extended 8-bit value from address (absolute_addr + rB) into rA.
+		// This sign-extends the value.
+		ldsba rA, rB, absolute_addr
 		
-		// Store 32-bit value in rA to address (absolute_addr + rB). 
-		stra rA, rB, absolute_addr 
+		// Store 32-bit value in rA to address (absolute_addr + rB).
+		stra rA, rB, absolute_addr
 		
-		// Store low 16 bits of rA to address (absolute_addr + rB). 
-		stha rA, rB, absolute_addr 
+		// Store low 16 bits of rA to address (absolute_addr + rB).
+		stha rA, rB, absolute_addr
 		
-		// Store low 8 bits of rA to address (absolute_addr + rB). 
+		// Store low 8 bits of rA to address (absolute_addr + rB).
 		stba rA, rB, absolute_addr
 		
 		
 		
 		// Set pc to destination address in (rA + rB + absolute_addr).
-		jumpaxx rA, rB, absolute_addr
+		jumpa rA, rB, absolute_addr
 		
 		// Subroutine call using (rA + rB + absolute_addr) as destination address. 
 		// The return address is stored in the link register (lr).
-		callaxx rA, rB, absolute_addr
+		calla rA, rB, absolute_addr
 		
 		// rA = 32-bit immediate, rB = same 32-bit immediate
 		// If rA is the same register as rB, then the 
@@ -639,25 +645,25 @@ Group 3 Instructions
 		
 		// Pseudo instruction:
 		//// Set pc to destination address in (rA + absolute_addr).
-		//// Encoded like this:  jumpaxx rA, r0, absolute_addr
-		jumpax rA, absolute_addr
+		//// Encoded like this:  jumpa rA, r0, absolute_addr
+		//jumpa rA, absolute_addr
 		
 		// Pseudo instruction:
 		//// Set pc to destination address in (absolute_addr).
-		//// Encoded like this:  jumpaxx r0, r0, absolute_addr
-		jumpa absolute_addr
+		//// Encoded like this:  jumpa r0, r0, absolute_addr
+		//jumpa absolute_addr
 		
 		// Pseudo instruction:
 		//// Subroutine call using (rA + absolute_addr) as destination address. 
 		//// The return address is stored in the link register (lr).
-		//// Encoded like this:  callaxx rA, r0, absolute_addr
-		callax rA, absolute_addr
+		//// Encoded like this:  calla rA, r0, absolute_addr
+		//calla rA, absolute_addr
 		
 		// Pseudo instruction:
 		//// Subroutine call using (absolute_addr) as destination address. 
 		//// The return address is stored in the link register (lr).
-		//// Encoded like this:  callaxx r0, r0, absolute_addr
-		calla absolute_addr
+		//// Encoded like this:  calla r0, r0, absolute_addr
+		//calla absolute_addr
 		
 		
 		
