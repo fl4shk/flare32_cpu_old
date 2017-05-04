@@ -110,6 +110,7 @@
 #define INSTR_FLAGS(instr) INSTR_ONE_ARG(instr,ARG_FLAGS)
 #define INSTR_FLAGS_RA(instr) INSTR_FLAGS(instr), ARG_REG(A)
 #define INSTR_RA_PC(instr) INSTR_RA(instr), ARG_PC
+#define INSTR_IRA_RA(instr) INSTR_IRA(instr), ARG_REG(A)
 #define PSEUDO_INSTR_RB(instr) INSTR_WITH_REG(instr,B)
 #define PSEUDO_INSTR_RB_IMM( instr, immediate ) PSEUDO_INSTR_RB(instr), immediate
 #define PSEUDO_INSTR_RB_RC(instr) PSEUDO_INSTR_RB(instr), ARG_REG(C)
@@ -263,7 +264,7 @@ Group 0 Instructions, for example, use 000 as their group identifier.
 
 To specify that an instruction is permitted to affect flags, append ".f"
 (without quotes) to the end of the instruction name.  
-Example:  "addt" becomes "addt.f"
+Example:  "add" becomes "add.f"
 
 GROUP_HEADER(0)
 00fo oooo aaaa bbbb
@@ -327,6 +328,21 @@ GROUP_HEADER(0)
 		// DIsable Interrupts
 		INSTR_NO_ARGS(dii)
 		
+		// Set the PC to interrupt RETurn address and enable Interrupts
+		INSTR_NO_ARGS(reti)
+		
+		// Set the PC to the Interrupt Return Address, but DON'T enable
+		// interrupts
+		INSTR_IRA(jump)
+		
+		
+		
+		// Copy ARG_REG(A) to the Interrupt Return Address
+		INSTR_IRA_RA(cpy)
+		
+		// Copy the Interrupt Return Address to ARG_REG(A)
+		INSTR_RA_IRA(cpy)
+		
 		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
 		DESCRIBE_CALL_RETURN_ADDRESS
 		INSTR_RA_RB(callx)
@@ -336,27 +352,10 @@ GROUP_HEADER(0)
 		INSTR_RA_PC(cpy)
 		
 		
-		
-		// Set the PC to interrupt RETurn address and enable Interrupts
-		INSTR_NO_ARGS(reti)
-		
-		// Set the PC to the Interrupt Return Address, but DON'T enable
-		// interrupts
-		INSTR_IRA(jump)
-		
-		// Swap the Interrupt Return Address and ARG_REG(A)
-		INSTR_RA_IRA(swp)
-		
-		// Copy the Interrupt Return Address to ARG_REG(A)
-		INSTR_RA_IRA(cpy)
-		
-		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_REG(B))
 		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(callx,ARG_REG(B))
 		//PSEUDO_INSTR_RB(call)
-		
-		
 
 
 GROUP_HEADER(1)
@@ -509,7 +508,7 @@ GROUP_HEADER(2)
 		
 		
 #define __TEMP_ARITH_LOG_INSTR_TYPE INSTR_RA_RB_RC
-		GEN_MOST_ARITH_LOG(ARG_REG(A),ARG_REG(B),ARG_REG(C),t)
+		GEN_MOST_ARITH_LOG(ARG_REG(A),ARG_REG(B),ARG_REG(C))
 #undef __TEMP_ARITH_LOG_INSTR_TYPE
 		
 		// Fused multiply-add
@@ -529,12 +528,13 @@ GROUP_HEADER(2)
 		// Add 4 to ARG_REG(B), then load from address in ARG_REG(B) into
 		// ARG_REG(A)
 		// LoaD Register, Add Before
-		INSTR_RA_RB(ldrab)
+		INSTR_RA_RB(ldrpb)
 		
 		// Store ARG_REG(A) to address in ARG_REG(B), then subtract 4 from
 		// ARG_REG(B)
 		// STore Register, Subtract After
-		INSTR_RA_RB(strsa)
+		INSTR_RA_RB(strma)
+		
 		RESERVED
 		
 		
@@ -549,25 +549,25 @@ GROUP_HEADER(2)
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_TEMP = ARG_REG(B) - ARG_REG(C)
 		//FLAGS_ALL
-		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(subt.f,ARG_REG(B)\, ARG_REG(C))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(sub.f,ARG_REG(B)\, ARG_REG(C))
 		//PSEUDO_INSTR_RB_RC(cmp)
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_TEMP = ARG_REG(B) - (-ARG_REG(C))
 		//FLAGS_ALL
-		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(addt.f,ARG_REG(B)\, ARG_REG(C))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(add.f,ARG_REG(B)\, ARG_REG(C))
 		//PSEUDO_INSTR_RB_RC(cmn)
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_TEMP = ARG_REG(C) - ARG_REG(B)
 		//FLAGS_ALL
-		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(rsbt.f,ARG_REG(B)\, ARG_REG(C))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(rsb.f,ARG_REG(B)\, ARG_REG(C))
 		//PSEUDO_INSTR_RB_RC(cmr)
 		
 		
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_TEMP = ARG_REG(B) & ARG_REG(C)
-		DESCRIBE_PSEUDO_INSTR_T_ENCODING(andt.f,ARG_REG(B),ARG_REG(C))
+		DESCRIBE_PSEUDO_INSTR_T_ENCODING(and.f,ARG_REG(B),ARG_REG(C))
 		//FLAGS_N_AND_Z
 		//PSEUDO_INSTR_RB_RC(tst)
 		

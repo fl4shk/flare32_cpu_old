@@ -7,7 +7,7 @@ Group 0 Instructions, for example, use 000 as their group identifier.
 
 To specify that an instruction is permitted to affect flags, append ".f"
 (without quotes) to the end of the instruction name.  
-Example:  "addt" becomes "addt.f"
+Example:  "add" becomes "add.f"
 
 Group 0 Instructions
 00fo oooo aaaa bbbb
@@ -128,6 +128,21 @@ Group 0 Instructions
 		// DIsable Interrupts
 		dii
 		
+		// Set the PC to interrupt RETurn address and enable Interrupts
+		reti
+		
+		// Set the PC to the Interrupt Return Address, but DON'T enable
+		// interrupts
+		jump ira
+		
+		
+		
+		// Copy rA to the Interrupt Return Address
+		cpy ira, rA
+		
+		// Copy the Interrupt Return Address to rA
+		cpy rA, ira
+		
 		// Subroutine call using (rA + rB) as destination address. 
 		// The return address is stored in the link register (lr).
 		callx rA, rB
@@ -137,27 +152,10 @@ Group 0 Instructions
 		cpy rA, pc
 		
 		
-		
-		// Set the PC to interrupt RETurn address and enable Interrupts
-		reti
-		
-		// Set the PC to the Interrupt Return Address, but DON'T enable
-		// interrupts
-		jump ira
-		
-		// Swap the Interrupt Return Address and rA
-		swp rA, ira
-		
-		// Copy the Interrupt Return Address to rA
-		cpy rA, ira
-		
-		
 		// Pseudo instruction:
 		//// Subroutine call using rB as destination address. 
 		//// Encoded like this:  callx r0, rB
 		//call rB
-		
-		
 
 
 Group 1 Instructions
@@ -411,62 +409,62 @@ Group 2 Instructions
 		
 		// rA = rB + rC
 		// This instruction can affect N, V, Z, and C flags.
-		addt rA, rB, rC
+		add rA, rB, rC
 		
 		// rA = rB + rC + carry_flag
 		// Add with carry
 		// This instruction can affect N, V, Z, and C flags.
-		adct rA, rB, rC
+		adc rA, rB, rC
 		
 		// rA = rB - rC
 		// This instruction can affect N, V, Z, and C flags.
-		subt rA, rB, rC
+		sub rA, rB, rC
 		
 		// rA = rB + (~rC) + carry_flag
 		// Subtract with borrow (6502 style)
 		// This instruction can affect N, V, Z, and C flags.
-		sbct rA, rB, rC
+		sbc rA, rB, rC
 		
 		
 		
 		// rA = rC - rB
 		// This instruction can affect N, V, Z, and C flags.
-		rsbt rA, rB, rC
+		rsb rA, rB, rC
 		
 		// rA = rB * rC
-		mult rA, rB, rC
+		mul rA, rB, rC
 		
 		// rA = rB & rC
 		// This instruction can affect the N and Z flags.
-		andt rA, rB, rC
+		and rA, rB, rC
 		
 		// rA = rB | rC
 		// This instruction can affect the N and Z flags.
-		ort rA, rB, rC
+		or rA, rB, rC
 		
 		
 		
 		// rA = rB ^ rC
 		// This instruction can affect the N and Z flags.
-		xort rA, rB, rC
+		xor rA, rB, rC
 		
 		// Logical shift left
 		// rA = rB << rC
-		lslt rA, rB, rC
+		lsl rA, rB, rC
 		
 		// Logical shift right
-		lsrt rA, rB, rC
+		lsr rA, rB, rC
 		
 		// Arithmetic shift right
-		asrt rA, rB, rC
+		asr rA, rB, rC
 		
 		
 		
 		// Rotate rB left by rC bits, then store result in rA.
-		rolt rA, rB, rC
+		rol rA, rB, rC
 		
 		// Rotate rB right by rC bits, then store result in rA.
-		rort rA, rB, rC
+		ror rA, rB, rC
 		
 		// Fused multiply-add
 		// rA = rA + (rB * rC)
@@ -485,12 +483,13 @@ Group 2 Instructions
 		// Add 4 to rB, then load from address in rB into
 		// rA
 		// LoaD Register, Add Before
-		ldrab rA, rB
+		ldrpb rA, rB
 		
 		// Store rA to address in rB, then subtract 4 from
 		// rB
 		// STore Register, Subtract After
-		strsa rA, rB
+		strma rA, rB
+		
 		// Reserved for future expansion.
 		
 		
@@ -505,25 +504,25 @@ Group 2 Instructions
 		// Pseudo instruction:
 		//// temp = rB - rC
 		//// This instruction can affect N, V, Z, and C flags.
-		//// Encoded like this:  subt.f r0, rB, rC
+		//// Encoded like this:  sub.f r0, rB, rC
 		//cmp rB, rC
 		
 		// Pseudo instruction:
 		//// temp = rB - (-rC)
 		//// This instruction can affect N, V, Z, and C flags.
-		//// Encoded like this:  addt.f r0, rB, rC
+		//// Encoded like this:  add.f r0, rB, rC
 		//cmn rB, rC
 		
 		// Pseudo instruction:
 		//// temp = rC - rB
 		//// This instruction can affect N, V, Z, and C flags.
-		//// Encoded like this:  rsbt.f r0, rB, rC
+		//// Encoded like this:  rsb.f r0, rB, rC
 		//cmr rB, rC
 		
 		
 		// Pseudo instruction:
 		//// temp = rB & rC
-		//// Encoded like this:  andt.f r0, rB, rC
+		//// Encoded like this:  and.f r0, rB, rC
 		//// This instruction can affect the N and Z flags.
 		//tst rB, rC
 		
