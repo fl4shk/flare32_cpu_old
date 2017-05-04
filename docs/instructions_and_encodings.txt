@@ -328,30 +328,36 @@ Group 1 Instructions
 		
 		// Pseudo instruction:
 		//// Compare rB to (zero-extended imm)
-		//// Encoded like this:  subi.f r0, rB, imm
 		//// temp = rB - (zero-extended imm)
+		//// Encoded like this:  subi.f r0, rB, imm
 		//// This instruction can affect N, V, Z, and C flags.
 		//cmpi rB, imm
 		
 		// Pseudo instruction:
 		//// Compare rB to negated (zero-extended imm)
-		//// Encoded like this:  addi.f r0, rB, imm
 		//// temp = rB - (-(zero-extended imm))
+		//// Encoded like this:  addi.f r0, rB, imm
 		//// This instruction can affect N, V, Z, and C flags.
 		//cmni rB, imm
 		
 		// Pseudo instruction:
 		//// Compare reversed with immediate value
-		//// Encoded like this:  rsbi.f r0, rB, imm
 		//// temp = (zero-extended imm) - rB
+		//// Encoded like this:  rsbi.f r0, rB, imm
 		//// This instruction can affect N, V, Z, and C flags.
 		//cmri rB, imm
 	
 		// Pseudo instruction:
 		//// Copy Negated
-		//// Encoded like this:  rsbi rA, rB, 0
 		//// rA = -rB
+		//// Encoded like this:  rsbi rA, rB, 0
 		//cpn rA, rB
+		
+		// Pseudo instruction:
+		//// Copy Complemented
+		//// rA = ~rB
+		//// Encoded like this:  xorsi rA, rB, -1
+		//cpc rA, rB
 		
 		
 		
