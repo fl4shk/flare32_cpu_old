@@ -509,25 +509,25 @@ Group 2 Instructions
 		
 		// Pseudo instruction:
 		//// Load 32-bit value from address rB into rA.
-		//// Encoded like this:  ldr rA, rB, r0, 0 
+		//// Encoded like this:  ldrxx, rA, rB, r0, 0 
 		//ldr rA, rB
 		
 		// Pseudo instruction:
 		//// Load zero-extended 16-bit value from address rB into rA.
 		//// This zero-extends the value.
-		//// Encoded like this:  ldh rA, rB, r0, 0 
+		//// Encoded like this:  ldhxx, rA, rB, r0, 0 
 		//ldh rA, rB
 		
 		// Pseudo instruction:
 		//// Load sign-extended 16-bit value from address rB into rA.
 		//// This sign-extends the value.
-		//// Encoded like this:  ldsh rA, rB, r0, 0 
+		//// Encoded like this:  ldshxx, rA, rB, r0, 0 
 		//ldsh rA, rB
 		
 		// Pseudo instruction:
 		//// Load zero-extended 8-bit value from address rB into rA.
 		//// This zero-extends the value.
-		//// Encoded like this:  ldb rA, rB, r0, 0 
+		//// Encoded like this:  ldbxx, rA, rB, r0, 0 
 		//ldb rA, rB
 		
 		
@@ -535,47 +535,47 @@ Group 2 Instructions
 		// Pseudo instruction:
 		//// Load sign-extended 8-bit value from address rB into rA.
 		//// This sign-extends the value.
-		//// Encoded like this:  ldsb rA, rB, r0, 0 
+		//// Encoded like this:  ldsbxx, rA, rB, r0, 0 
 		//ldsb rA, rB
 		
 		// Pseudo instruction:
 		//// Store 32-bit value in rA to address rB.
-		//// Encoded like this:  str rA, rB, r0, 0 
+		//// Encoded like this:  strxx, rA, rB, r0, 0 
 		//str rA, rB
 		
 		// Pseudo instruction:
 		//// Store low 16 bits of rA to address rB.
-		//// Encoded like this:  sth rA, rB, r0, 0 
+		//// Encoded like this:  sthxx, rA, rB, r0, 0 
 		//sth rA, rB
 		
 		// Pseudo instruction:
 		//// Store low 8 bits of rA to address rB.
-		//// Encoded like this:  stb rA, rB, r0, 0 
+		//// Encoded like this:  stbxx, rA, rB, r0, 0 
 		//stb rA, rB
 		
 		
 		
 		// Pseudo instruction:
 		//// Load 32-bit value from address (rB + rC) into rA.
-		//// Encoded like this:  ldr rA, rB, rC, 0 
+		//// Encoded like this:  ldrxx, rA, rB, rC, 0 
 		//ldrx rA, rB, rC
 		
 		// Pseudo instruction:
 		//// Load zero-extended 16-bit value from address (rB + rC) into rA.
 		//// This zero-extends the value.
-		//// Encoded like this:  ldh rA, rB, rC, 0 
+		//// Encoded like this:  ldhxx, rA, rB, rC, 0 
 		//ldhx rA, rB, rC
 		
 		// Pseudo instruction:
 		//// Load sign-extended 16-bit value from address (rB + rC) into rA.
 		//// This sign-extends the value.
-		//// Encoded like this:  ldsh rA, rB, rC, 0 
+		//// Encoded like this:  ldshxx, rA, rB, rC, 0 
 		//ldshx rA, rB, rC
 		
 		// Pseudo instruction:
 		//// Load zero-extended 8-bit value from address (rB + rC) into rA.
 		//// This zero-extends the value.
-		//// Encoded like this:  ldb rA, rB, rC, 0 
+		//// Encoded like this:  ldbxx, rA, rB, rC, 0 
 		//ldbx rA, rB, rC
 		
 		
@@ -583,47 +583,47 @@ Group 2 Instructions
 		// Pseudo instruction:
 		//// Load sign-extended 8-bit value from address (rB + rC) into rA.
 		//// This sign-extends the value.
-		//// Encoded like this:  ldsb rA, rB, rC, 0 
+		//// Encoded like this:  ldsbxx, rA, rB, rC, 0 
 		//ldsbx rA, rB, rC
 		
 		// Pseudo instruction:
 		//// Store 32-bit value in rA to address (rB + rC).
-		//// Encoded like this:  str rA, rB, rC, 0 
+		//// Encoded like this:  strxx, rA, rB, rC, 0 
 		//strx rA, rB, rC
 		
 		// Pseudo instruction:
 		//// Store low 16 bits of rA to address (rB + rC).
-		//// Encoded like this:  sth rA, rB, rC, 0 
+		//// Encoded like this:  sthxx, rA, rB, rC, 0 
 		//sthx rA, rB, rC
 		
 		// Pseudo instruction:
 		//// Store low 8 bits of rA to address (rB + rC).
-		//// Encoded like this:  stb rA, rB, rC, 0 
+		//// Encoded like this:  stbxx, rA, rB, rC, 0 
 		//stbx rA, rB, rC
 		
 		
 		
 		// Pseudo instruction:
 		//// Load 32-bit value from address (rB + (sign-extended imm)) into rA.
-		//// Encoded like this:  ldr rA, rB, r0, imm 
+		//// Encoded like this:  ldrxx, rA, rB, r0, imm 
 		//ldrxi rA, rB, imm
 		
 		// Pseudo instruction:
 		//// Load zero-extended 16-bit value from address (rB + (sign-extended imm)) into rA.
 		//// This zero-extends the value.
-		//// Encoded like this:  ldh rA, rB, r0, imm 
+		//// Encoded like this:  ldhxx, rA, rB, r0, imm 
 		//ldhxi rA, rB, imm
 		
 		// Pseudo instruction:
 		//// Load sign-extended 16-bit value from address (rB + (sign-extended imm)) into rA.
 		//// This sign-extends the value.
-		//// Encoded like this:  ldsh rA, rB, r0, imm 
+		//// Encoded like this:  ldshxx, rA, rB, r0, imm 
 		//ldshxi rA, rB, imm
 		
 		// Pseudo instruction:
 		//// Load zero-extended 8-bit value from address (rB + (sign-extended imm)) into rA.
 		//// This zero-extends the value.
-		//// Encoded like this:  ldb rA, rB, r0, imm 
+		//// Encoded like this:  ldbxx, rA, rB, r0, imm 
 		//ldbxi rA, rB, imm
 		
 		
@@ -631,22 +631,22 @@ Group 2 Instructions
 		// Pseudo instruction:
 		//// Load sign-extended 8-bit value from address (rB + (sign-extended imm)) into rA.
 		//// This sign-extends the value.
-		//// Encoded like this:  ldsb rA, rB, r0, imm 
+		//// Encoded like this:  ldsbxx, rA, rB, r0, imm 
 		//ldsbxi rA, rB, imm
 		
 		// Pseudo instruction:
 		//// Store 32-bit value in rA to address (rB + (sign-extended imm)).
-		//// Encoded like this:  str rA, rB, r0, imm 
+		//// Encoded like this:  strxx, rA, rB, r0, imm 
 		//strxi rA, rB, imm
 		
 		// Pseudo instruction:
 		//// Store low 16 bits of rA to address (rB + (sign-extended imm)).
-		//// Encoded like this:  sth rA, rB, r0, imm 
+		//// Encoded like this:  sthxx, rA, rB, r0, imm 
 		//sthxi rA, rB, imm
 		
 		// Pseudo instruction:
 		//// Store low 8 bits of rA to address (rB + (sign-extended imm)).
-		//// Encoded like this:  stb rA, rB, r0, imm 
+		//// Encoded like this:  stbxx, rA, rB, r0, imm 
 		//stbxi rA, rB, imm
 		
 		
