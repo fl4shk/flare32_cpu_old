@@ -128,6 +128,7 @@
 #define PSEUDO_INSTR_RA_RC(instr) INSTR_RA(instr), ARG_REG(C)
 #define PSEUDO_INSTR_PC_RB(instr) INSTR_ONE_ARG(instr,ARG_PC), ARG_REG(B)
 #define DESCRIBE_PSEUDO_INSTR_ENCODING(real_instr, arg) //// Encoded like this:  real_instr arg
+#define DESCRIBE_PSEUDO_INSTR_ENCODING_2(real_instr, arg) // Encoded like this:  real_instr arg
 #define DESCRIBE_PSEUDO_INSTR_LDST_ENCODING(real_ldst_instr) //// Encoded like this:  real_ldst_instr
 #define DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(real_instr, arg) DESCRIBE_PSEUDO_INSTR_ENCODING(real_instr,ARG_REG(0)\, arg)
 #define DESCRIBE_PSEUDO_INSTR_T_ENCODING(real_instr, first_arg, last_arg) DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(real_instr,first_arg\, last_arg)
@@ -315,13 +316,15 @@ GROUP_HEADER(0)
 		// ARG_REG(A) = Sign extend of low 8 bits in ARG_REG(B)
 		INSTR_RA_RB(seb)
 
-		// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
-		// stack (in that order)
-		INSTR_RA_RB(push)
+		//// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
+		//// stack (in that order)
+		//INSTR_RA_RB(push)
+		RESERVED
 
-		// Pop two 32-bit values off the stack, storing the first popped
-		// value into ARG_REG(B) and the second popped value into ARG_REG(A)
-		INSTR_RA_RB(pop)
+		//// Pop two 32-bit values off the stack, storing the first popped
+		//// value into ARG_REG(B) and the second popped value into ARG_REG(A)
+		//INSTR_RA_RB(pop)
+		RESERVED
 
 
 
@@ -560,22 +563,87 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
 		INSTR_RA_RB(jumpx)
 
-		// Add 4 to ARG_REG(B), then load from address in ARG_REG(B) into
-		// ARG_REG(A)
-		// LoaD Register, Add Before
-		INSTR_LDST_RA_RB(ldrpb)
+		
+		// LoaD Multiple, Add After
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000
+			// Effect:  
+				// ARG_REG(A) = [ARG_REG(X)];
+				// ARG_REG(X) += 4;
+			// Syntax:  ldmpa ARG_REG(X), {ARG_REG(A)}
 
-		// Store ARG_REG(A) to address in ARG_REG(B), then subtract 4 from
-		// ARG_REG(B)
-		// STore Register, Subtract After
-		INSTR_LDST_RA_RB(strma)
+		// Form 1:
+			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001
+			// Effect:  
+				// ARG_REG(A) = [ARG_REG(X)];
+				// ARG_REG(B) = [ARG_REG(X) + 4];
+				// ARG_REG(X) += 8;
+			// Syntax:  ldmpa ARG_REG(X), {ARG_REG(A), ARG_REG(B)}
+
+		// Form 2:
+			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010
+			// Effect:  
+				// ARG_REG(A) = [ARG_REG(X)];
+				// ARG_REG(B) = [ARG_REG(X) + 4];
+				// ARG_REG(C) = [ARG_REG(X) + 8];
+				// ARG_REG(X) += 12;
+			// Syntax:  ldmpa ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C)}
+
+		// Form 3:
+			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
+			// Effect:  
+				// ARG_REG(A) = [ARG_REG(X)];
+				// ARG_REG(B) = [ARG_REG(X) + 4];
+				// ARG_REG(C) = [ARG_REG(X) + 8];
+				// ARG_REG(D) = [ARG_REG(X) + 12];
+				// ARG_REG(X) += 16;
+			// Syntax:  ldmpa ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)}
+
+
+		// STore Multiple, Subtract Before
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000
+			// Effect:  
+				// ARG_REG(X) -= 4;
+				// [ARG_REG(X)] = ARG_REG(A);
+			Syntax:  stmmb ARG_REG(X), {ARG_REG(A)}
+
+		// Form 1:
+			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001
+			// Effect:  
+				// ARG_REG(X) -= 8;
+				// [ARG_REG(X)] = ARG_REG(A);
+				// [ARG_REG(X) + 4] = ARG_REG(B);
+			Syntax:  stmmb ARG_REG(X), {ARG_REG(A), ARG_REG(B)}
+
+		// Form 2:
+			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010
+			// Effect:  
+				// ARG_REG(X) -= 12;
+				// [ARG_REG(X)] = ARG_REG(A);
+				// [ARG_REG(X) + 4] = ARG_REG(B);
+				// [ARG_REG(X) + 8] = ARG_REG(C);
+			Syntax:  stmmb ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C)}
+
+		// Form 3:
+			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
+			// Effect:  
+				// ARG_REG(X) -= 16;
+				// [ARG_REG(X)] = ARG_REG(A);
+				// [ARG_REG(X) + 4] = ARG_REG(B);
+				// [ARG_REG(X) + 8] = ARG_REG(C);
+				// [ARG_REG(X) + 12] = ARG_REG(D);
+			Syntax:  stmmb ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)}
+
 
 
 		// LoaD Multiple, Increment After
 		// Note that this instruction takes multiple forms
 		// Form 0:
 			// Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000
-				// Effect:  
+			// Effect:  
 				// ARG_REG(A) = [ARG_REG(X)]; 
 				// ARG_REG(X) += 4;
 			Syntax:  ldmia ARG_REG(X), {ARG_REG(A)}
@@ -715,17 +783,90 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(jumpx,ARG_REG(B))
 		//PSEUDO_INSTR_PC_RB(cpy)
 
-		DESCRIBE_PSEUDO_INSTRUCTION
-		//// Push register ARG_REG(A) onto the stack
-		DESCRIBE_PSEUDO_INSTR_ENCODING(strma,ARG_REG(A)\, [ARG_SP])
-		//INSTR_RA(push)
-
-
 
 		DESCRIBE_PSEUDO_INSTRUCTION
-		//// Pop 32-bit value off the stack into register ARG_REG(A)
-		DESCRIBE_PSEUDO_INSTR_ENCODING(ldrpb,ARG_REG(A)\, [ARG_SP])
-		//INSTR_RA(pop)
+		// Pop
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  10f0 oooo aaaa 0000 0000 0000 1111 0000
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(ldmpa,ARG_SP\, {ARG_REG(A)})
+			// Effect:  
+				// ARG_REG(A) = [ARG_SP];
+				// ARG_SP += 4;
+			// Syntax:  pop ARG_REG(A)
+
+		// Form 1:
+			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 1111 0001
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(ldmpa,ARG_SP\, {ARG_REG(A)\, ARG_REG(B)})
+			// Effect:  
+				// ARG_REG(A) = [ARG_SP];
+				// ARG_REG(B) = [ARG_SP + 4];
+				// ARG_SP += 8;
+			// Syntax:  pop ARG_REG(A), ARG_REG(B)
+
+		// Form 2:
+			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 1111 0010
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(ldmpa,ARG_SP\, {ARG_REG(A)\, ARG_REG(B)\, ARG_REG(C)})
+			// Effect:  
+				// ARG_REG(A) = [ARG_SP];
+				// ARG_REG(B) = [ARG_SP + 4];
+				// ARG_REG(C) = [ARG_SP + 8];
+				// ARG_SP += 12;
+			// Syntax:  pop ARG_REG(A), ARG_REG(B), ARG_REG(C)
+
+		// Form 3:
+			// Encoding:  10f0 oooo aaaa bbbb cccc dddd 1111 0011
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(ldmpa,ARG_SP\, {ARG_REG(A)\, ARG_REG(B)\, ARG_REG(C)\, ARG_REG(D)})
+			// Effect:  
+				// ARG_REG(A) = [ARG_SP];
+				// ARG_REG(B) = [ARG_SP + 4];
+				// ARG_REG(C) = [ARG_SP + 8];
+				// ARG_REG(D) = [ARG_SP + 12];
+				// ARG_SP += 16;
+			// Syntax:  pop ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)
+
+
+		DESCRIBE_PSEUDO_INSTRUCTION
+		// Push
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmmb,ARG_SP\, {ARG_REG(A)})
+			// Effect:  
+				// ARG_SP -= 4;
+				// [ARG_SP] = ARG_REG(A);
+			// Syntax:  push ARG_REG(A)
+
+		// Form 1:
+			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmmb,ARG_SP\, {ARG_REG(A)\, ARG_REG(B)})
+			// Effect:  
+				// ARG_SP -= 8;
+				// [ARG_SP] = ARG_REG(A);
+				// [ARG_SP + 4] = ARG_REG(B);
+			// Syntax:  push ARG_REG(A), ARG_REG(B)
+
+		// Form 2:
+			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmmb,ARG_SP\, {ARG_REG(A)\, ARG_REG(B)\, ARG_REG(C)})
+			// Effect:  
+				// ARG_SP -= 12;
+				// [ARG_SP] = ARG_REG(A);
+				// [ARG_SP + 4] = ARG_REG(B);
+				// [ARG_SP + 8] = ARG_REG(C);
+			// Syntax:  push ARG_REG(A), ARG_REG(B), ARG_REG(C)
+
+		// Form 3:
+			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
+			// Effect:  
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmmb,ARG_SP, {ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)})
+				// ARG_SP -= 16;
+				// [ARG_SP] = ARG_REG(A);
+				// [ARG_SP + 4] = ARG_REG(B);
+				// [ARG_SP + 8] = ARG_REG(C);
+				// [ARG_SP + 12] = ARG_REG(D);
+			// Syntax:  push ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)
+
 
 
 
