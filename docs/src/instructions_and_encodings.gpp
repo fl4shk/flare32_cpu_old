@@ -16,7 +16,9 @@
 #define DESCRIBE_OP o:  opcode
 #define DESCRIBE_RA a:  rA
 #define DESCRIBE_RB b:  rB
-#define DESCRIBE_RC c:  rc
+#define DESCRIBE_RC c:  rC
+#define DESCRIBE_RD d:  rD
+#define DESCRIBE_RX x:  rX
 #define DESCRIBE_IMM(x) i:  x-bit immediate value
 #define DESCRIBE_IMM_UNSIGNED(x) DESCRIBE_IMM(zero-extended x)
 #define DESCRIBE_IMM_SIGNED(x) DESCRIBE_IMM(sign-extended x)
@@ -513,7 +515,7 @@ GROUP_HEADER(1)
 
 
 GROUP_HEADER(2)
-10fo oooo aaaa bbbb  cccc iiii iiii iiii
+Non Block Moves Version:  10fo oooo aaaa bbbb  cccc iiii iiii iiii
 
 	DESCRIBE_AFFECTS_FLAGS
 	DESCRIBE_OP
@@ -521,6 +523,17 @@ GROUP_HEADER(2)
 	DESCRIBE_RB
 	DESCRIBE_RC
 	DESCRIBE_IMM(12)
+
+Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
+
+	DESCRIBE_AFFECTS_FLAGS
+	DESCRIBE_OP
+	DESCRIBE_RA
+	DESCRIBE_RB
+	DESCRIBE_RC
+	DESCRIBE_RD
+	DESCRIBE_RX
+	DESCRIBE_IMM(4)
 
 	DESCRIBE_INSTRUCTIONS
 #define __TEMP_LDST_INSTR_TYPE INSTR_LDST_RA_RB_RC_IMM
@@ -557,11 +570,84 @@ GROUP_HEADER(2)
 		// STore Register, Subtract After
 		INSTR_LDST_RA_RB(strma)
 
-		RESERVED
+
+		// LoaD Multiple, Increment After
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000
+				// Effect:  
+				// ARG_REG(A) = [ARG_REG(X)]; 
+				// ARG_REG(X) += 4;
+			Syntax:  ldmia ARG_REG(X), {ARG_REG(A)}
+
+		// Form 1:
+			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001
+			// Effect:  
+				// ARG_REG(A) = [ARG_REG(X)]; 
+				// ARG_REG(B) = [ARG_REG(X) + 4];
+				// ARG_REG(X) += 8;
+			Syntax:  ldmia ARG_REG(X), {ARG_REG(A), ARG_REG(B)}
+
+		// Form 2:
+			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010
+			// Effect:  
+				// ARG_REG(A) = [ARG_REG(X)]; 
+				// ARG_REG(B) = [ARG_REG(X) + 4];
+				// ARG_REG(C) = [ARG_REG(X) + 8];
+				// ARG_REG(X) += 12;
+			Syntax:  ldmia ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C)}
+
+		// Form 3:
+			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
+			// Effect:  
+				// ARG_REG(A) = [ARG_REG(X)]; 
+				// ARG_REG(B) = [ARG_REG(X) + 4];
+				// ARG_REG(C) = [ARG_REG(X) + 8];
+				// ARG_REG(D) = [ARG_REG(X) + 12];
+				// ARG_REG(X) += 16;
+			Syntax:  ldmia ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)}
 
 
 
-		RESERVED
+
+
+		// STore Multiple, Increment After
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000
+			// Effect:  
+				// [ARG_REG(X)] = ARG_REG(A);
+				// ARG_REG(X) += 4;
+			Syntax:  stmia ARG_REG(X), {ARG_REG(A)}
+
+		// Form 1:
+			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001
+			// Effect:  
+				// [ARG_REG(X)] = ARG_REG(A);
+				// [ARG_REG(X) + 4] = ARG_REG(B);
+				// ARG_REG(X) += 8;
+			Syntax:  stmia ARG_REG(X), {ARG_REG(A), ARG_REG(B)}
+
+		// Form 2:
+			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010
+			// Effect:  
+				// [ARG_REG(X)] = ARG_REG(A);
+				// [ARG_REG(X) + 4] = ARG_REG(B);
+				// [ARG_REG(X) + 8] = ARG_REG(C);
+				// ARG_REG(X) += 12;
+			Syntax:  stmia ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C)}
+
+		// Form 3:
+			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
+			// Effect:  
+				// [ARG_REG(X)] = ARG_REG(A);
+				// [ARG_REG(X) + 4] = ARG_REG(B);
+				// [ARG_REG(X) + 8] = ARG_REG(C);
+				// [ARG_REG(X) + 12] = ARG_REG(D);
+				// ARG_REG(X) += 16;
+			Syntax:  stmia ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)}
+
+
 		RESERVED
 		RESERVED
 		RESERVED
