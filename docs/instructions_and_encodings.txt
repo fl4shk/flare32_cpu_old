@@ -16,8 +16,8 @@ Group 0 Instructions
 	flags unchanged.
 
 	o:  opcode
-	a:  rA (destination register usually)
-	b:  rB
+	a: rA (destination register usually)
+	b: rB
 
 	Instructions:
 		// rA = rA + rB
@@ -163,8 +163,8 @@ Group 1 Instructions
 	flags unchanged.
 
 	o:  opcode
-	a:  rA
-	b:  rB
+	a: rA
+	b: rB
 	i:  16-bit immediate value
 
 	Instructions:
@@ -367,30 +367,31 @@ Group 1 Instructions
 
 
 Group 2 Instructions
-Non Block Moves Version:  10fo oooo aaaa bbbb  cccc iiii iiii iiii
+Non Block Moves Version:  
+	10fo oooo aaaa bbbb  cccc iiii iiii iiii
 
 	f:  1 if can affect flags (and instruction type supports it), 0 if
 	flags unchanged.
 
 	o:  opcode
-	a:  rA
-	b:  rB
-	c:  rC
+	a: rA
+	b: rB
+	c: rC
 	i:  12-bit immediate value
 
-Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):  
-	10fo oooo aaaa bbbb  cccc dddd xxxx iiii
+Block Moves Version (stmdb, ldmia, stmia, push, pop):  
+	10fo oooo aaaa bbbb  cccc dddd xxxx 00ii
 
 	f:  1 if can affect flags (and instruction type supports it), 0 if
 	flags unchanged.
 
 	o:  opcode
-	a:  rA
-	b:  rB
-	c:  rC
-	d:  rD
-	x:  rX
-	i:  4-bit immediate value
+	a: rA
+	b: rB
+	c: rC
+	d: rD
+	x: rX
+	i:  2-bit immediate value
 
 	Instructions:
 		// Load 32-bit value from address (rB + rC + (sign-extended imm)) into rA.
@@ -497,52 +498,14 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 		// Set pc to destination address in (rA + rB).
 		jumpx rA, rB
 
-		
-		// LoaD Multiple, Add After
-		// Note that this instruction takes multiple forms
-		// Form 0:
-			// Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000
-			// Effect:  
-				// rA = [rX];
-				// rX += 4;
-			Syntax:  ldmpa rX, {rA}
-
-		// Form 1:
-			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001
-			// Effect:  
-				// rA = [rX];
-				// rB = [rX + 4];
-				// rX += 8;
-			Syntax:  ldmpa rX, {rA, rB}
-
-		// Form 2:
-			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010
-			// Effect:  
-				// rA = [rX];
-				// rB = [rX + 4];
-				// rC = [rX + 8];
-				// rX += 12;
-			Syntax:  ldmpa rX, {rA, rB, rC}
-
-		// Form 3:
-			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
-			// Effect:  
-				// rA = [rX];
-				// rB = [rX + 4];
-				// rC = [rX + 8];
-				// rD = [rX + 12];
-				// rX += 16;
-			 Syntax:  ldmpa rX, {rA, rB, rC, rD}
-
-
-		// STore Multiple, Subtract Before
+		// STore Multiple, Decrement Before
 		// Note that this instruction takes multiple forms
 		// Form 0:
 			// Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000
 			// Effect:  
 				// rX -= 4;
 				// [rX] = rA;
-			Syntax:  stmmb rX, {rA}
+			Syntax:  stmdb rX, {rA}
 
 		// Form 1:
 			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001
@@ -550,7 +513,7 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 				// rX -= 8;
 				// [rX] = rA;
 				// [rX + 4] = rB;
-			Syntax:  stmmb rX, {rA, rB}
+			Syntax:  stmdb rX, {rA, rB}
 
 		// Form 2:
 			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010
@@ -559,7 +522,7 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 				// [rX] = rA;
 				// [rX + 4] = rB;
 				// [rX + 8] = rC;
-			Syntax:  stmmb rX, {rA, rB, rC}
+			Syntax:  stmdb rX, {rA, rB, rC}
 
 		// Form 3:
 			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
@@ -569,7 +532,7 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 				// [rX + 4] = rB;
 				// [rX + 8] = rC;
 				// [rX + 12] = rD;
-			Syntax:  stmmb rX, {rA, rB, rC, rD}
+			Syntax:  stmdb rX, {rA, rB, rC, rD}
 
 
 
@@ -610,9 +573,6 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 			Syntax:  ldmia rX, {rA, rB, rC, rD}
 
 
-
-
-
 		// STore Multiple, Increment After
 		// Note that this instruction takes multiple forms
 		// Form 0:
@@ -650,6 +610,9 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 			Syntax:  stmia rX, {rA, rB, rC, rD}
 
 
+
+
+		// Reserved for future expansion.
 		// Reserved for future expansion.
 		// Reserved for future expansion.
 		// Reserved for future expansion.
@@ -838,7 +801,7 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 		// Note that this instruction takes multiple forms
 		// Form 0:
 			// Encoding:  10f0 oooo aaaa 0000 0000 0000 1111 0000
-			// Encoded like this:  ldmpa sp, {rA}
+			// Encoded like this:  ldmia sp, {rA}
 			// Effect:  
 				// rA = [sp];
 				// sp += 4;
@@ -846,7 +809,7 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 
 		// Form 1:
 			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 1111 0001
-			// Encoded like this:  ldmpa sp, {rA, rB}
+			// Encoded like this:  ldmia sp, {rA, rB}
 			// Effect:  
 				// rA = [sp];
 				// rB = [sp + 4];
@@ -855,7 +818,7 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 
 		// Form 2:
 			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 1111 0010
-			// Encoded like this:  ldmpa sp, {rA, rB, rC}
+			// Encoded like this:  ldmia sp, {rA, rB, rC}
 			// Effect:  
 				// rA = [sp];
 				// rB = [sp + 4];
@@ -865,7 +828,7 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 
 		// Form 3:
 			// Encoding:  10f0 oooo aaaa bbbb cccc dddd 1111 0011
-			// Encoded like this:  ldmpa sp, {rA, rB, rC, rD}
+			// Encoded like this:  ldmia sp, {rA, rB, rC, rD}
 			// Effect:  
 				// rA = [sp];
 				// rB = [sp + 4];
@@ -880,7 +843,7 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 		// Note that this instruction takes multiple forms
 		// Form 0:
 			// Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000
-			// Encoded like this:  stmmb sp, {rA}
+			// Encoded like this:  stmdb sp, {rA}
 			// Effect:  
 				// sp -= 4;
 				// [sp] = rA;
@@ -888,7 +851,7 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 
 		// Form 1:
 			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001
-			// Encoded like this:  stmmb sp, {rA, rB}
+			// Encoded like this:  stmdb sp, {rA, rB}
 			// Effect:  
 				// sp -= 8;
 				// [sp] = rA;
@@ -897,7 +860,7 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 
 		// Form 2:
 			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010
-			// Encoded like this:  stmmb sp, {rA, rB, rC}
+			// Encoded like this:  stmdb sp, {rA, rB, rC}
 			// Effect:  
 				// sp -= 12;
 				// [sp] = rA;
@@ -908,7 +871,7 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 		// Form 3:
 			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
 			// Effect:  
-			// Encoded like this:  stmmb sp
+			// Encoded like this:  stmdb sp
 				// sp -= 16;
 				// [sp] = rA;
 				// [sp + 4] = rB;
@@ -920,15 +883,34 @@ Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):
 
 
 Group 3 Instructions
-11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
+Non Block Moves Version:  
+	11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 
 	f:  1 if can affect flags (and instruction type supports it), 0 if
 	flags unchanged.
 
 	o:  opcode
-	a:  rA
-	b:  rB
+	a: rA
+	b: rB
 	i:  32-bit immediate value
+
+Block Moves Version (stmdb, ldmia, stmia, push, pop):  
+	11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 00ii
+
+	f:  1 if can affect flags (and instruction type supports it), 0 if
+	flags unchanged.
+
+	o:  opcode
+	a: rA
+	b: rB
+	c: rC
+	d: rD
+	e: rE
+	f: rF
+	g: rG
+	h: rH
+	x: rX
+	i:  2-bit immediate value
 
 	Instructions:
 		// Load 32-bit value from address (absolute_addr + rB) into rA.
@@ -975,12 +957,165 @@ Group 3 Instructions
 		// register will only be written once.
 		cpypi rA, rB, imm
 
-		// Reserved for future expansion.
+		// STore Multiple, Decrement Before
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 xxxx 0000
+			// Effect:  
+				// rX -= 20;
+				// [rX] = rA;
+				// [rX + 4] = rB;
+				// [rX + 8] = rC;
+				// [rX + 12] = rD;
+				// [rX + 16] = rE;
+			Syntax:  stmdb rX, {rA, rB, rC, rD, rE}
+
+		// Form 1:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 xxxx 0001
+			// Effect:  
+				// rX -= 24;
+				// [rX] = rA;
+				// [rX + 4] = rB;
+				// [rX + 8] = rC;
+				// [rX + 12] = rD;
+				// [rX + 16] = rE;
+				// [rX + 20] = rF;
+			Syntax:  stmdb rX, {rA, rB, rC, rD, rE, rF}
+
+		// Form 2:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 xxxx 0010
+			// Effect:  
+				// rX -= 28;
+				// [rX] = rA;
+				// [rX + 4] = rB;
+				// [rX + 8] = rC;
+				// [rX + 12] = rD;
+				// [rX + 16] = rE;
+				// [rX + 20] = rF;
+				// [rX + 24] = rG;
+			Syntax:  stmdb rX, {rA, rB, rC, rD, rE, rF, rG}
+
+		// Form 3:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 0011
+			// Effect:  
+				// rX -= 32;
+				// [rX] = rA;
+				// [rX + 4] = rB;
+				// [rX + 8] = rC;
+				// [rX + 12] = rD;
+				// [rX + 16] = rE;
+				// [rX + 20] = rF;
+				// [rX + 24] = rG;
+				// [rX + 28] = rH;
+			Syntax:  stmdb rX, {rA, rB, rC, rD, rE, rF, rG, rH}
 
 
 
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// LoaD Multiple, Increment After
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 xxxx 0000
+			// Effect:  
+				// rA = [rX]; 
+				// rB = [rX + 4];
+				// rC = [rX + 8];
+				// rD = [rX + 12];
+				// rE = [rX + 16];
+				// rX += 20;
+			Syntax:  ldmia rX, {rA, rB, rC, rD, rE}
+
+		// Form 1:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 xxxx 0001
+			// Effect:  
+				// rA = [rX]; 
+				// rB = [rX + 4];
+				// rC = [rX + 8];
+				// rD = [rX + 12];
+				// rE = [rX + 16];
+				// rF = [rX + 20];
+				// rX += 24;
+			Syntax:  ldmia rX, {rA, rB, rC, rD, rE, rF}
+
+		// Form 2:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 xxxx 0010
+			// Effect:  
+				// rA = [rX]; 
+				// rB = [rX + 4];
+				// rC = [rX + 8];
+				// rD = [rX + 12];
+				// rE = [rX + 16];
+				// rF = [rX + 20];
+				// rG = [rX + 24];
+				// rX += 28;
+			Syntax:  ldmia rX, {rA, rB, rC, rD, rE, rF, rG}
+
+		// Form 3:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 0011
+			// Effect:  
+				// rA = [rX]; 
+				// rB = [rX + 4];
+				// rC = [rX + 8];
+				// rD = [rX + 12];
+				// rE = [rX + 16];
+				// rF = [rX + 20];
+				// rG = [rX + 24];
+				// rH = [rX + 28];
+				// rX += 32;
+			Syntax:  ldmia rX, {rA, rB, rC, rD, rE, rF, rG, rH}
+
+
+		// STore Multiple, Increment After
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 xxxx 0000
+			// Effect:  
+				// [rX] = rA;
+				// [rX + 4] = rB;
+				// [rX + 8] = rC;
+				// [rX + 12] = rD;
+				// [rX + 16] = rE;
+				// rX += 20;
+			Syntax:  stmia rX, {rA, rB, rC, rD, rE}
+
+		// Form 1:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 xxxx 0001
+			// Effect:  
+				// [rX] = rA;
+				// [rX + 4] = rB;
+				// [rX + 8] = rC;
+				// [rX + 12] = rD;
+				// [rX + 16] = rE;
+				// [rX + 20] = rF;
+				// rX += 24;
+			Syntax:  stmia rX, {rA, rB, rC, rD, rE, rF}
+
+		// Form 2:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 xxxx 0010
+			// Effect:  
+				// [rX] = rA;
+				// [rX + 4] = rB;
+				// [rX + 8] = rC;
+				// [rX + 12] = rD;
+				// [rX + 16] = rE;
+				// [rX + 20] = rF;
+				// [rX + 24] = rG;
+				// rX += 28;
+			Syntax:  stmia rX, {rA, rB, rC, rD, rE, rF, rG}
+
+		// Form 3:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 0011
+			// Effect:  
+				// [rX] = rA;
+				// [rX + 4] = rB;
+				// [rX + 8] = rC;
+				// [rX + 12] = rD;
+				// [rX + 16] = rE;
+				// [rX + 20] = rF;
+				// [rX + 24] = rG;
+				// [rX + 28] = rH;
+				// rX += 32;
+			Syntax:  stmia rX, {rA, rB, rC, rD, rE, rF, rG, rH}
+
 		// Reserved for future expansion.
 		// Reserved for future expansion.
 
