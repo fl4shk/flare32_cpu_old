@@ -1132,3 +1132,120 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//// ARG_REG(A) = 32-bit immediate
 		DESCRIBE_PSEUDO_INSTR_ENCODING(cpypi,ARG_REG(A)\, ARG_REG(A)\, ARG_IMM)
 		//INSTR_RA_IMM(cpyi,ARG_IMM)
+
+
+
+		DESCRIBE_PSEUDO_INSTRUCTION
+		// Pop
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 1111 0000
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(ldmia,ARG_SP\, {rA\, rB\, rC\, rD\, rE})
+			// Effect:  
+				// ARG_REG(A) = [ARG_SP]; 
+				// ARG_REG(B) = [ARG_SP + 4];
+				// ARG_REG(C) = [ARG_SP + 8];
+				// ARG_REG(D) = [ARG_SP + 12];
+				// ARG_REG(E) = [ARG_SP + 16];
+				// ARG_SP += 20;
+			// Syntax:  pop rA, rB, rC, rD, rE
+
+		// Form 1:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 1111 0001
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(ldmia,ARG_SP\, {rA\, rB\, rC\, rD\, rE\, rF})
+			// Effect:  
+				// ARG_REG(A) = [ARG_SP]; 
+				// ARG_REG(B) = [ARG_SP + 4];
+				// ARG_REG(C) = [ARG_SP + 8];
+				// ARG_REG(D) = [ARG_SP + 12];
+				// ARG_REG(E) = [ARG_SP + 16];
+				// ARG_REG(F) = [ARG_SP + 20];
+				// ARG_SP += 24;
+			// Syntax:  pop rA, rB, rC, rD, rE, rF
+
+		// Form 2:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 1111 0010
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(ldmia,ARG_SP\, {rA\, rB\, rC\, rD\, rE\, rF\, rG})
+			// Effect:  
+				// ARG_REG(A) = [ARG_SP]; 
+				// ARG_REG(B) = [ARG_SP + 4];
+				// ARG_REG(C) = [ARG_SP + 8];
+				// ARG_REG(D) = [ARG_SP + 12];
+				// ARG_REG(E) = [ARG_SP + 16];
+				// ARG_REG(F) = [ARG_SP + 20];
+				// ARG_REG(G) = [ARG_SP + 24];
+				// ARG_SP += 28;
+			// Syntax:  pop rA, rB, rC, rD, rE, rF, rG
+
+		// Form 3:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 1111 0011
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(ldmia,ARG_SP\, {rA\, rB\, rC\, rD\, rE\, rF\, rG\, rH})
+			// Effect:  
+				// ARG_REG(A) = [ARG_SP]; 
+				// ARG_REG(B) = [ARG_SP + 4];
+				// ARG_REG(C) = [ARG_SP + 8];
+				// ARG_REG(D) = [ARG_SP + 12];
+				// ARG_REG(E) = [ARG_SP + 16];
+				// ARG_REG(F) = [ARG_SP + 20];
+				// ARG_REG(G) = [ARG_SP + 24];
+				// ARG_REG(H) = [ARG_SP + 28];
+				// ARG_SP += 32;
+			// Syntax:  pop rA, rB, rC, rD, rE, rF, rG, rH
+
+
+		DESCRIBE_PSEUDO_INSTRUCTION
+		// Push
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 1111 0000
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP, {rA\, rB\, rC\, rD\, rE})
+			// Effect:  
+				// ARG_SP -= 20;
+				// [ARG_SP] = ARG_REG(A);
+				// [ARG_SP + 4] = ARG_REG(B);
+				// [ARG_SP + 8] = ARG_REG(C);
+				// [ARG_SP + 12] = ARG_REG(D);
+				// [ARG_SP + 16] = ARG_REG(E);
+			// Syntax:  push rA, rB, rC, rD, rE
+
+		// Form 1:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 1111 0001
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP, {rA\, rB\, rC\, rD\, rE\, rF})
+			// Effect:  
+				// ARG_SP -= 24;
+				// [ARG_SP] = ARG_REG(A);
+				// [ARG_SP + 4] = ARG_REG(B);
+				// [ARG_SP + 8] = ARG_REG(C);
+				// [ARG_SP + 12] = ARG_REG(D);
+				// [ARG_SP + 16] = ARG_REG(E);
+				// [ARG_SP + 20] = ARG_REG(F);
+			// Syntax:  push rA, rB, rC, rD, rE, rF
+
+		// Form 2:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 1111 0010
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP, {rA\, rB\, rC\, rD\, rE\, rF\, rG})
+			// Effect:  
+				// ARG_SP -= 28;
+				// [ARG_SP] = ARG_REG(A);
+				// [ARG_SP + 4] = ARG_REG(B);
+				// [ARG_SP + 8] = ARG_REG(C);
+				// [ARG_SP + 12] = ARG_REG(D);
+				// [ARG_SP + 16] = ARG_REG(E);
+				// [ARG_SP + 20] = ARG_REG(F);
+				// [ARG_SP + 24] = ARG_REG(G);
+			// Syntax:  push rA, rB, rC, rD, rE, rF, rG
+
+		// Form 3:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 1111 0010
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP, {rA\, rB\, rC\, rD\, rE\, rF\, rG\, rH})
+			// Effect:  
+				// ARG_SP -= 32;
+				// [ARG_SP] = ARG_REG(A);
+				// [ARG_SP + 4] = ARG_REG(B);
+				// [ARG_SP + 8] = ARG_REG(C);
+				// [ARG_SP + 12] = ARG_REG(D);
+				// [ARG_SP + 16] = ARG_REG(E);
+				// [ARG_SP + 20] = ARG_REG(F);
+				// [ARG_SP + 24] = ARG_REG(G);
+				// [ARG_SP + 28] = ARG_REG(H);
+			// Syntax:  push rA, rB, rC, rD, rE, rF, rG, rH

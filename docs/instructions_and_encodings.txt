@@ -1177,3 +1177,120 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//// rA = 32-bit immediate
 		//// Encoded like this:  cpypi rA, rA, imm
 		//cpyi rA, imm
+
+
+
+		// Pseudo instruction:
+		// Pop
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 1111 0000
+			// Encoded like this:  ldmia sp, {rA, rB, rC, rD, rE}
+			// Effect:  
+				// rA = [sp]; 
+				// rB = [sp + 4];
+				// rC = [sp + 8];
+				// rD = [sp + 12];
+				// rE = [sp + 16];
+				// sp += 20;
+			// Syntax:  pop rA, rB, rC, rD, rE
+
+		// Form 1:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 1111 0001
+			// Encoded like this:  ldmia sp, {rA, rB, rC, rD, rE, rF}
+			// Effect:  
+				// rA = [sp]; 
+				// rB = [sp + 4];
+				// rC = [sp + 8];
+				// rD = [sp + 12];
+				// rE = [sp + 16];
+				// rF = [sp + 20];
+				// sp += 24;
+			// Syntax:  pop rA, rB, rC, rD, rE, rF
+
+		// Form 2:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 1111 0010
+			// Encoded like this:  ldmia sp, {rA, rB, rC, rD, rE, rF, rG}
+			// Effect:  
+				// rA = [sp]; 
+				// rB = [sp + 4];
+				// rC = [sp + 8];
+				// rD = [sp + 12];
+				// rE = [sp + 16];
+				// rF = [sp + 20];
+				// rG = [sp + 24];
+				// sp += 28;
+			// Syntax:  pop rA, rB, rC, rD, rE, rF, rG
+
+		// Form 3:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 1111 0011
+			// Encoded like this:  ldmia sp, {rA, rB, rC, rD, rE, rF, rG, rH}
+			// Effect:  
+				// rA = [sp]; 
+				// rB = [sp + 4];
+				// rC = [sp + 8];
+				// rD = [sp + 12];
+				// rE = [sp + 16];
+				// rF = [sp + 20];
+				// rG = [sp + 24];
+				// rH = [sp + 28];
+				// sp += 32;
+			// Syntax:  pop rA, rB, rC, rD, rE, rF, rG, rH
+
+
+		// Pseudo instruction:
+		// Push
+		// Note that this instruction takes multiple forms
+		// Form 0:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 1111 0000
+			// Encoded like this:  stmdb sp
+			// Effect:  
+				// sp -= 20;
+				// [sp] = rA;
+				// [sp + 4] = rB;
+				// [sp + 8] = rC;
+				// [sp + 12] = rD;
+				// [sp + 16] = rE;
+			// Syntax:  push rA, rB, rC, rD, rE
+
+		// Form 1:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 1111 0001
+			// Encoded like this:  stmdb sp
+			// Effect:  
+				// sp -= 24;
+				// [sp] = rA;
+				// [sp + 4] = rB;
+				// [sp + 8] = rC;
+				// [sp + 12] = rD;
+				// [sp + 16] = rE;
+				// [sp + 20] = rF;
+			// Syntax:  push rA, rB, rC, rD, rE, rF
+
+		// Form 2:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 1111 0010
+			// Encoded like this:  stmdb sp
+			// Effect:  
+				// sp -= 28;
+				// [sp] = rA;
+				// [sp + 4] = rB;
+				// [sp + 8] = rC;
+				// [sp + 12] = rD;
+				// [sp + 16] = rE;
+				// [sp + 20] = rF;
+				// [sp + 24] = rG;
+			// Syntax:  push rA, rB, rC, rD, rE, rF, rG
+
+		// Form 3:
+			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 1111 0010
+			// Encoded like this:  stmdb sp
+			// Effect:  
+				// sp -= 32;
+				// [sp] = rA;
+				// [sp + 4] = rB;
+				// [sp + 8] = rC;
+				// [sp + 12] = rD;
+				// [sp + 16] = rE;
+				// [sp + 20] = rF;
+				// [sp + 24] = rG;
+				// [sp + 28] = rH;
+			// Syntax:  push rA, rB, rC, rD, rE, rF, rG, rH
