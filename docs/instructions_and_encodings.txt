@@ -96,15 +96,11 @@ Group 0 Instructions
 		// rA = Sign extend of low 8 bits in rB
 		seb rA, rB
 
-		//// Push registers rA and rb (as a pair) onto the 
-		//// stack (in that order)
-		//push rA, rB
-		// Reserved for future expansion.
+		// Load a 32-bit value into rA from the address in rB
+		ldr rA, [rB]
 
-		//// Pop two 32-bit values off the stack, storing the first popped
-		//// value into rB and the second popped value into rA
-		//pop rA, rB
-		// Reserved for future expansion.
+		// Store rA to address in rB
+		str rA, [rB]
 
 
 
@@ -382,7 +378,8 @@ Non Block Moves Version:  10fo oooo aaaa bbbb  cccc iiii iiii iiii
 	c:  rC
 	i:  12-bit immediate value
 
-Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
+Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):  
+	10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 
 	f:  1 if can affect flags (and instruction type supports it), 0 if
 	flags unchanged.
@@ -508,7 +505,7 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 			// Effect:  
 				// rA = [rX];
 				// rX += 4;
-			// Syntax:  ldmpa rX, {rA}
+			Syntax:  ldmpa rX, {rA}
 
 		// Form 1:
 			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001
@@ -516,7 +513,7 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 				// rA = [rX];
 				// rB = [rX + 4];
 				// rX += 8;
-			// Syntax:  ldmpa rX, {rA, rB}
+			Syntax:  ldmpa rX, {rA, rB}
 
 		// Form 2:
 			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010
@@ -525,7 +522,7 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 				// rB = [rX + 4];
 				// rC = [rX + 8];
 				// rX += 12;
-			// Syntax:  ldmpa rX, {rA, rB, rC}
+			Syntax:  ldmpa rX, {rA, rB, rC}
 
 		// Form 3:
 			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
@@ -535,7 +532,7 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 				// rC = [rX + 8];
 				// rD = [rX + 12];
 				// rX += 16;
-			// Syntax:  ldmpa rX, {rA, rB, rC, rD}
+			 Syntax:  ldmpa rX, {rA, rB, rC, rD}
 
 
 		// STore Multiple, Subtract Before
@@ -660,10 +657,6 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 
 
 		// Pseudo instruction:
-		//// Load 32-bit value from address rB into rA.
-		//// Encoded like this:  ldr rA, [rB, r0, 0]
-		//ldr rA, [rB]
-
 		// Pseudo instruction:
 		//// Load zero-extended 16-bit value from address rB into rA.
 		//// This zero-extends the value.
@@ -682,18 +675,13 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 		//// Encoded like this:  ldb rA, [rB, r0, 0]
 		//ldb rA, [rB]
 
-
-
 		// Pseudo instruction:
 		//// Load sign-extended 8-bit value from address rB into rA.
 		//// This sign-extends the value.
 		//// Encoded like this:  ldsb rA, [rB, r0, 0]
 		//ldsb rA, [rB]
 
-		// Pseudo instruction:
-		//// Store 32-bit value in rA to address rB.
-		//// Encoded like this:  str rA, [rB, r0, 0]
-		//str rA, [rB]
+
 
 		// Pseudo instruction:
 		//// Store low 16 bits of rA to address rB.

@@ -211,6 +211,42 @@
 		//DESCRIBE_STORE_8(arg_address)\
 		DESCRIBE_PSEUDO_INSTR_LDST_ENCODING(__TEMP_LDST_INSTR_TYPE_2(concat(stb,encoding_suffix),encoding_args))\
 		//__TEMP_LDST_INSTR_TYPE(concat(stb,suffix))
+#define GEN_MOST_PSEUDO_LDST_2(arg_address, suffix, encoding_suffix, encoding_args) DESCRIBE_PSEUDO_INSTRUCTION\
+		DESCRIBE_PSEUDO_INSTRUCTION\
+		//DESCRIBE_LOAD_16_UNSIGNED(arg_address)\
+		//DESCRIBE_ZERO_EXTEND\
+		DESCRIBE_PSEUDO_INSTR_LDST_ENCODING(__TEMP_LDST_INSTR_TYPE_2(concat(ldh,encoding_suffix),encoding_args))\
+		//__TEMP_LDST_INSTR_TYPE(concat(ldh,suffix))\
+\
+		DESCRIBE_PSEUDO_INSTRUCTION\
+		//DESCRIBE_LOAD_16_SIGNED(arg_address)\
+		//DESCRIBE_SIGN_EXTEND\
+		DESCRIBE_PSEUDO_INSTR_LDST_ENCODING(__TEMP_LDST_INSTR_TYPE_2(concat(ldsh,encoding_suffix),encoding_args))\
+		//__TEMP_LDST_INSTR_TYPE(concat(ldsh,suffix))\
+\
+		DESCRIBE_PSEUDO_INSTRUCTION\
+		//DESCRIBE_LOAD_8_UNSIGNED(arg_address)\
+		//DESCRIBE_ZERO_EXTEND\
+		DESCRIBE_PSEUDO_INSTR_LDST_ENCODING(__TEMP_LDST_INSTR_TYPE_2(concat(ldb,encoding_suffix),encoding_args))\
+		//__TEMP_LDST_INSTR_TYPE(concat(ldb,suffix))\
+\
+		DESCRIBE_PSEUDO_INSTRUCTION\
+		//DESCRIBE_LOAD_8_SIGNED(arg_address)\
+		//DESCRIBE_SIGN_EXTEND\
+		DESCRIBE_PSEUDO_INSTR_LDST_ENCODING(__TEMP_LDST_INSTR_TYPE_2(concat(ldsb,encoding_suffix),encoding_args))\
+		//__TEMP_LDST_INSTR_TYPE(concat(ldsb,suffix))\
+\
+\
+\
+		DESCRIBE_PSEUDO_INSTRUCTION\
+		//DESCRIBE_STORE_16(arg_address)\
+		DESCRIBE_PSEUDO_INSTR_LDST_ENCODING(__TEMP_LDST_INSTR_TYPE_2(concat(sth,encoding_suffix),encoding_args))\
+		//__TEMP_LDST_INSTR_TYPE(concat(sth,suffix))\
+\
+		DESCRIBE_PSEUDO_INSTRUCTION\
+		//DESCRIBE_STORE_8(arg_address)\
+		DESCRIBE_PSEUDO_INSTR_LDST_ENCODING(__TEMP_LDST_INSTR_TYPE_2(concat(stb,encoding_suffix),encoding_args))\
+		//__TEMP_LDST_INSTR_TYPE(concat(stb,suffix))
 #define GEN_MOST_ARITH_LOG(rotate_arg, arg_0, arg_1, arg_2, suffix) // arg_0 = arg_1 + arg_2\
 		FLAGS_ALL\
 		__TEMP_ARITH_LOG_INSTR_TYPE(concat(add,suffix))\
@@ -316,15 +352,11 @@ GROUP_HEADER(0)
 		// ARG_REG(A) = Sign extend of low 8 bits in ARG_REG(B)
 		INSTR_RA_RB(seb)
 
-		//// Push registers ARG_REG(A) and ARG_REG(b) (as a pair) onto the 
-		//// stack (in that order)
-		//INSTR_RA_RB(push)
-		RESERVED
+		// Load a 32-bit value into rA from the address in rB
+		INSTR_LDST_RA_RB(ldr)
 
-		//// Pop two 32-bit values off the stack, storing the first popped
-		//// value into ARG_REG(B) and the second popped value into ARG_REG(A)
-		//INSTR_RA_RB(pop)
-		RESERVED
+		// Store rA to address in rB
+		INSTR_LDST_RA_RB(str)
 
 
 
@@ -527,7 +559,8 @@ Non Block Moves Version:  10fo oooo aaaa bbbb  cccc iiii iiii iiii
 	DESCRIBE_RC
 	DESCRIBE_IMM(12)
 
-Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
+Block Moves Version (ldmpa, stmmb, ldmia, stmia, push, pop):  
+	10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 
 	DESCRIBE_AFFECTS_FLAGS
 	DESCRIBE_OP
@@ -571,7 +604,7 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 			// Effect:  
 				// ARG_REG(A) = [ARG_REG(X)];
 				// ARG_REG(X) += 4;
-			// Syntax:  ldmpa ARG_REG(X), {ARG_REG(A)}
+			Syntax:  ldmpa ARG_REG(X), {ARG_REG(A)}
 
 		// Form 1:
 			// Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001
@@ -579,7 +612,7 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 				// ARG_REG(A) = [ARG_REG(X)];
 				// ARG_REG(B) = [ARG_REG(X) + 4];
 				// ARG_REG(X) += 8;
-			// Syntax:  ldmpa ARG_REG(X), {ARG_REG(A), ARG_REG(B)}
+			Syntax:  ldmpa ARG_REG(X), {ARG_REG(A), ARG_REG(B)}
 
 		// Form 2:
 			// Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010
@@ -588,7 +621,7 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 				// ARG_REG(B) = [ARG_REG(X) + 4];
 				// ARG_REG(C) = [ARG_REG(X) + 8];
 				// ARG_REG(X) += 12;
-			// Syntax:  ldmpa ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C)}
+			Syntax:  ldmpa ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C)}
 
 		// Form 3:
 			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
@@ -598,7 +631,7 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 				// ARG_REG(C) = [ARG_REG(X) + 8];
 				// ARG_REG(D) = [ARG_REG(X) + 12];
 				// ARG_REG(X) += 16;
-			// Syntax:  ldmpa ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)}
+			 Syntax:  ldmpa ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)}
 
 
 		// STore Multiple, Subtract Before
@@ -724,7 +757,7 @@ Block Moves Version:  10fo oooo aaaa bbbb  cccc dddd xxxx iiii
 
 #define __TEMP_LDST_INSTR_TYPE_2 INSTR_LDST_GENERIC_RA_RB_RC_IMM
 #define __TEMP_LDST_INSTR_TYPE INSTR_LDST_RA_RB
-		GEN_MOST_PSEUDO_LDST(ARG_FOR_LDST_NON_INDEXED,,,ARG_REG(B)\,ARG_REG(0)\,0)
+		GEN_MOST_PSEUDO_LDST_2(ARG_FOR_LDST_NON_INDEXED,,,ARG_REG(B)\,ARG_REG(0)\,0)
 #undef __TEMP_LDST_INSTR_TYPE
 
 
