@@ -856,7 +856,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// Form 3:
 			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
 			// Effect:  
-			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP, {ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)})
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP\, {ARG_REG(A)\, ARG_REG(B)\, ARG_REG(C)\, ARG_REG(D)})
 				// ARG_SP -= 16;
 				// [ARG_SP] = ARG_REG(A);
 				// [ARG_SP + 4] = ARG_REG(B);
@@ -1198,7 +1198,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// Note that this instruction takes multiple forms
 		// Form 0:
 			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 1111 0000
-			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP, {rA\, rB\, rC\, rD\, rE})
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP\, {rA\, rB\, rC\, rD\, rE})
 			// Effect:  
 				// ARG_SP -= 20;
 				// [ARG_SP] = ARG_REG(A);
@@ -1210,7 +1210,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 		// Form 1:
 			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 1111 0001
-			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP, {rA\, rB\, rC\, rD\, rE\, rF})
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP\, {rA\, rB\, rC\, rD\, rE\, rF})
 			// Effect:  
 				// ARG_SP -= 24;
 				// [ARG_SP] = ARG_REG(A);
@@ -1223,7 +1223,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 		// Form 2:
 			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 1111 0010
-			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP, {rA\, rB\, rC\, rD\, rE\, rF\, rG})
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP\, {rA\, rB\, rC\, rD\, rE\, rF\, rG})
 			// Effect:  
 				// ARG_SP -= 28;
 				// [ARG_SP] = ARG_REG(A);
@@ -1237,7 +1237,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 		// Form 3:
 			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 1111 0010
-			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP, {rA\, rB\, rC\, rD\, rE\, rF\, rG\, rH})
+			DESCRIBE_PSEUDO_INSTR_ENCODING_2(stmdb,ARG_SP\, {rA\, rB\, rC\, rD\, rE\, rF\, rG\, rH})
 			// Effect:  
 				// ARG_SP -= 32;
 				// [ARG_SP] = ARG_REG(A);

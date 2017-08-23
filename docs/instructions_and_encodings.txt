@@ -871,7 +871,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// Form 3:
 			// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
 			// Effect:  
-			// Encoded like this:  stmdb sp
+			// Encoded like this:  stmdb sp, {rA, rB, rC, rD}
 				// sp -= 16;
 				// [sp] = rA;
 				// [sp + 4] = rB;
@@ -1243,7 +1243,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// Note that this instruction takes multiple forms
 		// Form 0:
 			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 1111 0000
-			// Encoded like this:  stmdb sp
+			// Encoded like this:  stmdb sp, {rA, rB, rC, rD, rE}
 			// Effect:  
 				// sp -= 20;
 				// [sp] = rA;
@@ -1255,7 +1255,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 		// Form 1:
 			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 1111 0001
-			// Encoded like this:  stmdb sp
+			// Encoded like this:  stmdb sp, {rA, rB, rC, rD, rE, rF}
 			// Effect:  
 				// sp -= 24;
 				// [sp] = rA;
@@ -1268,7 +1268,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 		// Form 2:
 			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 1111 0010
-			// Encoded like this:  stmdb sp
+			// Encoded like this:  stmdb sp, {rA, rB, rC, rD, rE, rF, rG}
 			// Effect:  
 				// sp -= 28;
 				// [sp] = rA;
@@ -1282,7 +1282,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 		// Form 3:
 			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 1111 0010
-			// Encoded like this:  stmdb sp
+			// Encoded like this:  stmdb sp, {rA, rB, rC, rD, rE, rF, rG, rH}
 			// Effect:  
 				// sp -= 32;
 				// [sp] = rA;
