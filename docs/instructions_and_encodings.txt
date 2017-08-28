@@ -508,8 +508,6 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
-		// Reserved for future expansion.
-
 		// STore Multiple, Decrement Before
 		// Note that this instruction takes multiple forms
 		// Form 0:
@@ -621,12 +619,21 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 				// rX += 16;
 			Syntax:  stmia rX, {rA, rB, rC, rD}
 
+		// ENable Interrupts
+		eni
 
 
 
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// DIsable Interrupts
+		dii
+
+		// Set the PC to interrupt RETurn address and enable Interrupts
+		reti
+
+		// Set the PC to the Interrupt Return Address, but DON'T enable
+		// interrupts
+		jump ira
+
 		// Reserved for future expansion.
 
 
@@ -1091,22 +1098,13 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// Copy to flags from rA
 		// This instruction can affect N, V, Z, and C flags.
 		cpy flags, rA
-		
-		// ENable Interrupts
-		eni
 
-		// DIsable Interrupts
-		dii
+		// Reserved for future expansion.
+		// Reserved for future expansion.
 
 
-
-		// Set the PC to interrupt RETurn address and enable Interrupts
-		reti
-
-		// Set the PC to the Interrupt Return Address, but DON'T enable
-		// interrupts
-		jump ira
-
+		// Reserved for future expansion.
+		// Reserved for future expansion.
 		// Reserved for future expansion.
 		// Reserved for future expansion.
 

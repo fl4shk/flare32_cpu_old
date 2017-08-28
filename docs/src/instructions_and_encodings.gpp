@@ -546,8 +546,6 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
-		RESERVED
-
 		// STore Multiple, Decrement Before
 		// Note that this instruction takes multiple forms
 		// Form 0:
@@ -659,12 +657,21 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 				// ARG_REG(X) += 16;
 			Syntax:  stmia ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)}
 
+		// ENable Interrupts
+		INSTR_NO_ARGS(eni)
 
 
 
-		RESERVED
-		RESERVED
-		RESERVED
+		// DIsable Interrupts
+		INSTR_NO_ARGS(dii)
+
+		// Set the PC to interrupt RETurn address and enable Interrupts
+		INSTR_NO_ARGS(reti)
+
+		// Set the PC to the Interrupt Return Address, but DON'T enable
+		// interrupts
+		INSTR_IRA(jump)
+
 		RESERVED
 
 
@@ -1024,22 +1031,13 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// Copy to flags from ARG_REG(A)
 		FLAGS_ALL
 		INSTR_FLAGS_RA(cpy)
-		
-		// ENable Interrupts
-		INSTR_NO_ARGS(eni)
 
-		// DIsable Interrupts
-		INSTR_NO_ARGS(dii)
+		RESERVED
+		RESERVED
 
 
-
-		// Set the PC to interrupt RETurn address and enable Interrupts
-		INSTR_NO_ARGS(reti)
-
-		// Set the PC to the Interrupt Return Address, but DON'T enable
-		// interrupts
-		INSTR_IRA(jump)
-
+		RESERVED
+		RESERVED
 		RESERVED
 		RESERVED
 
