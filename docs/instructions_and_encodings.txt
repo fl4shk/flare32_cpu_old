@@ -131,11 +131,18 @@ Group 0 Instructions
 		// The return address is stored in the link register (lr).
 		callx rA, rB
 
+		// Set pc to destination address in (rA + rB).
+		jumpx rA, rB
+
+
+
 		// Copy pc to rA (this can be used for pc-relative loads
 		// and stores)
 		cpy rA, pc
 
-
+		// Copy
+		// rA = rB
+		cpy rA, rB
 
 		// rA = Sign extend of low 16 bits in rB
 		// Note that the high 16 bits of rB are ignored
@@ -144,17 +151,22 @@ Group 0 Instructions
 		// rA = Sign extend of low 8 bits in rB
 		seb rA, rB
 
-		// Copy
-		// rA = rB
-		cpy rA, rB
-		
-		// Reserved for future expansion.
 
 
 		// Pseudo instruction:
 		//// Subroutine call using rB as destination address. 
 		//// Encoded like this:  callx r0, rB
 		//call rB
+
+		// Pseudo instruction:
+		//// Set pc to destination address in rB.
+		//// Encoded like this:  jumpx r0, rB
+		//jump rB
+
+		// Pseudo instruction:
+		//// Set pc to destination address in rB.
+		//// Encoded like this:  jumpx r0, rB
+		//cpy pc, rB
 
 
 Group 1 Instructions
@@ -496,8 +508,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
-		// Set pc to destination address in (rA + rB).
-		jumpx rA, rB
+		// Reserved for future expansion.
 
 		// STore Multiple, Decrement Before
 		// Note that this instruction takes multiple forms
@@ -743,17 +754,6 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//tst rB, rC
 
 
-
-
-		// Pseudo instruction:
-		//// Set pc to destination address in rB.
-		//// Encoded like this:  jumpx r0, rB
-		//jump rB
-
-		// Pseudo instruction:
-		//// Set pc to destination address in rB.
-		//// Encoded like this:  jumpx r0, rB
-		//cpy pc, rB
 
 
 		// Pseudo instruction:

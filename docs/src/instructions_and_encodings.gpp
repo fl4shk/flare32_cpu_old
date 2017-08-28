@@ -326,11 +326,18 @@ GROUP_HEADER(0)
 		DESCRIBE_CALL_RETURN_ADDRESS
 		INSTR_RA_RB(callx)
 
+		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
+		INSTR_RA_RB(jumpx)
+
+
+
 		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
 		// and stores)
 		INSTR_RA_PC(cpy)
 
-
+		// Copy
+		// ARG_REG(A) = ARG_REG(B)
+		INSTR_RA_RB(cpy)
 
 		// ARG_REG(A) = Sign extend of low 16 bits in ARG_REG(B)
 		// Note that the high 16 bits of ARG_REG(B) are ignored
@@ -339,17 +346,22 @@ GROUP_HEADER(0)
 		// ARG_REG(A) = Sign extend of low 8 bits in ARG_REG(B)
 		INSTR_RA_RB(seb)
 
-		// Copy
-		// ARG_REG(A) = ARG_REG(B)
-		INSTR_RA_RB(cpy)
-		
-		RESERVED
 
 
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//DESCRIBE_CALL_DESTINATION_ADDRESS(ARG_REG(B))
 		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(callx,ARG_REG(B))
 		//PSEUDO_INSTR_RB(call)
+
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(B))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(jumpx,ARG_REG(B))
+		//PSEUDO_INSTR_RB(jump)
+
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(B))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(jumpx,ARG_REG(B))
+		//PSEUDO_INSTR_PC_RB(cpy)
 
 
 GROUP_HEADER(1)
@@ -534,8 +546,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
-		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
-		INSTR_RA_RB(jumpx)
+		RESERVED
 
 		// STore Multiple, Decrement Before
 		// Note that this instruction takes multiple forms
@@ -706,17 +717,6 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//PSEUDO_INSTR_RB_RC(tst)
 
 
-
-
-		DESCRIBE_PSEUDO_INSTRUCTION
-		//DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(B))
-		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(jumpx,ARG_REG(B))
-		//PSEUDO_INSTR_RB(jump)
-
-		DESCRIBE_PSEUDO_INSTRUCTION
-		//DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(B))
-		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(jumpx,ARG_REG(B))
-		//PSEUDO_INSTR_PC_RB(cpy)
 
 
 		DESCRIBE_PSEUDO_INSTRUCTION
