@@ -20,6 +20,38 @@ Group 0 Instructions
 	b: rB
 
 	Instructions:
+		// Load 32-bit value from address rB into rA.
+		ldr rA, [rB]
+
+		// Load zero-extended 16-bit value from address rB into rA.
+		// This zero-extends the value.
+		ldh rA, [rB]
+
+		// Load sign-extended 16-bit value from address rB into rA.
+		// This sign-extends the value.
+		ldsh rA, [rB]
+
+		// Load zero-extended 8-bit value from address rB into rA.
+		// This zero-extends the value.
+		ldb rA, [rB]
+
+
+
+		// Load sign-extended 8-bit value from address rB into rA.
+		// This sign-extends the value.
+		ldsb rA, [rB]
+
+		// Store 32-bit value in rA to address rB.
+		str rA, [rB]
+
+		// Store low 16 bits of rA to address rB.
+		sth rA, [rB]
+
+		// Store low 8 bits of rA to address rB.
+		stb rA, [rB]
+
+
+
 		// rA = rA + rB
 		// This instruction can affect N, V, Z, and C flags.
 		add rA, rB
@@ -89,52 +121,6 @@ Group 0 Instructions
 
 
 
-		// rA = Sign extend of low 16 bits in rB
-		// Note that the high 16 bits of rB are ignored
-		seh rA, rB
-
-		// rA = Sign extend of low 8 bits in rB
-		seb rA, rB
-
-		// Load a 32-bit value into rA from the address in rB
-		ldr rA, [rB]
-
-		// Store rA to address in rB
-		str rA, [rB]
-
-
-
-		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
-		// value are set to zero before the push)
-		push flags
-
-		// Pop 8-bit value from the stack and store low 4 bits to flags
-		pop flags
-
-		// Clear rA, then CoPY FRom Flags to rA
-		cpy rA, flags
-
-		// Copy to flags from rA
-		// This instruction can affect N, V, Z, and C flags.
-		cpy flags, rA
-
-
-
-		// ENable Interrupts
-		eni
-
-		// DIsable Interrupts
-		dii
-
-		// Set the PC to interrupt RETurn address and enable Interrupts
-		reti
-
-		// Set the PC to the Interrupt Return Address, but DON'T enable
-		// interrupts
-		jump ira
-
-
-
 		// Copy rA to the Interrupt Return Address
 		cpy ira, rA
 
@@ -148,6 +134,21 @@ Group 0 Instructions
 		// Copy pc to rA (this can be used for pc-relative loads
 		// and stores)
 		cpy rA, pc
+
+
+
+		// rA = Sign extend of low 16 bits in rB
+		// Note that the high 16 bits of rB are ignored
+		seh rA, rB
+
+		// rA = Sign extend of low 8 bits in rB
+		seb rA, rB
+
+		// Copy
+		// rA = rB
+		cpy rA, rB
+		
+		// Reserved for future expansion.
 
 
 		// Pseudo instruction:
@@ -619,42 +620,6 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
-		// Pseudo instruction:
-		// Pseudo instruction:
-		//// Load zero-extended 16-bit value from address rB into rA.
-		//// This zero-extends the value.
-		//// Encoded like this:  ldh rA, [rB, r0, 0]
-		//ldh rA, [rB]
-
-		// Pseudo instruction:
-		//// Load sign-extended 16-bit value from address rB into rA.
-		//// This sign-extends the value.
-		//// Encoded like this:  ldsh rA, [rB, r0, 0]
-		//ldsh rA, [rB]
-
-		// Pseudo instruction:
-		//// Load zero-extended 8-bit value from address rB into rA.
-		//// This zero-extends the value.
-		//// Encoded like this:  ldb rA, [rB, r0, 0]
-		//ldb rA, [rB]
-
-		// Pseudo instruction:
-		//// Load sign-extended 8-bit value from address rB into rA.
-		//// This sign-extends the value.
-		//// Encoded like this:  ldsb rA, [rB, r0, 0]
-		//ldsb rA, [rB]
-
-
-
-		// Pseudo instruction:
-		//// Store low 16 bits of rA to address rB.
-		//// Encoded like this:  sth rA, [rB, r0, 0]
-		//sth rA, [rB]
-
-		// Pseudo instruction:
-		//// Store low 8 bits of rA to address rB.
-		//// Encoded like this:  stb rA, [rB, r0, 0]
-		//stb rA, [rB]
 
 
 		// Pseudo instruction:
@@ -779,11 +744,6 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
-		// Pseudo instruction:
-		//// Copy
-		//// rA = rC
-		//// Encoded like this:  cpyp rA, rA, rC
-		//cpy rA, rC
 
 		// Pseudo instruction:
 		//// Set pc to destination address in rB.
@@ -1116,20 +1076,37 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 				// rX += 32;
 			Syntax:  stmia rX, {rA, rB, rC, rD, rE, rF, rG, rH}
 
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
+		// value are set to zero before the push)
+		push flags
+
+		// Pop 8-bit value from the stack and store low 4 bits to flags
+		pop flags
 
 
 
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// Clear rA, then CoPY FRom Flags to rA
+		cpy rA, flags
+
+		// Copy to flags from rA
+		// This instruction can affect N, V, Z, and C flags.
+		cpy flags, rA
+		
+		// ENable Interrupts
+		eni
+
+		// DIsable Interrupts
+		dii
 
 
 
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// Set the PC to interrupt RETurn address and enable Interrupts
+		reti
+
+		// Set the PC to the Interrupt Return Address, but DON'T enable
+		// interrupts
+		jump ira
+
 		// Reserved for future expansion.
 		// Reserved for future expansion.
 
