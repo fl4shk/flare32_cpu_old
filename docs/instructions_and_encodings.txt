@@ -332,7 +332,8 @@ Group 1 Instructions
 		// This instruction can affect the N and Z flags.
 		xorsi rA, rB, imm
 
-		// Reserved for future expansion.
+		// rA bits {31, 30, 29, ..., 18, 17, 16} = 16-bit unsigned immediate value
+		lui rA, imm
 
 
 

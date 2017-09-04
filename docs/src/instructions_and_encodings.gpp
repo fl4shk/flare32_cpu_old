@@ -454,7 +454,8 @@ GROUP_HEADER(1)
 		FLAGS_N_AND_Z
 		INSTR_RA_RB_IMM(xorsi,ARG_IMM)
 
-		RESERVED
+		// ARG_REG(A) bits {31, 30, 29, ..., 18, 17, 16} = 16-bit unsigned immediate value
+		INSTR_RA_IMM(lui,ARG_IMM)
 
 
 
