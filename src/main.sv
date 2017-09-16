@@ -20,6 +20,13 @@ module Main;
 
 	bit [7:0] __state;
 
+
+	task set_state;
+		input [7:0] some_state;
+
+		__state <= some_state;
+	endtask
+
 	initial
 	begin
 		__clk = 0;
@@ -39,7 +46,8 @@ module Main;
 		case (__state)
 			pkg_main::StInit:
 			begin
-				__state <= pkg_main::StQuit;
+				//__state <= pkg_main::StQuit;
+				set_state(pkg_main::StQuit);
 				$display("I'm in starting state!");
 			end
 
