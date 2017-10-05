@@ -2,6 +2,14 @@
 `define cpu_instr_encoding_defines_svinc
 
 // Some Abbreviations:
+//
+// IE:  Instruction Encoding
+//
+// 
+// G1:  Group 1
+// G2:  Group 2
+// G3:  Group 3
+//
 // 
 // HW0:  Half Word 0:  
 //		bits 15-0 of 16-bit instructions
@@ -21,8 +29,8 @@
 
 
 // Encoding group
-`define CPU_INSTR_HW0_ENC_GROUP__HIGH_BIT 15
-`define CPU_INSTR_HW0_ENC_GROUP__LOW_BIT 14
+`define CPU_IE_HW0_ENC_GROUP__HIGH_BIT 15
+`define CPU_IE_HW0_ENC_GROUP__LOW_BIT 14
 
 
 
@@ -31,15 +39,110 @@
 //
 // I guess "pop flags" discards the results despite affecting the stack
 // pointer?  I might want to change that....
-`define CPU_INSTR_HW0_AFFECTS_FLAGS__BIT 13
+`define CPU_IE_HW0_AFFECTS_FLAGS__BIT 13
 
 
 
 // What type of operation (add, sub, ldr, mul, subi, etc.)
-`define CPU_INSTR_HW0_OPER__HIGH_BIT 12
-`define CPU_INSTR_HW0_OPER__LOW_BIT 8
+`define CPU_IE_HW0_OPER__HIGH_BIT 12
+`define CPU_IE_HW0_OPER__LOW_BIT 8
 
 
+// rA
+`define CPU_IE_HW0_REG_A_INDEX__HIGH_BIT 7
+`define CPU_IE_HW0_REG_A_INDEX__LOW_BIT 4
+
+
+// rB
+`define CPU_IE_HW0_REG_A_INDEX__HIGH_BIT 3
+`define CPU_IE_HW0_REG_A_INDEX__LOW_BIT 0
+
+
+
+
+// Peculiarities to Instruction Groups other than 0:
+
+
+// [Encoding of] Group 1 Instructions
+// 01fo oooo aaaa bbbb  iiii iiii iiii iiii
+
+	// f:  1 if can affect flags (and instruction type supports it), 0 if
+	// flags unchanged.
+
+	// o:  opcode
+	// a: rA
+	// b: rB
+	// i:  16-bit immediate value
+
+
+// The 16-bit immediate value of a group 1 instruction:  
+`define CPU_IE_G1_HW1_IMM_VALUE__HIGH_BIT 15
+`define CPU_IE_G1_HW1_IMM_VALUE__LOW_BIT 0
+// Well that's simple.
+
+
+
+
+
+
+// [Encoding of] Group 2 Instructions
+// Non Block Moves Version:  
+	// 10fo oooo aaaa bbbb  cccc iiii iiii iiii
+
+	// f:  1 if can affect flags (and instruction type supports it), 0 if
+	// flags unchanged.
+
+	// o:  opcode
+	// a: rA
+	// b: rB
+	// c: rC
+	// i:  12-bit immediate value
+
+// Block Moves Version (stmdb, ldmia, stmia, push, pop):  
+	// 10fo oooo aaaa bbbb  cccc dddd xxxx 00ii
+
+	// f:  1 if can affect flags (and instruction type supports it), 0 if
+	// flags unchanged.
+
+	// o:  opcode
+	// a: rA
+	// b: rB
+	// c: rC
+	// d: rD
+	// x: rX
+	// i:  2-bit immediate value
+
+
+// rC
+// Note that both block moves version and non block moves version group 2
+// instructions have rC in their encoding
+`define CPU_IE_G2_HW1_REG_C_INDEX__HIGH_BIT 15
+`define CPU_IE_G2_HW1_REG_C_INDEX__LOW_BIT 12
+
+
+// The 12-bit immediate value of a non-block move group 2 instruction:
+`define CPU_IE_G2_NONBLK_HW1_IMM_VALUE__HIGH_BIT 11
+`define CPU_IE_G2_NONBLK_HW1_IMM_VALUE__LOW_BIT 0
+
+
+
+// Block move:  rD
+`define CPU_IE_G2_BLK_HW1_REG_D_INDEX__HIGH_BIT 11
+`define CPU_IE_G2_BLK_HW1_REG_D_INDEX__LOW_BIT 8
+
+
+// Block move:  rX
+`define CPU_IE_G2_BLK_HW1_REG_X_INDEX__HIGH_BIT 7
+`define CPU_IE_G2_BLK_HW1_REG_X_INDEX__LOW_BIT 4
+
+// Block move:  00
+`define CPU_IE_G2_BLK_HW1_BLANK__HIGH_BIT 3
+`define CPU_IE_G2_BLK_HW1_BLANK__LOW_BIT 2
+
+// Block move:  00 for one address reg, 01 for two address regs, 10 for
+// three address regs, 11 for four address regs
+`define CPU_IE_G2_BLK_HW1_NUM_REGS__HIGH_BIT 1
+`define CPU_IE_G2_BLK_HW1_NUM_REGS__LOW_BIT 0
 
 
 `endif		// cpu_instr_encoding_defines_svinc
