@@ -5,6 +5,8 @@ objs*/*
 objs_dis*/*
 asmouts*/*
 preprocs*/*
+*.s.ignore
+*.s
 *.gdb_history*
 *tags
 *types_*.taghl

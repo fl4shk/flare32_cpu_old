@@ -1,6 +1,11 @@
+`include "src/misc_defines.svinc"
+
 package pkg_main;
 
-typedef enum bit [7:0]
+`define STATE_WIDTH 8
+`define STATE_MSB_POS `WIDTH_TO_MSB_POS(`STATE_WIDTH)
+
+typedef enum bit [`STATE_MSB_POS:0]
 {
 	StInit,
 
@@ -18,14 +23,16 @@ module Main;
 
 	bit __clk;
 
-	bit [7:0] __state;
+	bit [`STATE_MSB_POS:0] __state;
 
 
 	task set_state;
-		input [7:0] some_state;
+		input [`STATE_MSB_POS:0] some_state;
 
 		__state <= some_state;
 	endtask
+
+
 
 	initial
 	begin
@@ -36,7 +43,7 @@ module Main;
 
 	always
 	begin
-		#1
+		#20
 		__clk = !__clk;
 	end
 
@@ -56,9 +63,7 @@ module Main;
 				$display("I'm quitting now!");
 				$finish;
 			end
-
 		endcase
-		
 	end
 
 
