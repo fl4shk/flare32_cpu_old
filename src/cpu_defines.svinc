@@ -1,0 +1,30 @@
+`ifndef cpu_defines_svinc
+`define cpu_defines_svinc
+
+`include "src/misc_defines.svinc"
+
+
+// General defines
+
+`define CPU_REQ_DATA_SIZE_WIDTH 2
+`define CPU_REQ_DATA_SIZE_MSB_POS \
+	`WIDTH_TO_MSB_POS(`CPU_REQ_DATA_SIZE_WIDTH)
+
+
+`define CPU_DATA_BUS_MAX_WIDTH 48
+`define CPU_DATA_BUS_MAX_MSB_POS `WIDTH_TO_MSB_POS(`CPU_DATA_BUS_MAX_WIDTH)
+
+
+
+// This is for the no cache version of the CPU
+`define CPU_ADDR_BUS_WIDTH 32
+`define CPU_ADDR_BUS_MSB_POS `WIDTH_TO_MSB_POS(`CPU_ADDR_BUS_WIDTH)
+
+
+
+// Instruction encoding defines
+`include "src/cpu_instr_encoding_defines.svinc"
+
+
+
+`endif		// cpu_defines_svinc

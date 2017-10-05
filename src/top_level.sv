@@ -1,6 +1,7 @@
 `include "src/misc_defines.svinc"
 
 
+// Simulation top level module
 module TopLevel;
 
 	bit __master_clk, __half_clk;

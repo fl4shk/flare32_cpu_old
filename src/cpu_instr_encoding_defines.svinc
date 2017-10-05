@@ -1,0 +1,45 @@
+`ifndef cpu_instr_encoding_defines_svinc
+`define cpu_instr_encoding_defines_svinc
+
+// Some Abbreviations:
+// 
+// HW0:  Half Word 0:  
+//		bits 15-0 of 16-bit instructions
+//		bits 31-16 of 32-bit instructions
+//		bits 47-32 of 48-bit instructions
+// 
+// HW1:  Half Word 1:  
+//		bits 15-0 of 32-bit instructions
+//		bits 31-16 of 48-bit instructions
+// 
+// HW2:  Half Word 2:
+//		bits 15-0 of 48-bit instructions
+//
+//
+// NONBLK:  Non Block Move instructions
+// BLK:  Block Move instructions
+
+
+// Encoding group
+`define CPU_INSTR_HW0_ENC_GROUP__HIGH_BIT 15
+`define CPU_INSTR_HW0_ENC_GROUP__LOW_BIT 14
+
+
+
+// If flags are possible to change (some instructions don't affect flags
+// anyway though)
+//
+// I guess "pop flags" discards the results despite affecting the stack
+// pointer?  I might want to change that....
+`define CPU_INSTR_HW0_AFFECTS_FLAGS__BIT 13
+
+
+
+// What type of operation (add, sub, ldr, mul, subi, etc.)
+`define CPU_INSTR_HW0_OPER__HIGH_BIT 12
+`define CPU_INSTR_HW0_OPER__LOW_BIT 8
+
+
+
+
+`endif		// cpu_instr_encoding_defines_svinc
