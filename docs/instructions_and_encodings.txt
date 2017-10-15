@@ -1166,7 +1166,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//
 		// If rA and rB are the same register, only the low 32 bits of
 		// result are stored
-		umull rA:rB, rC, rD
+		umul rA:rB, rC, rD
 
 		// Signed 32-bit by 32-bit Multiplication -> Signed 64-bit result,
 		// where rA is high 32 bits of result, rB is low 32 bits of result
@@ -1174,7 +1174,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//
 		// If rA and rB are the same register, only the low 32 bits of
 		// result are stored
-		smull rA:rB, rC, rD
+		smul rA:rB, rC, rD
 
 
 		// Unsigned 64-bit by 64-bit Division -> Unsigned 64-bit Quotient
@@ -1194,7 +1194,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//
 		// If rB is the same as either rC or rD, then no remainder will be
 		// stored.
-		udivmodl rA:rB, rC:rD, rE:rF, rG:rH
+		udivmod rA:rB, rC:rD, rE:rF, rG:rH
 
 		// Signed 64-bit by 64-bit Division -> Signed 64-bit Quotient and
 		// Signed 64-bit Remainder
@@ -1213,7 +1213,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//
 		// If rB is the same as either rC or rD, then no remainder will be
 		// stored.
-		sdivmodl rA:rB, rC:rD, rE:rF, rG:rH
+		sdivmod rA:rB, rC:rD, rE:rF, rG:rH
 
 		// Unsigned 32-bit by 32-bit Division -> Unsigned 32-bit Quotient
 		// and Unsigned 32-bit Remainder
