@@ -922,6 +922,19 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	c: rC
 	d: rD
 
+64-bit bitshifted by 32-bit -> 64-bit Version:
+	11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 0000 0000
+
+	f:  1 if can affect flags (and instruction type supports it), 0 if
+	flags unchanged.
+
+	o:  opcode
+	a: rA
+	b: rB
+	c: rC
+	d: rD
+	DESCRIBE_RE
+
 
 	Instructions:
 		// Load 32-bit value from address (absolute_addr + rB) into rA.
@@ -1220,9 +1233,30 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// 64-bit logical shift left by 32-bit register
+		//
+		// rA:rB = rC:rD << rE
+		//
+		// if rA is the same register as rB, only the low 32 bits of the
+		// result will be stored
+		lsl rA:rB, rC:rD, rE
+
+		// 64-bit logical shift right by 32-bit register
+		//
+		// rA:rB = $unsigned($unsigned(rC:rD) >> $unsigned(rE))
+		//
+		// if rA is the same register as rB, only the low 32 bits of the
+		// result will be stored
+		lsr rA:rB, rC:rD, rE
+
+		// 64-bit arithmetic shift right by 32-bit register
+		//
+		// rA:rB = $signed($signed(rC:rD) >> $signed(rE))
+		//
+		// if rA is the same register as rB, only the low 32 bits of the
+		// result will be stored
+		asr rA:rB, rC:rD, rE
+
 		// Reserved for future expansion.
 
 

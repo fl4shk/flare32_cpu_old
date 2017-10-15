@@ -875,6 +875,17 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	DESCRIBE_RC
 	DESCRIBE_RD
 
+64-bit bitshifted by 32-bit -> 64-bit Version:
+	11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 0000 0000
+
+	DESCRIBE_AFFECTS_FLAGS
+	DESCRIBE_OP
+	DESCRIBE_RA
+	DESCRIBE_RB
+	DESCRIBE_RC
+	DESCRIBE_RD
+	DESCRIBE_RE
+
 
 	DESCRIBE_INSTRUCTIONS
 #define __TEMP_LDST_INSTR_TYPE INSTR_LDST_RA_RB_IMM
@@ -1147,9 +1158,30 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
-		RESERVED
-		RESERVED
-		RESERVED
+		// 64-bit logical shift left by 32-bit register
+		//
+		// rA:rB = rC:rD << rE
+		//
+		// if rA is the same register as rB, only the low 32 bits of the
+		// result will be stored
+		lsl rA:rB, rC:rD, rE
+
+		// 64-bit logical shift right by 32-bit register
+		//
+		// rA:rB = $unsigned($unsigned(rC:rD) >> $unsigned(rE))
+		//
+		// if rA is the same register as rB, only the low 32 bits of the
+		// result will be stored
+		lsr rA:rB, rC:rD, rE
+
+		// 64-bit arithmetic shift right by 32-bit register
+		//
+		// rA:rB = $signed($signed(rC:rD) >> $signed(rE))
+		//
+		// if rA is the same register as rB, only the low 32 bits of the
+		// result will be stored
+		asr rA:rB, rC:rD, rE
+
 		RESERVED
 
 
