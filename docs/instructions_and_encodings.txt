@@ -933,7 +933,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	b: rB
 	c: rC
 	d: rD
-	DESCRIBE_RE
+	e: rE
 
 
 	Instructions:

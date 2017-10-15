@@ -884,7 +884,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	DESCRIBE_RB
 	DESCRIBE_RC
 	DESCRIBE_RD
-	DESCRIBE_RE
+	DESCRIBE_REG(e,E)
 
 
 	DESCRIBE_INSTRUCTIONS
