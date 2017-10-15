@@ -851,6 +851,8 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 Group 3 Instructions
+Note that these instructions really should have the "f" bit replaced with
+another opcode bit.
 Non Block Moves Version:  
 	11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 
@@ -879,6 +881,47 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	h: rH
 	x: rX
 	i:  2-bit immediate value
+
+32-bit by 32-bit -> 64-bit Multiply Version:
+	11fo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
+
+	f:  1 if can affect flags (and instruction type supports it), 0 if
+	flags unchanged.
+
+	o:  opcode
+	a: rA
+	b: rB
+	c: rC
+	d: rD
+
+
+64-bit by 32-bit -> 64-bit DivMod Version:
+	11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 0000 0000
+
+	f:  1 if can affect flags (and instruction type supports it), 0 if
+	flags unchanged.
+
+	o:  opcode
+	a: rA
+	b: rB
+	c: rC
+	d: rD
+	e: rE
+	f: rF
+	g: rG
+
+32-bit by 32-bit -> 32-bit DivMod Version:
+	11fo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
+
+	f:  1 if can affect flags (and instruction type supports it), 0 if
+	flags unchanged.
+
+	o:  opcode
+	a: rA
+	b: rB
+	c: rC
+	d: rD
+
 
 	Instructions:
 		// Load 32-bit value from address (absolute_addr + rB) into rA.
@@ -1100,14 +1143,80 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// This instruction can affect N, V, Z, and C flags.
 		cpy flags, rA
 
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+
+		// Unigned 32-bit by 32-bit Multiplication -> Unsigned 64-bit
+		// result,
+		// where rA is high 32 bits of result, rB is low 32 bits of result
+		// $unsigned(rC * rD) -> rA:rB as a pair
+		//
+		// If rA and rB are the same register, only the low 32 bits of
+		// result are stored
+		umull rA:rB, rC, rD
+
+		// Signed 32-bit by 32-bit Multiplication -> Signed 64-bit result,
+		// where rA is high 32 bits of result, rB is low 32 bits of result
+		// $signed(rC * rD) -> rA:rB as a pair
+		//
+		// If rA and rB are the same register, only the low 32 bits of
+		// result are stored
+		smull rA:rB, rC, rD
 
 
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
-		// Reserved for future expansion.
+		// Unsigned 64-bit by 32-bit Division -> Unsigned 64-bit Quotient
+		// and Unsigned 64-bit Remainder.
+		// 
+		// Unsigned Divides rE:rF by rG, stores 64-bit unsigned quotient
+		// in rA:rB and 64-bit unsigned remainder in rC:rD
+		//
+		// If rA and rB are the same register, only the low 32 bits of
+		// quotient are stored
+		//
+		// If rC and rD are the same register, only the low 32 bits of the
+		// remainder are stored.
+		//
+		// If rA is the same as either rC or rD, then no remainder will be
+		// stored.
+		//
+		// If rB is the same as either rC or rD, then no remainder will be
+		// stored.
+		udivmodl rA:rB, rC:rD, rE:rF, rG
+
+		// Signed 64-bit by 32-bit Division -> Signed 64-bit Quotient and
+		// Signed 64-bit Remainder
+		// 
+		// Signed Divides rE:rF by rG, stores 64-bit signed quotient in
+		// rA:rB and 64-bit signed remainder in rC:rD
+		//
+		// If rA and rB are the same register, only the low 32 bits of
+		// quotient are stored
+		//
+		// If rC and rD are the same register, only the low 32 bits of the
+		// remainder are stored.
+		//
+		// If rA is the same as either rC or rD, then no remainder will be
+		// stored.
+		//
+		// If rB is the same as either rC or rD, then no remainder will be
+		// stored.
+		sdivmodl rA:rB, rC:rD, rE:rF, rG
+
+		// Unsigned 32-bit by 32-bit Division -> Unsigned 32-bit Quotient
+		// and Unsigned 32-bit Remainder
+		//
+		// Unsigned Divides rC by rD, stores 32-bit unsigned quotient in rA
+		// and 32-bit unsigned remainder in rB
+		//
+		// If rA is the same as rB, then no remainder will be stored.
+		udivmod rA, rB, rC, rD
+
+		// Signed 32-bit by 32-bit Division -> Signed 32-bit Quotient and
+		// Signed 32-bit Remainder
+		//
+		// Signed Divides rC by rD, stores 32-bit signed quotient in rA and
+		// 32-bit signed remainder in rB
+		//
+		// If rA is the same as rB, then no remainder will be stored.
+		sdivmod rA, rB, rC, rD
 
 
 

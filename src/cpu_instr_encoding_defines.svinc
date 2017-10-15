@@ -145,4 +145,36 @@
 `define CPU_IE_G2_BLK_HW1_NUM_REGS__LOW_BIT 0
 
 
+
+// Group 3 Instructions
+// Non Block Moves Version:  
+	// 11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
+
+	// f:  1 if can affect flags (and instruction type supports it), 0 if
+	// flags unchanged.
+
+	// o:  opcode
+	// a: rA
+	// b: rB
+	// i:  32-bit immediate value
+
+// Block Moves Version (stmdb, ldmia, stmia, push, pop):  
+	// 11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 00ii
+
+	// f:  1 if can affect flags (and instruction type supports it), 0 if
+	// flags unchanged.
+
+	// o:  opcode
+	// a: rA
+	// b: rB
+	// c: rC
+	// d: rD
+	// e: rE
+	// f: rF
+	// g: rG
+	// h: rH
+	// x: rX
+	// i:  2-bit immediate value
+
+
 `endif		// cpu_instr_encoding_defines_svinc
