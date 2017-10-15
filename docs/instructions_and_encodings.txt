@@ -895,8 +895,8 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	d: rD
 
 
-64-bit by 32-bit -> 64-bit DivMod Version:
-	11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 0000 0000
+64-bit by 64-bit -> 64-bit DivMod Version:
+	11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 0000 0000
 
 	f:  1 if can affect flags (and instruction type supports it), 0 if
 	flags unchanged.
@@ -909,6 +909,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	e: rE
 	f: rF
 	g: rG
+	h: rH
 
 32-bit by 32-bit -> 32-bit DivMod Version:
 	11fo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
@@ -922,8 +923,8 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	c: rC
 	d: rD
 
-64-bit bitshifted by 32-bit -> 64-bit Version:
-	11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 0000 0000
+64-bit bitshifted by 64-bit -> 64-bit Version:
+	11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 0000 0000
 
 	f:  1 if can affect flags (and instruction type supports it), 0 if
 	flags unchanged.
@@ -934,6 +935,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	c: rC
 	d: rD
 	e: rE
+	f: rF
 
 
 	Instructions:
@@ -1175,10 +1177,10 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		smull rA:rB, rC, rD
 
 
-		// Unsigned 64-bit by 32-bit Division -> Unsigned 64-bit Quotient
+		// Unsigned 64-bit by 64-bit Division -> Unsigned 64-bit Quotient
 		// and Unsigned 64-bit Remainder.
 		// 
-		// Unsigned Divides rE:rF by rG, stores 64-bit unsigned quotient
+		// Unsigned Divides rE:rF by rG:rH, stores 64-bit unsigned quotient
 		// in rA:rB and 64-bit unsigned remainder in rC:rD
 		//
 		// If rA and rB are the same register, only the low 32 bits of
@@ -1192,12 +1194,12 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//
 		// If rB is the same as either rC or rD, then no remainder will be
 		// stored.
-		udivmodl rA:rB, rC:rD, rE:rF, rG
+		udivmodl rA:rB, rC:rD, rE:rF, rG:rH
 
-		// Signed 64-bit by 32-bit Division -> Signed 64-bit Quotient and
+		// Signed 64-bit by 64-bit Division -> Signed 64-bit Quotient and
 		// Signed 64-bit Remainder
 		// 
-		// Signed Divides rE:rF by rG, stores 64-bit signed quotient in
+		// Signed Divides rE:rF by rG:rH, stores 64-bit signed quotient in
 		// rA:rB and 64-bit signed remainder in rC:rD
 		//
 		// If rA and rB are the same register, only the low 32 bits of
@@ -1211,7 +1213,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//
 		// If rB is the same as either rC or rD, then no remainder will be
 		// stored.
-		sdivmodl rA:rB, rC:rD, rE:rF, rG
+		sdivmodl rA:rB, rC:rD, rE:rF, rG:rH
 
 		// Unsigned 32-bit by 32-bit Division -> Unsigned 32-bit Quotient
 		// and Unsigned 32-bit Remainder
@@ -1233,29 +1235,29 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
-		// 64-bit logical shift left by 32-bit register
+		// 64-bit logical shift left by 64-bit register pair
 		//
-		// rA:rB = rC:rD << rE
+		// rA:rB = rC:rD << rE:rF
 		//
 		// if rA is the same register as rB, only the low 32 bits of the
 		// result will be stored
-		lsl rA:rB, rC:rD, rE
+		lsl rA:rB, rC:rD, rE:rF
 
-		// 64-bit logical shift right by 32-bit register
+		// 64-bit logical shift right by 64-bit register pair
 		//
-		// rA:rB = $unsigned($unsigned(rC:rD) >> $unsigned(rE))
+		// rA:rB = $unsigned($unsigned(rC:rD) >> $unsigned(rE:rF))
 		//
 		// if rA is the same register as rB, only the low 32 bits of the
 		// result will be stored
-		lsr rA:rB, rC:rD, rE
+		lsr rA:rB, rC:rD, rE:rF
 
-		// 64-bit arithmetic shift right by 32-bit register
+		// 64-bit arithmetic shift right by 64-bit register pair
 		//
-		// rA:rB = $signed($signed(rC:rD) >> $signed(rE))
+		// rA:rB = $signed($signed(rC:rD) >> $signed(rE:rF))
 		//
 		// if rA is the same register as rB, only the low 32 bits of the
 		// result will be stored
-		asr rA:rB, rC:rD, rE
+		asr rA:rB, rC:rD, rE:rF
 
 		// Reserved for future expansion.
 
