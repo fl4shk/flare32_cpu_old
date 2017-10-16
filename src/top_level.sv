@@ -22,7 +22,7 @@ module TestRam(input bit clk, enable,
 
 	bit [7:0] __mem[0:`TEST_RAM_REAL_ADDR_MSB_POS];
 
-	initial $readmemh(__mem, "readmemh_input.txt.ignore");
+	initial $readmemh("readmemh_input.txt.ignore", __mem);
 
 	always @ (posedge clk)
 	begin
