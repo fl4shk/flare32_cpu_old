@@ -5,7 +5,7 @@ package pkg_cpu;
 
 // Size of requested data, be it for reading (all 4 sizes) or writing
 // (8-bit, 16-bit, and 32-bit)
-typedef enum bit [`CPU_REQ_DATA_SIZE_MSB_POS:0]
+typedef enum bit [`CPU_ENUM_REQ_DATA_SIZE_MSB_POS:0]
 {
 	ReqDataSz8,
 	ReqDataSz16,
@@ -13,6 +13,17 @@ typedef enum bit [`CPU_REQ_DATA_SIZE_MSB_POS:0]
 	ReqDataSz48
 
 } ReqDataSize;
+
+
+
+
+
+//typedef enum bit [`CPU_INSTR_ENC_OPER_MSB_POS:0]
+//{
+//} Ig2Oper;
+
+
+
 
 
 endpackage

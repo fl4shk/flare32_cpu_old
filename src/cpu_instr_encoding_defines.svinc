@@ -1,6 +1,52 @@
 `ifndef cpu_instr_encoding_defines_svinc
 `define cpu_instr_encoding_defines_svinc
 
+`include "src/misc_defines.svinc"
+
+
+`define CPU_INSTR_MAX_WIDTH 48
+`define CPU_INSTR_MAX_MSB_POS `WIDTH_TO_MSB_POS(`CPU_INSTR_MAX_WIDTH)
+
+`define CPU_INSTR_ENC_GROUP_WIDTH 2
+`define CPU_INSTR_ENC_GROUP_MSB_POS \
+	`WIDTH_TO_MSB_POS(`CPU_INSTR_ENC_GROUP_WIDTH)
+
+`define CPU_INSTR_ENC_OPER_WIDTH 5
+`define CPU_INSTR_ENC_OPER_MSB_POS \
+	`WIDTH_TO_MSB_POS(`CPU_INSTR_ENC_OPER_WIDTH)
+
+`define CPU_INSTR_ENC_REG_INDEX_WIDTH 4
+`define CPU_INSTR_ENC_REG_INDEX_MSB_POS \
+	`WIDTH_TO_MSB_POS(`CPU_INSTR_ENC_REG_INDEX_WIDTH)
+
+`define CPU_INSTR_ENC_UIMM16_WIDTH 16
+`define CPU_INSTR_ENC_UIMM16_MSB_POS \
+	`WIDTH_TO_MSB_POS(`CPU_INSTR_ENC_UIMM16_WIDTH)
+
+
+`define CPU_INSTR_ENC_SIMM16_WIDTH 16
+`define CPU_INSTR_ENC_SIMM16_MSB_POS \
+	`WIDTH_TO_MSB_POS(`CPU_INSTR_ENC_SIMM16_WIDTH)
+
+
+`define CPU_INSTR_ENC_SIMM12_WIDTH 12
+`define CPU_INSTR_ENC_SIMM12_MSB_POS \
+	`WIDTH_TO_MSB_POS(`CPU_INSTR_ENC_SIMM12_WIDTH)
+
+`define CPU_INSTR_ENC_IMM32_WIDTH 32
+`define CPU_INSTR_ENC_IMM32_MSB_POS \
+	`WIDTH_TO_MSB_POS(`CPU_INSTR_ENC_IMM32_WIDTH)
+
+
+
+// 
+`define CPU_INSTR_ENC_MAX_IMM_VALUE_WIDTH 32
+`define CPU_INSTR_ENC_MAX_IMM_VALUE_MSB_POS \
+	`WIDTH_TO_MSB_POS(`CPU_INSTR_ENC_MAX_IMM_VALUE_WIDTH)
+
+
+
+
 // Some Abbreviations:
 //
 // IE:  Instruction Encoding
@@ -39,7 +85,7 @@
 //
 // I guess "pop flags" discards the results despite affecting the stack
 // pointer?  I might want to change that....
-`define CPU_IE_HW0_AFFECTS_FLAGS__BIT 13
+`define CPU_IE_HW0_MIGHT_AFFECT_FLAGS__BIT 13
 
 
 
@@ -54,8 +100,8 @@
 
 
 // rB
-`define CPU_IE_HW0_REG_A_INDEX__HIGH_BIT 3
-`define CPU_IE_HW0_REG_A_INDEX__LOW_BIT 0
+`define CPU_IE_HW0_REG_B_INDEX__HIGH_BIT 3
+`define CPU_IE_HW0_REG_B_INDEX__LOW_BIT 0
 
 
 
@@ -147,7 +193,7 @@
 
 
 // Group 3 Instructions
-// Non Block Moves Version:  
+// Two Registers Version:  
 	// 11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 
 	// f:  1 if can affect flags (and instruction type supports it), 0 if
@@ -230,5 +276,57 @@
 	// d: rD
 	// e: rE
 	// f: rF
+
+
+// The 32-bit immediate of 48-bit instructions that involve only two
+// registers
+`define CPU_IE_G3_TWO_REGS_HW1_IMM_VALUE__HIGH_BIT 15
+`define CPU_IE_G3_TWO_REGS_HW1_IMM_VALUE__LOW_BIT 0
+`define CPU_IE_G3_TWO_REGS_HW2_IMM_VALUE__HIGH_BIT 15
+`define CPU_IE_G3_TWO_REGS_HW2_IMM_VALUE__LOW_BIT 0
+
+
+
+// More than two registers:  rC index
+`define CPU_IE_G3_MULTI_REGS_HW1_REG_C_INDEX__HIGH_BIT 15
+`define CPU_IE_G3_MULTI_REGS_HW1_REG_C_INDEX__LOW_BIT 12
+
+// More than two registers:  rD index
+`define CPU_IE_G3_MULTI_REGS_HW1_REG_D_INDEX__HIGH_BIT 11
+`define CPU_IE_G3_MULTI_REGS_HW1_REG_D_INDEX__LOW_BIT 8
+
+// More than two registers:  rE index
+`define CPU_IE_G3_MULTI_REGS_HW1_REG_E_INDEX__HIGH_BIT 7
+`define CPU_IE_G3_MULTI_REGS_HW1_REG_E_INDEX__LOW_BIT 4
+
+// More than two registers:  rF index
+`define CPU_IE_G3_MULTI_REGS_HW1_REG_F_INDEX__HIGH_BIT 3
+`define CPU_IE_G3_MULTI_REGS_HW1_REG_F_INDEX__LOW_BIT 0
+
+
+
+// More than two registers:  rG index
+`define CPU_IE_G3_MULTI_REGS_HW2_REG_G_INDEX__HIGH_BIT 15
+`define CPU_IE_G3_MULTI_REGS_HW2_REG_G_INDEX__LOW_BIT 12
+
+// More than two registers:  rH index
+`define CPU_IE_G3_MULTI_REGS_HW2_REG_H_INDEX__HIGH_BIT 11
+`define CPU_IE_G3_MULTI_REGS_HW2_REG_H_INDEX__LOW_BIT 8
+
+
+// Block move:  rX index
+`define CPU_IE_G3_BLK_HW2_REG_X_INDEX__HIGH_BIT 7
+`define CPU_IE_G3_BLK_HW2_REG_X_INDEX__LOW_BIT 4
+
+
+// Block move:  00
+`define CPU_IE_G3_BLK_HW2_BLANK__HIGH_BIT 3
+`define CPU_IE_G3_BLK_HW2_BLANK__LOW_BIT 2
+
+// Block move:  00 for five address regs, 01 for six address regs, 10 for
+// seven address regs, 11 for eight address regs
+`define CPU_IE_G3_BLK_HW2_NUM_REGS__HIGH_BIT 1
+`define CPU_IE_G3_BLK_HW2_NUM_REGS__LOW_BIT 0
+
 
 `endif		// cpu_instr_encoding_defines_svinc

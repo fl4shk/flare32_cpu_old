@@ -5,6 +5,7 @@
 `define WIDTH_TO_MSB_POS(width) ((width) - 1)
 
 
+// Used for simulation purposes
 `define MASTER_CLOCK_DELAY #20
 
 

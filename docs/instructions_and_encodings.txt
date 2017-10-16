@@ -851,9 +851,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 Group 3 Instructions
-Note that these instructions really should have the "f" bit replaced with
-another opcode bit.
-Non Block Moves Version:  
+Two Registers Version:  
 	11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 
 	f:  1 if can affect flags (and instruction type supports it), 0 if

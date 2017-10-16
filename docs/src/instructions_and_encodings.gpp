@@ -814,9 +814,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 GROUP_HEADER(3)
-Note that these instructions really should have the "f" bit replaced with
-another opcode bit.
-Non Block Moves Version:  
+Two Registers Version:  
 	11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 
 	DESCRIBE_AFFECTS_FLAGS
