@@ -1,0 +1,169 @@
+`ifndef group_0_instructions_svinc
+`define group_0_instructions_svinc
+
+
+// Group 0 Instructions
+// 00fo oooo aaaa bbbb
+
+	// f:  1 if can affect Flags (and instruction type supports it), 0 if
+	// Flags unchanged.
+
+	// o:  opcode
+	// a: rA (destination register usually)
+	// b: rB
+
+`define LIST_OF_INSTR_G0_LDST_RA_RB__COLLECTION_0 \
+/* Load 32-bit value from address rB into rA. */ \
+`INSTR_STUFF(0, LdStRaRb, Ldr, "ldr") \
+\
+/* Load zero-extended 16-bit value from address rB into rA. */ \
+/* This zero-extends the value. */ \
+`INSTR_STUFF(0, LdStRaRb, Ldh, "ldh") \
+\
+/* Load sign-extended 16-bit value from address rB into rA. */ \
+/* This sign-extends the value. */ \
+`INSTR_STUFF(0, LdStRaRb, Ldsh, "ldsh") \
+\
+/* Load zero-extended 8-bit value from address rB into rA. */ \
+/* This zero-extends the value. */ \
+`INSTR_STUFF(0, LdStRaRb, Ldb, "ldb") \
+\
+\
+\
+/* Load sign-extended 8-bit value from address rB into rA. */ \
+/* This sign-extends the value. */ \
+`INSTR_STUFF(0, LdStRaRb, Ldsb, "ldsb") \
+\
+/* Store 32-bit value in rA to address rB. */ \
+`INSTR_STUFF(0, LdStRaRb, Str, "str") \
+\
+/* Store low 16 bits of rA to address rB. */ \
+`INSTR_STUFF(0, LdStRaRb, Sth, "sth") \
+\
+/* Store low 8 bits of rA to address rB. */ \
+`INSTR_STUFF(0, LdStRaRb, Stb, "stb")
+
+
+
+`define LIST_OF_INSTR_G0_RA_RB__COLLECTION_0 \
+/* rA = rA + rB */ \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+`INSTR_STUFF(0, RaRb, Add, "add") \
+\
+/* rA = rA + rB + carry_flag */ \
+/* Add with carry */ \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+`INSTR_STUFF(0, RaRb, Adc, "adc") \
+\
+/* rA = rA - rB */ \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+`INSTR_STUFF(0, RaRb, Sub, "sub") \
+\
+/* rA = rA + (~rB) + carry_flag */ \
+/* Subtract with borrow (6502 style) */ \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+`INSTR_STUFF(0, RaRb, Sbc, "sbc") \
+\
+\
+\
+/* rA = rB - rA */ \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+`INSTR_STUFF(0, RaRb, Rsb, "rsb") \
+\
+/* rA = rA * rB */ \
+`INSTR_STUFF(0, RaRb, Mul, "mul") \
+\
+/* rA = rA & rB */ \
+/* This instruction can affect the N and Z Flags. */ \
+`INSTR_STUFF(0, RaRb, And, "and") \
+\
+/* rA = rA | rB */ \
+/* This instruction can affect the N and Z Flags. */ \
+`INSTR_STUFF(0, RaRb, Or, "or") \
+\
+\
+\
+/* rA = rA ^ rB */ \
+/* This instruction can affect the N and Z Flags. */ \
+`INSTR_STUFF(0, RaRb, Xor, "xor") \
+\
+/* Logical shift left */ \
+/* rA = rA << rB */ \
+`INSTR_STUFF(0, RaRb, Lsl, "lsl") \
+\
+/* Logical shift right */ \
+`INSTR_STUFF(0, RaRb, Lsr, "lsr") \
+\
+/* Arithmetic shift right */ \
+`INSTR_STUFF(0, RaRb, Asr, "asr") \
+\
+\
+\
+/* Rotate rA left by rB bits, then store result in rA. */ \
+`INSTR_STUFF(0, RaRb, Rol, "rol") \
+\
+/* Rotate rA right by rB bits, then store result in rA. */ \
+`INSTR_STUFF(0, RaRb, Ror, "ror") \
+\
+/* Rotate rB left (THROUGH carry) by 1 bit, then store result in rA. */ \
+/* This instruction can only affect the C flag. */ \
+`INSTR_STUFF(0, RaRb, Rlc, "rlc") \
+\
+/* Rotate rB right (THROUGH carry) by 1 bit, then store result in rA. */ \
+/* This instruction can only affect the C flag. */ \
+`INSTR_STUFF(0, RaRb, Rrc, "rrc")
+
+
+
+`define LIST_OF_INSTR_G0_IRA_RA__COLLECTION_0 \
+/* Copy rA to the Interrupt Return Address */ \
+`INSTR_STUFF(0, IraRa, Cpy, "cpy")
+
+`define LIST_OF_INSTR_G0_RA_IRA__COLLECTION_0 \
+/* Copy the Interrupt Return Address to rA */ \
+`INSTR_STUFF(0, RaIra, Cpy, "cpy")
+
+`define LIST_OF_INSTR_G0_RA_RB__COLLECTION_1 \
+/* Subroutine call using (rA + rB) as destination address.  */ \
+/* The return address is stored in the link register (lr). */ \
+`INSTR_STUFF(0, RaRb, Callx, "callx") \
+\
+/* Set pc to destination address in (rA + rB). */ \
+`INSTR_STUFF(0, RaRb, Jumpx, "jumpx")
+
+
+
+`define LIST_OF_INSTR_G0_RA_PC__COLLECTION_0 \
+/* Copy pc to rA (this can be used for pc-relative loads */ \
+/* and stores) */ \
+`INSTR_STUFF(0, RaPc, Cpy, "cpy")
+
+
+
+`define LIST_OF_INSTR_G0_RA_RB__COLLECTION_2 \
+/* Copy */ \
+/* rA = rB */ \
+`INSTR_STUFF(0, RaRb, Cpy, "cpy") \
+\
+/* rA = Sign extend of low 16 bits in rB */ \
+/* Note that the high 16 bits of rB are ignored */ \
+`INSTR_STUFF(0, RaRb, Seh, "seh") \
+\
+/* rA = Sign extend of low 8 bits in rB */ \
+`INSTR_STUFF(0, RaRb, Seb, "seb")
+
+
+
+
+
+`define LIST_OF_GROUP_0_INSTRUCTIONS \
+`LIST_OF_INSTR_G0_LDST_RA_RB__COLLECTION_0 \
+`LIST_OF_INSTR_G0_RA_RB__COLLECTION_0 \
+`LIST_OF_INSTR_G0_IRA_RA__COLLECTION_0 \
+`LIST_OF_INSTR_G0_RA_IRA__COLLECTION_0 \
+`LIST_OF_INSTR_G0_RA_RB__COLLECTION_1 \
+`LIST_OF_INSTR_G0_RA_PC__COLLECTION_0 \
+`LIST_OF_INSTR_G0_RA_RB__COLLECTION_2 \
+
+
+`endif		// group_0_instructions_svinc

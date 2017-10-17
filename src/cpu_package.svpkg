@@ -1,4 +1,8 @@
 `include "src/cpu_defines.svinc"
+//`include "src/group_0_instructions.svinc"
+//`include "src/group_1_instructions.svinc"
+//`include "src/group_2_instructions.svinc"
+//`include "src/group_3_instructions.svinc"
 
 package pkg_cpu;
 
@@ -16,14 +20,241 @@ typedef enum bit [`CPU_ENUM_REQ_DATA_SIZE_MSB_POS:0]
 
 
 
-
-
-//typedef enum bit [`CPU_INSTR_ENC_OPER_MSB_POS:0]
+//`define INSTR_STUFF(group, args, ident, str) \
+//	ident``_``args``_``group,
+//
+//typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 //{
-//} Ig2Oper;
+//	`LIST_OF_GROUP_0_INSTRUCTIONS
+//	DummyOperG0
+//} OperG0;
+//
+//typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
+//{
+//	`LIST_OF_GROUP_1_INSTRUCTIONS
+//	DummyOperG1
+//} OperG1;
+//
+//typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
+//{
+//	`LIST_OF_GROUP_2_INSTRUCTIONS
+//	DummyOperG2
+//} OperG2;
+//
+//typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
+//{
+//	`LIST_OF_GROUP_3_INSTRUCTIONS
+//	DummyOperG3
+//} OperG3;
+//`undef INSTR_STUFF
 
 
+typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
+{
+	// Load value from / Store value to address contained in rB
+	Ldr_LdStRaRb_0,
+	Ldh_LdStRaRb_0,
+	Ldsh_LdStRaRb_0,
+	Ldb_LdStRaRb_0,
+	Ldsb_LdStRaRb_0,
+	Str_LdStRaRb_0,
+	Sth_LdStRaRb_0,
+	Stb_LdStRaRb_0,
+
+	// rA <= rA op rB
+	Add_RaRb_0,
+	Adc_RaRb_0,
+	Sub_RaRb_0,
+	Sbc_RaRb_0,
+	Rsb_RaRb_0,
+	Mul_RaRb_0,
+	And_RaRb_0,
+	Or_RaRb_0,
+	Xor_RaRb_0,
+	Lsl_RaRb_0,
+	Lsr_RaRb_0,
+	Asr_RaRb_0,
+	Rol_RaRb_0,
+	Ror_RaRb_0,
+
+	// Rotate rB left through carry (by one bit), then store to rA
+	Rlc_RaRb_0,
+
+	// Rotate rB right through carry (by one bit), then store to rA
+	Rrc_RaRb_0,
 
 
+	// cpy ira, rA
+	Cpy_IraRa_0,
+
+	// cpy rA, ira
+	Cpy_RaIra_0,
+
+
+	// call subroutine
+	Callx_RaRb_0,
+	Jumpx_RaRb_0,
+
+	Cpy_RaPc_0,
+	Cpy_RaRb_0,
+	Seh_RaRb_0,
+	Seb_RaRb_0
+} OperG0;
+
+typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
+{
+	// rA <= rB op (zero-extended immediate)
+	Addi_RaRbUImm16_1,
+	Adci_RaRbUImm16_1,
+	Subi_RaRbUImm16_1,
+	Sbci_RaRbUImm16_1,
+	Rsbi_RaRbUImm16_1,
+	Muli_RaRbUImm16_1,
+	Andi_RaRbUImm16_1,
+	Ori_RaRbUImm16_1,
+	Xori_RaRbUImm16_1,
+	Lsli_RaRbUImm16_1,
+	Lsri_RaRbUImm16_1,
+	Asri_RaRbUImm16_1,
+	Roli_RaRbUImm16_1,
+	Rori_RaRbUImm16_1,
+
+	// Branches
+	Bra_Branch_1,
+	Bnv_Branch_1,
+	Bne_Branch_1,
+	Beq_Branch_1,
+	Bcc_Branch_1,
+	Bcs_Branch_1,
+	Bls_Branch_1,
+	Bhi_Branch_1,
+	Bpl_Branch_1,
+	Bmi_Branch_1,
+	Bvc_Branch_1,
+	Bvs_Branch_1,
+	Bge_Branch_1,
+	Blt_Branch_1,
+	Bgt_Branch_1,
+	Ble_Branch_1,
+
+	// rA <= rB ^ (sign-extended immediate)
+	Xorsi_RaRbSImm16_1,
+
+	// rA[31:16] <= 16-bit immediate
+	Lui_RaUImm16_1
+} OperG1;
+
+typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
+{
+	// Load value from / Store value to address (rB + rC + (sign-extended
+	// imm))
+	Ldr_LdStRaRbRcSImm12_2,
+	Ldh_LdStRaRbRcSImm12_2,
+	Ldsh_LdStRaRbRcSImm12_2,
+	Ldb_LdStRaRbRcSImm12_2,
+	Ldsb_LdStRaRbRcSImm12_2,
+	Str_LdStRaRbRcSImm12_2,
+	Sth_LdStRaRbRcSImm12_2,
+	Stb_LdStRaRbRcSImm12_2,
+
+	// Three-register ALU instructions
+	Add_RaRbRc_2,
+	Adc_RaRbRc_2,
+	Sub_RaRbRc_2,
+	Sbc_RaRbRc_2,
+	Rsb_RaRbRc_2,
+	Mul_RaRbRc_2,
+	And_RaRbRc_2,
+	Or_RaRbRc_2,
+	Xor_RaRbRc_2,
+	Lsl_RaRbRc_2,
+	Lsr_RaRbRc_2,
+	Asr_RaRbRc_2,
+	Rol_RaRbRc_2,
+	Ror_RaRbRc_2,
+
+	// Fused multiply-add
+	// rA <= rA + (rB * rC)
+	Fma_RaRbRc_2,
+
+	// rA <= rC; rB <= rC;
+	Cpyp_RaRbRc_2,
+
+	// Block moves
+	Stmdb_LdStBlock1To4_2,
+	Ldmia_LdStBlock1To4_2,
+	Stmia_LdStBlock1To4_2,
+
+
+	// Enable interrupts
+	Eni_NoArgs_2,
+
+	// Disable interrupts
+	Dii_NoArgs_2,
+
+	// Jump to the Interrupt Return Address (IRA) and enable interrupts
+	Reti_NoArgs_2,
+
+	// Jump to the Interrupt Return Address, but don't enable interrupts
+	// (maybe useful if you had interrupts disabled and didn't want to
+	// store your next jump address in a regular register?)
+	Jump_Ira_2
+} OperG2;
+
+typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
+{
+	// Loads from / Stores to [address + rB] where address is encoded
+	// directly into the instruction
+	Ldra_LdStRaRbImm32_3,
+	Ldha_LdStRaRbImm32_3,
+	Ldsha_LdStRaRbImm32_3,
+	Ldba_LdStRaRbImm32_3,
+	Ldsba_LdStRaRbImm32_3,
+	Stra_LdStRaRbImm32_3,
+	Stha_LdStRaRbImm32_3,
+	Stba_LdStRaRbImm32_3,
+
+	// Call/Jump to rA + rB + address where address is encoded directly
+	// into the instruction
+	Calla_RaRbImm32_3,
+	Jumpa_RaRbImm32_3,
+
+	// rA = 32-bit immediate, rB = same 32-bit immediate
+	// If rA is the same register as rB, then the 
+	// register will only be written once.
+	Cpypi_RaRbImm32_3,
+
+	// Block Moves
+	Stmdb_LdStBlock5To8_3,
+	Ldmia_LdStBlock5To8_3,
+	Stmia_LdStBlock5To8_3,
+
+	// push / pop flags
+	Push_Flags_3,
+	Pop_Flags_3,
+
+	// cpy rA, flags
+	Cpy_RaFlags_3,
+
+	// cpy flags, rA
+	Cpy_FlagsRa_3,
+
+	// 32-bit * 32-bit -> 64-bit multiply
+	UMul_LongMul_3,
+	SMul_LongMul_3,
+
+	// 64-bit by 64-bit -> 64-bit divmod
+	UDivMod_LongDivMod_3,
+	SDivMod_LongDivMod_3,
+
+	// 32-bit divmod
+	UDivMod_DivMod_3,
+	SDivMod_DivMod_3,
+
+	// 64-bit Bit Shifts
+	Lsl_LongBitShift_3,
+	Lsr_LongBitShift_3,
+	Asr_LongBitShift_3
+} OperG3;
 
 endpackage

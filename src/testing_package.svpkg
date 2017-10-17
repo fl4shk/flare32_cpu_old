@@ -1,0 +1,14 @@
+`include "src/misc_defines.svinc"
+
+
+package pkg_testing;
+
+parameter test_ram_real_addr_width = 8;
+parameter test_ram_real_addr_msb_pos 
+	= `WIDTH_TO_MSB_POS(test_ram_real_addr_width);
+
+parameter test_ram_mem_max_offset
+	= `WIDTH_TO_LARGEST_ADDR(test_ram_real_addr_width);
+
+
+endpackage

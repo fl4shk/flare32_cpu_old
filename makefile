@@ -14,6 +14,7 @@ VC=iverilog
 #BUILD=$(VC) -o $(PROJ).vvp
 #BUILD=$(VC) -g2005-sv -o $(PROJ).vvp
 BUILD=$(VC) -g2009 -o $(PROJ).vvp
+PREPROCESS=$(VC) -g2009 -E -o $(PROJ).E
 
 
 #SRCFILES		:=	$(foreach DIR,$(SRCDIRS),$(notdir $(wildcard $(DIR)/*.v)))
@@ -32,6 +33,9 @@ SRCFILES:=$(foreach DIR,$(SRCDIRS),$(wildcard $(DIR)/*.sv))
 all: reminder clean
 	$(BUILD) $(PKGFILES) $(SRCFILES)
 
+.PHONY : only_preprocess
+only_preprocess: reminder clean
+	$(PREPROCESS) $(PKGFILES) $(SRCFILES)
 
 .PHONY : reminder
 reminder:
@@ -39,4 +43,4 @@ reminder:
 
 .PHONY : clean
 clean:  
-	rm -fv $(PROJ).vvp
+	rm -fv $(PROJ).vvp $(PROJ).E
