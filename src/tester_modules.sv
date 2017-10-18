@@ -88,6 +88,88 @@ module AluTester(input bit clk, enable);
 		display_alu_unsigned();
 	endtask
 
+
+	task test_eq_ne_compare;
+		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
+
+		init_alu(some_a, some_b, pkg_cpu::Alu_Sub, 4'b0000);
+
+		`MASTER_CLOCK_DELAY
+
+		// Branch when Z == 0, 
+		if (some_a != some_b)
+		begin
+			if (!(alu_out.flags_out[pkg_cpu::FlagZ] == 0))
+			begin
+				$display("!= Error with");
+				display_alu_unsigned();
+			end
+		end
+
+		// Branch when Z == 1, 
+		if (some_a == some_b)
+		begin
+			if (!(alu_out.flags_out[pkg_cpu::FlagZ] == 1))
+			begin
+				$display("== Error with");
+				display_alu_unsigned();
+			end
+		end
+	endtask
+
+
+	task test_unsigned_compare;
+		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
+
+		init_alu(some_a, some_b, pkg_cpu::Alu_Sub, 4'b0000);
+
+		`MASTER_CLOCK_DELAY
+
+		// Branch when C == 0 [unsigned less than], 
+		if (some_a < some_b)
+		begin
+			if (!(alu_out.flags_out[pkg_cpu::FlagC] == 0))
+			begin
+				$display("< Error with");
+				display_alu_unsigned();
+			end
+		end
+
+		// Branch when (C == 0 or Z == 1) [unsigned less than or equal], 
+		if (some_a <= some_b)
+		begin
+			if (!((alu_out.flags_out[pkg_cpu::FlagC] == 0)
+				|| (alu_out.flags_out[pkg_cpu::FlagZ] == 1)))
+			begin
+				$display("<= Error with");
+				display_alu_unsigned();
+			end
+		end
+
+		// Branch when (C == 1 and Z == 0) [unsigned greater than], 
+		if (some_a > some_b)
+		begin
+			if (!((alu_out.flags_out[pkg_cpu::FlagC] == 1)
+				&& (alu_out.flags_out[pkg_cpu::FlagZ] == 0)))
+			begin
+				$display("> Error with");
+				display_alu_unsigned();
+			end
+		end
+
+		// Branch when C == 1 [unsigned greater than or equal], 
+		if (some_a >= some_b)
+		begin
+			if (!(alu_out.flags_out[pkg_cpu::FlagC] == 1))
+			begin
+				$display(">= Error with");
+				display_alu_unsigned();
+			end
+		end
+	
+	
+	endtask
+
 	task test_signed_compare;
 		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
 
@@ -102,7 +184,7 @@ module AluTester(input bit clk, enable);
 			if (!(alu_out.flags_out[pkg_cpu::FlagN]
 				!= alu_out.flags_out[pkg_cpu::FlagV]))
 			begin
-				$display("< Error with");
+				$display("Signed < Error with");
 				display_alu_signed();
 			end
 		end
@@ -114,7 +196,7 @@ module AluTester(input bit clk, enable);
 				!= alu_out.flags_out[pkg_cpu::FlagV])
 				|| (alu_out.flags_out[pkg_cpu::FlagZ] == 1)))
 			begin
-				$display("<= Error with");
+				$display("Signed <= Error with");
 				display_alu_signed();
 			end
 		end
@@ -126,7 +208,7 @@ module AluTester(input bit clk, enable);
 				== alu_out.flags_out[pkg_cpu::FlagV])
 				&& (alu_out.flags_out[pkg_cpu::FlagZ] == 0)))
 			begin
-				$display("> Error with");
+				$display("Signed > Error with");
 				display_alu_signed();
 			end
 		end
@@ -137,13 +219,14 @@ module AluTester(input bit clk, enable);
 			if (!(alu_out.flags_out[pkg_cpu::FlagN]
 				== alu_out.flags_out[pkg_cpu::FlagV]))
 			begin
-				$display(">= Error with");
+				$display("Signed >= Error with");
 				display_alu_signed();
 			end
 		end
 	
 	
 	endtask
+
 
 
 
@@ -163,6 +246,8 @@ module AluTester(input bit clk, enable);
 				begin
 					tester_a = i;
 					tester_b = j;
+					test_eq_ne_compare(tester_a, tester_b);
+					test_unsigned_compare(tester_a, tester_b);
 					test_signed_compare(tester_a, tester_b);
 				end
 			end
