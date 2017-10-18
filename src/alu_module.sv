@@ -1,17 +1,5 @@
 `include "src/cpu_defines.svinc"
 
-typedef struct packed
-{
-	bit [`CPU_WORD_MSB_POS:0] a_in, b_in, c_in;
-	bit [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0] oper;
-	bit [`CPU_FLAGS_MSB_POS:0] flags_in;
-} StrcInAlu;
-
-typedef struct packed
-{
-	bit [`CPU_WORD_MSB_POS:0] out;
-	bit [`CPU_FLAGS_MSB_POS:0] flags_out;
-} StrcOutAlu;
 
 
 module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
@@ -41,12 +29,12 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 		//	= !((in.a_in[`CPU_WORD_MSB_POS] ^ in.b_in[`CPU_WORD_MSB_POS])
 		//	& (in.a_in[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
 
-		//out.flags_out[pkg_cpu::FlagV]
-		//	= ((in.a_in[`CPU_WORD_MSB_POS] ^ in.b_in[`CPU_WORD_MSB_POS])
-		//	& (in.a_in[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
 		out.flags_out[pkg_cpu::FlagV]
-			= ((in.a_in[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS])
-			& (in.b_in[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
+			= ((in.a_in[`CPU_WORD_MSB_POS] ^ in.b_in[`CPU_WORD_MSB_POS])
+			& (in.a_in[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
+		//out.flags_out[pkg_cpu::FlagV]
+		//	= ((in.a_in[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS])
+		//	& (in.b_in[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
 	endtask
 	task update_n_and_z_flags;
 		{out.flags_out[pkg_cpu::FlagN], out.flags_out[pkg_cpu::FlagZ]}

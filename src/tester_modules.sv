@@ -36,12 +36,15 @@
 //endmodule
 
 
-module AluTester(input bit clk);
+module AluTester(input bit clk, enable);
 
 	import pkg_cpu::*;
 
 	pkg_cpu::StrcInAlu alu_in;
 	pkg_cpu::StrcOutAlu alu_out;
+
+	bit [`CPU_WORD_MSB_POS:0] tester_a, tester_b;
+	integer i, j;
 	
 	task set_alu_a_b;
 		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
@@ -59,7 +62,22 @@ module AluTester(input bit clk);
 		alu_in.flags_in = some_flags_in;
 	endtask
 
-	task exec_alu;
+	task display_alu_unsigned;
+		$display("%h %h %d %b\t\t%h %b",
+			alu_in.a_in, alu_in.b_in, alu_in.oper, alu_in.flags_in,
+			alu_out.out, alu_out.flags_out);
+	endtask
+	task display_alu_signed;
+		$display("%d %d %d %b\t\t%d %b\t\t%b",
+			$signed(alu_in.a_in), $signed(alu_in.b_in), 
+			alu_in.oper, alu_in.flags_in,
+			$signed(alu_out.out), alu_out.flags_out,
+			
+			(alu_out.flags_out[pkg_cpu::FlagN] 
+			== alu_out.flags_out[pkg_cpu::FlagV]) );
+	endtask
+
+	task exec_alu_and_display_unsigned;
 		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
 		input [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0] some_oper;
 		input [`CPU_ENUM_FLAGS_POS_MSB_POS:0] some_flags_in;
@@ -67,10 +85,66 @@ module AluTester(input bit clk);
 		init_alu(some_a, some_b, some_oper, some_flags_in);
 
 		`MASTER_CLOCK_DELAY
-		$display("%h %h %d %b\t\t%h %b",
-			alu_in.a_in, alu_in.b_in, alu_in.oper, alu_in.flags_in,
-			alu_out.out, alu_out.flags_out);
+		display_alu_unsigned();
 	endtask
+
+	task test_signed_compare;
+		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
+
+		init_alu(some_a, some_b, pkg_cpu::Alu_Sub, 4'b0000);
+
+		`MASTER_CLOCK_DELAY
+
+
+		// N != V [signed less than], 
+		if ($signed(some_a) < $signed(some_b))
+		begin
+			if (!(alu_out.flags_out[pkg_cpu::FlagN]
+				!= alu_out.flags_out[pkg_cpu::FlagV]))
+			begin
+				$display("< Error with");
+				display_alu_signed();
+			end
+		end
+
+		// (N != V or Z == 1) [signed less than or equal], 
+		if ($signed(some_a) <= $signed(some_b))
+		begin
+			if (!((alu_out.flags_out[pkg_cpu::FlagN]
+				!= alu_out.flags_out[pkg_cpu::FlagV])
+				|| (alu_out.flags_out[pkg_cpu::FlagZ] == 1)))
+			begin
+				$display("<= Error with");
+				display_alu_signed();
+			end
+		end
+
+		// (N == V and Z == 0) [signed greater than], 
+		if ($signed(some_a) > $signed(some_b))
+		begin
+			if (!((alu_out.flags_out[pkg_cpu::FlagN]
+				== alu_out.flags_out[pkg_cpu::FlagV])
+				&& (alu_out.flags_out[pkg_cpu::FlagZ] == 0)))
+			begin
+				$display("> Error with");
+				display_alu_signed();
+			end
+		end
+
+		// N == V [signed greater than or equal], 
+		if ($signed(some_a) >= $signed(some_b))
+		begin
+			if (!(alu_out.flags_out[pkg_cpu::FlagN]
+				== alu_out.flags_out[pkg_cpu::FlagV]))
+			begin
+				$display(">= Error with");
+				display_alu_signed();
+			end
+		end
+	
+	
+	endtask
+
 
 
 	//initial
@@ -81,32 +155,19 @@ module AluTester(input bit clk);
 
 	initial
 	begin
-		exec_alu(-1, 50, pkg_cpu::Alu_Add, 4'b0000);
-		exec_alu(-1, 50, pkg_cpu::Alu_Add, 4'b0001);
-		exec_alu(-1, 50, pkg_cpu::Alu_Adc, 4'b0000);
-		exec_alu(-1, 50, pkg_cpu::Alu_Adc, 4'b0001);
-		$display();
-
-		exec_alu(50, -1, pkg_cpu::Alu_Add, 4'b0000);
-		exec_alu(50, -1, pkg_cpu::Alu_Add, 4'b0001);
-		exec_alu(50, -1, pkg_cpu::Alu_Adc, 4'b0000);
-		exec_alu(50, -1, pkg_cpu::Alu_Adc, 4'b0001);
-		$display();
-
-		exec_alu(-1, 50, pkg_cpu::Alu_Sub, 4'b0000);
-		exec_alu(-1, 50, pkg_cpu::Alu_Sub, 4'b0001);
-		exec_alu(-1, 50, pkg_cpu::Alu_Sbc, 4'b0000);
-		exec_alu(-1, 50, pkg_cpu::Alu_Sbc, 4'b0001);
-		$display();
-
-		exec_alu(50, -1, pkg_cpu::Alu_Sub, 4'b0000);
-		exec_alu(50, -1, pkg_cpu::Alu_Sub, 4'b0001);
-		exec_alu(50, -1, pkg_cpu::Alu_Sbc, 4'b0000);
-		exec_alu(50, -1, pkg_cpu::Alu_Sbc, 4'b0001);
-		$display();
-
-
-		$finish;
+		if (enable)
+		begin
+			for (i=0; i<`WIDTH_TO_SIZE(`CPU_WORD_WIDTH); i=i+1)
+			begin
+				for (j=0; j<`WIDTH_TO_SIZE(`CPU_WORD_WIDTH); j=j+1)
+				begin
+					tester_a = i;
+					tester_b = j;
+					test_signed_compare(tester_a, tester_b);
+				end
+			end
+			$finish;
+		end
 	end
 
 	Alu alu(.in(alu_in), .out(alu_out));

@@ -3,7 +3,8 @@
 
 
 `define WIDTH_TO_MSB_POS(width) ((width) - 1)
-`define WIDTH_TO_LARGEST_ADDR(width) ((1 << (width)) - 1)
+`define WIDTH_TO_SIZE(width) (1 << (width))
+`define WIDTH_TO_LARGEST_ADDR(width) (`WIDTH_TO_SIZE(width) - 1)
 
 
 // Used for simulation purposes

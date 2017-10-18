@@ -31,8 +31,6 @@ module TopLevel;
 		__half_clk = !__half_clk;
 	end
 
-	AluTester alu_tester(.clk(__master_clk));
-
 
 
 endmodule
