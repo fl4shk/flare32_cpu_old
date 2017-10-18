@@ -54,6 +54,18 @@ typedef enum bit [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]
 	// Fused multiply-add
 	Alu_Fma
 } OperAlu;
+typedef struct packed
+{
+	bit [`CPU_WORD_MSB_POS:0] a_in, b_in, c_in;
+	bit [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0] oper;
+	bit [`CPU_FLAGS_MSB_POS:0] flags_in;
+} StrcInAlu;
+
+typedef struct packed
+{
+	bit [`CPU_WORD_MSB_POS:0] out;
+	bit [`CPU_FLAGS_MSB_POS:0] flags_out;
+} StrcOutAlu;
 
 //`define INSTR_STUFF(group, args, ident, str) \
 //	ident``_``args``_``group,
@@ -292,5 +304,7 @@ typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 	Lsr_LongBitShift_3,
 	Asr_LongBitShift_3
 } OperG3;
+
+
 
 endpackage

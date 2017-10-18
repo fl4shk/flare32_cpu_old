@@ -8,6 +8,7 @@
 
 // Used for simulation purposes
 `define MASTER_CLOCK_DELAY #20
+`define HALF_CLOCK_DELAY `MASTER_CLOCK_DELAY `MASTER_CLOCK_DELAY
 
 
 `endif		// misc_defines_svinc
