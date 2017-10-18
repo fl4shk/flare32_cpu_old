@@ -7,10 +7,10 @@ module TopLevel;
 
 	bit __master_clk, __half_clk;
 
-	//wire __cmp_tester_enable;
+	wire __testers_enable;
 
 
-	//assign __cmp_tester_enable = 1;
+	assign __testers_enable = 1;
 
 
 	initial
@@ -37,7 +37,10 @@ module TopLevel;
 	end
 
 	//CompareTester cmp_tester(.clk(__master_clk), 
-	//	.enable(__cmp_tester_enable));
+	//	.enable(__testers_enable));
+
+	RotateTester rotate_tester(.clk(__master_clk),
+		.enable(__testers_enable));
 
 
 endmodule
