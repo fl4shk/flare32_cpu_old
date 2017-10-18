@@ -96,7 +96,7 @@ module AluTester(input bit clk, enable);
 
 		`MASTER_CLOCK_DELAY
 
-		// Branch when Z == 0, 
+		// Z == 0
 		if (some_a != some_b)
 		begin
 			if (!(alu_out.flags_out[pkg_cpu::FlagZ] == 0))
@@ -106,7 +106,7 @@ module AluTester(input bit clk, enable);
 			end
 		end
 
-		// Branch when Z == 1, 
+		// Z == 1
 		if (some_a == some_b)
 		begin
 			if (!(alu_out.flags_out[pkg_cpu::FlagZ] == 1))
@@ -125,7 +125,7 @@ module AluTester(input bit clk, enable);
 
 		`MASTER_CLOCK_DELAY
 
-		// Branch when C == 0 [unsigned less than], 
+		// C == 0 [unsigned less than]
 		if (some_a < some_b)
 		begin
 			if (!(alu_out.flags_out[pkg_cpu::FlagC] == 0))
@@ -135,7 +135,7 @@ module AluTester(input bit clk, enable);
 			end
 		end
 
-		// Branch when (C == 0 or Z == 1) [unsigned less than or equal], 
+		// (C == 0 or Z == 1) [unsigned less than or equal]
 		if (some_a <= some_b)
 		begin
 			if (!((alu_out.flags_out[pkg_cpu::FlagC] == 0)
@@ -146,7 +146,7 @@ module AluTester(input bit clk, enable);
 			end
 		end
 
-		// Branch when (C == 1 and Z == 0) [unsigned greater than], 
+		// (C == 1 and Z == 0) [unsigned greater than]
 		if (some_a > some_b)
 		begin
 			if (!((alu_out.flags_out[pkg_cpu::FlagC] == 1)
@@ -157,7 +157,7 @@ module AluTester(input bit clk, enable);
 			end
 		end
 
-		// Branch when C == 1 [unsigned greater than or equal], 
+		// C == 1 [unsigned greater than or equal]
 		if (some_a >= some_b)
 		begin
 			if (!(alu_out.flags_out[pkg_cpu::FlagC] == 1))
@@ -178,7 +178,7 @@ module AluTester(input bit clk, enable);
 		`MASTER_CLOCK_DELAY
 
 
-		// N != V [signed less than], 
+		// N != V [signed less than]
 		if ($signed(some_a) < $signed(some_b))
 		begin
 			if (!(alu_out.flags_out[pkg_cpu::FlagN]
@@ -189,7 +189,7 @@ module AluTester(input bit clk, enable);
 			end
 		end
 
-		// (N != V or Z == 1) [signed less than or equal], 
+		// (N != V or Z == 1) [signed less than or equal]
 		if ($signed(some_a) <= $signed(some_b))
 		begin
 			if (!((alu_out.flags_out[pkg_cpu::FlagN]
@@ -201,7 +201,7 @@ module AluTester(input bit clk, enable);
 			end
 		end
 
-		// (N == V and Z == 0) [signed greater than], 
+		// (N == V and Z == 0) [signed greater than]
 		if ($signed(some_a) > $signed(some_b))
 		begin
 			if (!((alu_out.flags_out[pkg_cpu::FlagN]
@@ -213,7 +213,7 @@ module AluTester(input bit clk, enable);
 			end
 		end
 
-		// N == V [signed greater than or equal], 
+		// N == V [signed greater than or equal]
 		if ($signed(some_a) >= $signed(some_b))
 		begin
 			if (!(alu_out.flags_out[pkg_cpu::FlagN]
