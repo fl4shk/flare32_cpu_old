@@ -1,4 +1,4 @@
-`include "src/misc_defines.svinc"
+`include "src/cpu_defines.svinc"
 
 
 package pkg_instr_enc;
@@ -94,8 +94,6 @@ parameter g1_hw1_imm_value__low = 0;
 // rC
 // Note that both block moves version and non block moves version group
 // 2 instructions have rC in their encoding
-parameter g2_hw1_rc_index__high = 15;
-parameter g2_hw1_rc_index__low = 12;
 
 
 // The 12-bit immediate value of a non-block move group 2 instruction:
@@ -104,23 +102,19 @@ parameter g2_nonblk_hw1_imm_value__low = 0;
 
 
 
-// Block move:  rD
-parameter g2_blk_hw1_rd_index__high = 11;
-parameter g2_blk_hw1_rd_index__low = 8;
-
 
 // Block move:  rX
-parameter g2_blk_hw1_rx_index__high = 7;
-parameter g2_blk_hw1_rx_index__low = 4;
+parameter block_move_rx_index__high = 7;
+parameter block_move_rx_index__low = 4;
 
 // Block move:  00
-parameter g2_blk_hw1_blank__high = 3;
-parameter g2_blk_hw1_blank__low = 2;
+parameter block_move_blank__high = 3;
+parameter block_move_blank__low = 2;
 
-// Block move:  00 for one address reg, 01 for two address regs, 10 for
-// three address regs, 11 for four address regs
-parameter g2_blk_hw1_num_regs__high = 1;
-parameter g2_blk_hw1_num_regs__low = 0;
+// Group 2 Block move:  00 for one address reg, 01 for two address regs, 10
+// for three address regs, 11 for four address regs
+parameter block_move_num_regs__high = 1;
+parameter block_move_num_regs__low = 0;
 
 
 
@@ -166,44 +160,59 @@ parameter g3_two_regs_hw2_imm_value__low = 0;
 
 
 // More than two registers:  rC index
-parameter g3__hw1_rc_index__high = 15;
-parameter g3__hw1_rc_index__low = 12;
+parameter multi_regs_rc_index__high = 15;
+parameter multi_regs_rc_index__low = 12;
 
 // More than two registers:  rD index
-parameter g3__hw1_rd_index__high = 11;
-parameter g3__hw1_rd_index__low = 8;
+parameter multi_regs_rd_index__high = 11;
+parameter multi_regs_rd_index__low = 8;
 
 // More than two registers:  rE index
-parameter g3__hw1_re_index__high = 7;
-parameter g3__hw1_re_index__low = 4;
+parameter multi_regs_re_index__high = 7;
+parameter multi_regs_re_index__low = 4;
 
 // More than two registers:  rF index
-parameter g3__hw1_rf_index__high = 3;
-parameter g3__hw1_rf_index__low = 0;
+parameter multi_regs_rf_index__high = 3;
+parameter multi_regs_rf_index__low = 0;
 
 
 
 // More than two registers:  rG index
-parameter g3__hw2_rg_index__high = 15;
-parameter g3__hw2_rg_index__low = 12;
+parameter multi_regs_rg_index__high = 15;
+parameter multi_regs_rg_index__low = 12;
 
 // More than two registers:  rH index
-parameter g3__hw2_rh_index__high = 11;
-parameter g3__hw2_rh_index__low = 8;
+parameter multi_regs_rh_index__high = 11;
+parameter multi_regs_rh_index__low = 8;
 
 
-// Block move:  rX index
-parameter g3_blk_hw2_rx_index__high = 7;
-parameter g3_blk_hw2_rx_index__low = 4;
+typedef struct packed
+{
+	// Instruction group
+	bit [`CPU_INSTR_ENC_GROUP_MSB_POS:0] group;
+
+	// If this instruction is permitted to affect flags
+	bit might_affect_flags;
+
+	// The 5-bit operation within the particular group
+	bit [`CPU_INSTR_ENC_OPER_MSB_POS:0] oper;
 
 
-// Block move:  00
-parameter g3_blk_hw2_blank__high = 3;
-parameter g3_blk_hw2_blank__low = 2;
+	// Register indices
+	bit [`CPU_INSTR_ENC_REG_INDEX_MSB_POS:0] 
+		ra_index, rb_index, rc_index, rd_index, 
+		re_index, rf_index, rg_index, rh_index, 
+		rx_index;
 
-// Block move:  00 for five address regs, 01 for six address regs, 10
-// for seven address regs, 11 for eight address regs
-parameter g3_blk_hw2_num_regs__high = 1;
-parameter g3_blk_hw2_num_regs__low = 0;
+
+	// Immediate values
+	bit [`CPU_INSTR_ENC_MAX_IMM_VALUE_MSB_POS:0] 
+		imm_val_2,
+		imm_val_u16, imm_val_s16,
+		imm_val_s12, 
+		imm_val_32;
+
+} StrcOutInstrDecoder;
+
 
 endpackage
