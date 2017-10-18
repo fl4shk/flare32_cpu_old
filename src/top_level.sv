@@ -7,10 +7,10 @@ module TopLevel;
 
 	bit __master_clk, __half_clk;
 
-	wire __alu_tester_enable;
+	//wire __cmp_tester_enable;
 
 
-	assign __alu_tester_enable = 1;
+	//assign __cmp_tester_enable = 1;
 
 
 	initial
@@ -36,7 +36,8 @@ module TopLevel;
 		__half_clk = !__half_clk;
 	end
 
-	AluTester alu_tester(.clk(__master_clk), .enable(__alu_tester_enable));
+	//CompareTester cmp_tester(.clk(__master_clk), 
+	//	.enable(__cmp_tester_enable));
 
 
 endmodule

@@ -36,7 +36,7 @@
 //endmodule
 
 
-module AluTester(input bit clk, enable);
+module CompareTester(input bit clk, enable);
 
 	import pkg_cpu::*;
 
@@ -44,7 +44,9 @@ module AluTester(input bit clk, enable);
 	pkg_cpu::StrcOutAlu alu_out;
 
 	bit [`CPU_WORD_MSB_POS:0] tester_a, tester_b;
-	integer i, j;
+	bit tester_carry_in;
+
+	longint i, j;
 	
 	task set_alu_a_b;
 		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
@@ -229,13 +231,6 @@ module AluTester(input bit clk, enable);
 
 
 
-
-	//initial
-	//begin
-	//	#400
-	//	$finish;
-	//end
-
 	initial
 	begin
 		if (enable)
@@ -254,6 +249,7 @@ module AluTester(input bit clk, enable);
 			$finish;
 		end
 	end
+
 
 	Alu alu(.in(alu_in), .out(alu_out));
 
