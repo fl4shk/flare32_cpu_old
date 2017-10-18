@@ -18,7 +18,42 @@ typedef enum bit [`CPU_ENUM_REQ_DATA_SIZE_MSB_POS:0]
 
 } ReqDataSize;
 
+typedef enum bit [`CPU_ENUM_FLAGS_POS_MSB_POS:0]
+{
+	FlagC,
+	FlagZ,
+	FlagV,
+	FlagN
+} FlagsPos;
 
+typedef enum bit [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]
+{
+	Alu_Add,
+	Alu_Adc,
+	Alu_Sub,
+	Alu_Sbc,
+	Alu_Rsb,
+	Alu_Mul,
+	Alu_And,
+	Alu_Or,
+	Alu_Xor,
+	Alu_Lsl,
+	Alu_Lsr,
+	Alu_Asr,
+	Alu_Rol,
+	Alu_Ror,
+
+	Alu_Rlc,
+
+	Alu_Rrc,
+
+
+	// Used mainly for ldst rA, [rB, rC, simm12]
+	Alu_AddThree,
+
+	// Fused multiply-add
+	Alu_Fma
+} OperAlu;
 
 //`define INSTR_STUFF(group, args, ident, str) \
 //	ident``_``args``_``group,
@@ -47,6 +82,7 @@ typedef enum bit [`CPU_ENUM_REQ_DATA_SIZE_MSB_POS:0]
 //	DummyOperG3
 //} OperG3;
 //`undef INSTR_STUFF
+
 
 
 typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
