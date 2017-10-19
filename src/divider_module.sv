@@ -125,6 +125,7 @@ module NonRestoringDivider #(parameter args_width=32)
 				// iteration per clock cycle.
 
 				iterate();
+				iterate();
 			end
 		end
 
