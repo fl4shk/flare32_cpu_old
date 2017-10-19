@@ -41,6 +41,22 @@ module Cpu(input bit clk,
 	pkg_cpu::StrcInSmallAlu small_alu_in;
 	pkg_cpu::StrcOutSmallAlu small_alu_out;
 
+
+	// Connections to divmod32
+	bit divmod32_enable, divmod32_unsgn_or_sgn;
+	bit [31:0] divmod32_num, divmod32_denom;
+
+	wire [31:0] divmod32_quot, divmod32_rem;
+	wire divmod32_can_accept_cmd, divmod32_data_ready;
+
+	// Connections to divmod64
+	bit divmod64_enable, divmod64_unsgn_or_sgn;
+	bit [63:0] divmod64_num, divmod64_denom;
+
+	wire [63:0] divmod64_quot, divmod64_rem;
+	wire divmod64_can_accept_cmd, divmod64_data_ready;
+
+
 	// Temporaries
 	bit [`CPU_WORD_MSB_POS:0] __temp0, __temp1;
 
@@ -179,6 +195,8 @@ module Cpu(input bit clk,
 			// division is being performed.
 			else if (__state == pkg_cpu::StFinishExecInstr)
 			begin
+				{divmod32_enable, divmod64_enable} <= 0;
+				
 				case (__instr_dec_out_buf.group)
 					2'b00:
 					begin
@@ -236,5 +254,18 @@ module Cpu(input bit clk,
 		.out(instr_dec_out));
 	Alu alu(.in(alu_in), .out(alu_out));
 	SmallAlu small_alu(.in(small_alu_in), .out(small_alu_out));
+
+	NonRestoringDivider #(32) divmod32(.clk(clk),
+		.enable(divmod32_enable), .unsgn_or_sgn(divmod32_unsgn_or_sgn),
+		.num(divmod32_num), .denom(divmod32_denom),
+		.quot(divmod32_quot), .rem(divmod32_rem),
+		.can_accept_cmd(divmod32_can_accept_cmd),
+		.data_ready(divmod32_data_ready));
+	NonRestoringDivider #(64) divmod64(.clk(clk),
+		.enable(divmod64_enable), .unsgn_or_sgn(divmod64_unsgn_or_sgn),
+		.num(divmod64_num), .denom(divmod64_denom),
+		.quot(divmod64_quot), .rem(divmod64_rem),
+		.can_accept_cmd(divmod64_can_accept_cmd),
+		.data_ready(divmod64_data_ready));
 
 endmodule

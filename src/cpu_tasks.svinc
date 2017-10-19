@@ -33,6 +33,39 @@ task disab_rdwr;
 	out.req_rdwr = 1'b0;
 endtask
 
+task prep_divide_u32;
+	input [31:0] num, denom;
+
+	divmod32_enable <= 1;
+	divmod32_unsgn_or_sgn <= 0;
+	{divmod32_num, divmod32_denom} <= {num, denom};
+endtask
+
+task prep_divide_s32;
+	input [31:0] num, denom;
+
+	divmod32_enable <= 1;
+	divmod32_unsgn_or_sgn <= 1;
+	{divmod32_num, divmod32_denom} <= {num, denom};
+endtask
+
+task prep_divide_u64;
+	input [63:0] num, denom;
+
+	divmod64_enable <= 1;
+	divmod64_unsgn_or_sgn <= 0;
+	{divmod64_num, divmod64_denom} <= {num, denom};
+endtask
+
+task prep_divide_s64;
+	input [63:0] num, denom;
+
+	divmod64_enable <= 1;
+	divmod64_unsgn_or_sgn <= 1;
+	{divmod64_num, divmod64_denom} <= {num, denom};
+endtask
+
+
 
 
 task exec_group_0_instr_part_0;
