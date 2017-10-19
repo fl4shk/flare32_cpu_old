@@ -7,6 +7,10 @@ module Cpu(input bit clk,
 	// If an interrupt is being requested
 	input bit req_interrupt,
 
+	// If the CPU is enabled (can be used to stall it while memory access
+	// is being performed)
+	input bit enable,
+
 
 	input bit [`CPU_DATA_BUS_MAX_MSB_POS:0] data_in,
 	output pkg_cpu::StrcOutCpu out);
@@ -25,6 +29,7 @@ module Cpu(input bit clk,
 	wire [`CPU_DATA_BUS_MAX_MSB_POS:0] instr_dec_to_decode;
 	pkg_instr_enc::StrcOutInstrDecoder instr_dec_out;
 
+	// Copy of instr_dec_out
 	pkg_instr_enc::StrcOutInstrDecoder __instr_dec_out_buf;
 
 
@@ -38,6 +43,31 @@ module Cpu(input bit clk,
 
 	// Temporaries
 	bit [`CPU_WORD_MSB_POS:0] __temp0, __temp1;
+
+
+	// Assignments
+	assign instr_dec_to_decode = data_in;
+
+	// Tasks
+	task set_alu_a_b;
+		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
+
+		{alu_in.a_in, alu_in.b_in} = {some_a, some_b};
+	endtask
+
+	task init_alu;
+		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
+		input [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0] some_oper;
+		input [`CPU_ENUM_FLAGS_POS_MSB_POS:0] some_flags_in;
+
+		set_alu_a_b(some_a, some_b);
+		alu_in.oper = some_oper;
+		alu_in.flags_in = some_flags_in;
+	endtask
+
+	`include "src/cpu_tasks.svinc"
+
+
 
 	initial
 	begin
@@ -59,69 +89,144 @@ module Cpu(input bit clk,
 
 	always @ (posedge clk)
 	begin
-		if (__state == pkg_cpu::StInit)
+		if (enable)
 		begin
-			
-		end
+			if (__state == pkg_cpu::StInit)
+			begin
+				prep_load_instr();
+			end
 
-		else if (__state == pkg_cpu::StDecodeInstr)
-		begin
-			
-		end
+			else if (__state == pkg_cpu::StDecodeInstr)
+			begin
+				if (__stor.ints_enabled && req_interrupt)
+				begin
+					// Keep the same state
 
-		else if (__state == pkg_cpu::StAcceptInterrupt)
-		begin
-			
-		end
+					__stor.ira <= __stor.pc;
+					__stor.pc <= pkg_cpu::irq_jump_location;
+					__stor.ints_enabled <= 1'b0;
+					prep_read(pkg_cpu::ReqDataSz32,
+						pkg_cpu::irq_jump_location);
+				end
+				else
+				begin
+					__state <= pkg_cpu::StStartExecInstr;
 
-		else if (__state == pkg_cpu::StExecNonLdSt)
-		begin
-			
-		end
+					__instr_dec_out_buf <= instr_dec_out;
 
-		else if (__state == pkg_cpu::StExecLdStPart0)
-		begin
-			
-		end
+					// Disable reading/writing
+					disab_rdwr();
 
-		else if (__state == pkg_cpu::StExecLdStPart1)
-		begin
-			
-		end
-	end
+					case (instr_dec_out.group)
+						// 16-bit (2 bytes)
+						2'b00:
+						begin
+							__stor.pc <= __stor.pc + 2;
+						end
+
+						// 32-bit (4 bytes)
+						2'b01:
+						begin
+							__stor.pc <= __stor.pc + 4;
+						end
+
+						// 32-bit (4 bytes)
+						2'b10:
+						begin
+							__stor.pc <= __stor.pc + 4;
+						end
+
+						// 48-bit (6 bytes)
+						2'b11:
+						begin
+							__stor.pc <= __stor.pc + 6;
+						end
+					endcase
+				end
+			end
+
+			else if (__state == pkg_cpu::StStartExecInstr)
+			begin
+				// For eventual conversion to use a pipeline, go ahead and
+				// always go to pkg_cpu::StFinishExecInstr every time.
+				__state <= pkg_cpu::StFinishExecInstr;
+				case (__instr_dec_out_buf.group)
+					2'b00:
+					begin
+						exec_group_0_instr_part_0();
+					end
+
+					2'b01:
+					begin
+						exec_group_1_instr_part_0();
+					end
+
+					2'b10:
+					begin
+						exec_group_2_instr_part_0();
+					end
+
+					2'b11:
+					begin
+						exec_group_3_instr_part_0();
+					end
+				endcase
+			end
 
 
-	//always_comb // your hair
-	always @ (*)
-	begin
-		if (__state == pkg_cpu::StInit)
-		begin
-			
-		end
+			// Note that this state may take multiple cycles to complete if
+			// either a block move is being performed or an integer
+			// division is being performed.
+			else if (__state == pkg_cpu::StFinishExecInstr)
+			begin
+				case (__instr_dec_out_buf.group)
+					2'b00:
+					begin
+						exec_group_0_instr_part_1();
+					end
 
-		else if (__state == pkg_cpu::StDecodeInstr)
-		begin
-			
-		end
+					2'b01:
+					begin
+						exec_group_1_instr_part_1();
+					end
 
-		else if (__state == pkg_cpu::StAcceptInterrupt)
-		begin
-			
-		end
+					2'b10:
+					begin
+						exec_group_2_instr_part_1();
+					end
 
-		else if (__state == pkg_cpu::StExecNonLdSt)
-		begin
-			
-		end
+					2'b11:
+					begin
+						exec_group_3_instr_part_1();
+					end
+				endcase
+			end
 
-		else if (__state == pkg_cpu::StExecLdStPart0)
-		begin
-			
-		end
+			else if (__state == pkg_cpu::StWriteBack)
+			begin
+				prep_load_instr();
+				case (__instr_dec_out_buf.group)
+					2'b00:
+					begin
+						exec_group_0_instr_part_2();
+					end
 
-		else if (__state == pkg_cpu::StExecLdStPart1)
-		begin
-			
+					2'b01:
+					begin
+						exec_group_1_instr_part_2();
+					end
+
+					2'b10:
+					begin
+						exec_group_2_instr_part_2();
+					end
+
+					2'b11:
+					begin
+						exec_group_3_instr_part_2();
+					end
+				endcase
+			end
 		end
 	end
 

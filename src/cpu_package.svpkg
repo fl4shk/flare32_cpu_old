@@ -7,16 +7,6 @@
 package pkg_cpu;
 
 
-// Size of requested data, be it for reading (all 4 sizes) or writing
-// (8-bit, 16-bit, and 32-bit)
-typedef enum bit [`CPU_ENUM_REQ_DATA_SIZE_MSB_POS:0]
-{
-	ReqDataSz8,
-	ReqDataSz16,
-	ReqDataSz32,
-	ReqDataSz48
-
-} ReqDataSize;
 
 typedef enum bit [`CPU_ENUM_FLAGS_POS_MSB_POS:0]
 {
@@ -334,6 +324,16 @@ parameter sp_reg_index = 15;
 parameter lr_reg_index = 14;
 
 
+// Size of requested data, be it for reading (all 4 sizes) or writing
+// (8-bit, 16-bit, and 32-bit)
+typedef enum bit [`CPU_ENUM_REQ_DATA_SIZE_MSB_POS:0]
+{
+	ReqDataSz8,
+	ReqDataSz16,
+	ReqDataSz32,
+	ReqDataSz48
+
+} ReqDataSize;
 
 typedef struct packed
 {
@@ -369,13 +369,12 @@ typedef enum bit [`CPU_ENUM_STATE_MSB_POS:0]
 {
 	StInit,
 	StDecodeInstr,
-	StAcceptInterrupt,
-	StExecNonLdSt,
-	StExecLdStPart0,
-	StExecLdStPart1
+	StStartExecInstr,
+	StFinishExecInstr,
+	StWriteBack
 } State;
 
-
+parameter irq_jump_location = 32'h8000;
 
 
 endpackage

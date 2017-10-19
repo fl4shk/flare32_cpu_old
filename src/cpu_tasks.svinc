@@ -2,5 +2,75 @@
 `define cpu_tasks_svinc
 
 
+task prep_read;
+	input [`CPU_ENUM_REQ_DATA_SIZE_MSB_POS:0] req_data_size;
+	input [`CPU_ADDR_BUS_MSB_POS:0] addr_out;
+
+	out.req_data_size = req_data_size;
+	out.addr_out = addr_out;
+	out.req_rdwr = 1'b1;
+	out.req_write = 1'b0;
+endtask
+
+task prep_load_instr;
+	prep_read(pkg_cpu::ReqDataSz32, __stor.pc);
+	__state <= pkg_cpu::StDecodeInstr;
+endtask
+
+task prep_write;
+	input [`CPU_ENUM_REQ_DATA_SIZE_MSB_POS:0] req_data_size;
+	input [`CPU_DATA_BUS_MAX_MSB_POS:0] data_out;
+	input [`CPU_ADDR_BUS_MSB_POS:0] addr_out;
+
+	out.req_data_size = req_data_size;
+	out.data_out = data_out;
+	out.addr_out = addr_out;
+	out.req_rdwr = 1'b1;
+	out.req_write = 1'b1;
+endtask
+
+task disab_rdwr;
+	out.req_rdwr = 1'b0;
+endtask
+
+
+
+task exec_group_0_instr_part_0;
+endtask
+
+task exec_group_1_instr_part_0;
+endtask
+
+task exec_group_2_instr_part_0;
+endtask
+
+task exec_group_3_instr_part_0;
+endtask
+
+
+task exec_group_0_instr_part_1;
+endtask
+
+task exec_group_1_instr_part_1;
+endtask
+
+task exec_group_2_instr_part_1;
+endtask
+
+task exec_group_3_instr_part_1;
+endtask
+
+
+task exec_group_0_instr_part_2;
+endtask
+
+task exec_group_1_instr_part_2;
+endtask
+
+task exec_group_2_instr_part_2;
+endtask
+
+task exec_group_3_instr_part_2;
+endtask
 
 `endif		// cpu_tasks_svinc

@@ -66,7 +66,7 @@
 #define DESCRIBE_JUMP_DESTINATION_ADDRESS(addr) // Set pc to destination address in addr.
 #define DESCRIBE_CALL_DESTINATION_ADDRESS(addr) // Subroutine call using addr as destination address. 
 #define DESCRIBE_CALL_RETURN_ADDRESS // The return address is stored in the link register (lr).
-#define DESCRIBE_BRANCH_TARGET to ((pc when instruction starts)\
+#define DESCRIBE_BRANCH_TARGET to ((pc when instruction starts + 4)\
 		// + (sign-extended 16-bit immediate value))
 #if 0
 
@@ -331,8 +331,8 @@ GROUP_HEADER(0)
 
 
 
-		// Copy pc to ARG_REG(A) (this can be used for pc-relative loads
-		// and stores)
+		// Copy (pc when instructions starts + 2) to ARG_REG(A) (this can
+		// be used for pc-relative loads and stores)
 		INSTR_RA_PC(cpy)
 
 		// Copy
