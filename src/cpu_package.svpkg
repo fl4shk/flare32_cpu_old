@@ -148,13 +148,22 @@ typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 	Cpy_RaIra_0,
 
 
-	// call subroutine
+	// call subroutine at address (rA + rB)
 	Callx_RaRb_0,
+
+	// jump to address (rA + rB)
 	Jumpx_RaRb_0,
 
+	// cpy rA, pc
 	Cpy_RaPc_0,
+
+	// cp rA, rB
 	Cpy_RaRb_0,
+
+	// Sign-extend low 16-bits of rB, then store result to rA
 	Seh_RaRb_0,
+
+	// Sign extend low 8-bits of rB, then store result to rA
 	Seb_RaRb_0
 } OperG0;
 
@@ -374,7 +383,9 @@ typedef enum bit [`CPU_ENUM_STATE_MSB_POS:0]
 	StWriteBack
 } State;
 
-parameter irq_jump_location = 32'h8000;
+
+// Just use address 0 as the interrupt jump location
+parameter irq_jump_location = 32'h0000;
 
 
 endpackage

@@ -81,6 +81,7 @@ task exec_group_3_instr_part_0;
 endtask
 
 
+
 task exec_group_0_instr_part_1;
 endtask
 
@@ -94,6 +95,7 @@ task exec_group_3_instr_part_1;
 endtask
 
 
+
 task exec_group_0_instr_part_2;
 endtask
 
@@ -105,5 +107,6 @@ endtask
 
 task exec_group_3_instr_part_2;
 endtask
+
 
 `endif		// cpu_tasks_svinc

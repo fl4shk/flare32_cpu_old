@@ -127,13 +127,13 @@
 
 
 `define LIST_OF_INSTR_G3_RA_RB_IMM32__COLLECTION_0 \
-/* Set pc to destination address in (rA + rB + absolute_addr). */ \
-`INSTR_STUFF(3, RaRbImm32, Jumpa, "jumpa") \
-\
 /* Subroutine call using (rA + rB + absolute_addr) as destination */ \
 /* address. */ \
 /* The return address is stored in the link register (lr). */ \
 `INSTR_STUFF(3, RaRbImm32, Calla, "calla") \
+\
+/* Set pc to destination address in (rA + rB + absolute_addr). */ \
+`INSTR_STUFF(3, RaRbImm32, Jumpa, "jumpa") \
 \
 /* rA = 32-bit immediate, rB = same 32-bit immediate */ \
 /* If rA is the same register as rB, then the  */ \
