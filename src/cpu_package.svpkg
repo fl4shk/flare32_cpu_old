@@ -45,18 +45,21 @@ typedef enum bit [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]
 
 	Alu_Rlc,
 
-	Alu_Rrc,
-
-
-	// Used mainly for ldst rA, [rB, rC, simm12]
-	Alu_AddThree,
-
-	// Fused multiply-add
-	Alu_Fma
+	Alu_Rrc
 } OperAlu;
 
 
-// ALU Ports
+typedef enum bit [`CPU_ENUM_SMALL_ALU_OPER_SIZE_MSB_POS:0]
+{
+	// Used mainly for ldst rA, [rB, rC, simm12]
+	SmallAlu_AddThree,
+
+	// Fused multiply-add
+	SmallAlu_Fma
+} OperSmallAlu;
+
+
+// Alu Ports
 typedef struct packed
 {
 	bit [`CPU_WORD_MSB_POS:0] a_in, b_in, c_in;
@@ -69,6 +72,19 @@ typedef struct packed
 	bit [`CPU_WORD_MSB_POS:0] out;
 	bit [`CPU_FLAGS_MSB_POS:0] flags_out;
 } StrcOutAlu;
+
+// SmallAlu Ports
+typedef struct packed
+{
+	bit [`CPU_WORD_MSB_POS:0] a_in, b_in, c_in;
+	bit [`CPU_ENUM_SMALL_ALU_OPER_SIZE_MSB_POS:0] oper;
+} StrcInSmallAlu;
+
+typedef struct packed
+{
+	bit [`CPU_WORD_MSB_POS:0] out;
+} StrcOutSmallAlu;
+
 
 //`define INSTR_STUFF(group, args, ident, str) \
 //	ident``_``args``_``group,
@@ -318,19 +334,6 @@ parameter sp_reg_index = 15;
 parameter lr_reg_index = 14;
 
 
-typedef struct packed
-{
-	// General purpose registers
-	bit [`CPU_WORD_MSB_POS:0] gp_regs[0:`WIDTH_TO_MSB_POS(num_regs)];
-
-	// Program Counter
-	bit [`CPU_WORD_MSB_POS:0] pc_reg;
-
-	// Interrupt Return Address
-	bit [`CPU_WORD_MSB_POS:0] ira_reg;
-} StrcCpuSpecPurpRegs;
-
-
 
 typedef struct packed
 {
@@ -342,6 +345,36 @@ typedef struct packed
 	// Request anything, request a write specifically
 	bit req_rdwr, req_write;
 } StrcOutCpu;
+
+typedef struct packed
+{
+	// General purpose registers
+	bit [`CPU_WORD_MSB_POS:0] gp_regs[0:`WIDTH_TO_MSB_POS(num_regs)];
+
+	// Program Counter
+	bit [`CPU_WORD_MSB_POS:0] pc_reg;
+
+	// Interrupt Return Address
+	bit [`CPU_WORD_MSB_POS:0] ira_reg;
+
+	bit [`CPU_ENUM_FLAGS_POS_MSB_POS:0] flags;
+
+	// Whether interrupts are enabled
+	bit ints_enabled;
+} StrcCpuRegs;
+
+
+
+typedef enum bit [`CPU_ENUM_STATE_MSB_POS:0]
+{
+	StInit,
+	StDecodeInstr,
+	StAcceptInterrupt,
+	StExecNonLdSt,
+	StExecLdStPart0,
+	StExecLdStPart1
+} State;
+
 
 
 

@@ -8,14 +8,14 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 
 
 	// Local wires
-	wire [`CPU_WORD_MSB_POS:0] rot_mod_thing;
+	wire [`CPU_WORD_MSB_POS:0] __rot_mod_thing;
 	wire [`CPU_WORD_WIDTH + `CPU_WORD_WIDTH 
-		+ `CPU_WORD_WIDTH + `CPU_WORD_WIDTH - 1 : 0] rot_temp;
+		+ `CPU_WORD_WIDTH + `CPU_WORD_WIDTH - 1 : 0] __rot_temp;
 
 	// Note that using `WIDTH_TO_MSB_POS in this way ONLY works if
 	// `CPU_WORD_WIDTH and friends are powers of two.
-	assign rot_mod_thing = `WIDTH_TO_MSB_POS(`CPU_WORD_WIDTH);
-	assign rot_temp = {in.a_in, in.a_in};
+	assign __rot_mod_thing = `WIDTH_TO_MSB_POS(`CPU_WORD_WIDTH);
+	assign __rot_temp = {in.a_in, in.a_in};
 
 	// This task is used by both adding and subtracting to update the V
 	// flag.
@@ -41,7 +41,7 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 			= {out.out[`CPU_WORD_MSB_POS], (out.out == 0)};
 	endtask
 
-	//always_comb
+	//always_comb // your hair
 	always @ (*)
 	begin
 		case (in.oper)
@@ -139,8 +139,8 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 				//rot_p_temp[(`alu_inout_pair_width 
 				//- (b_in_lo & rot_p_mod_thing)) 
 				//+: `alu_inout_pair_width]
-				out.out = rot_temp[(`CPU_WORD_WIDTH 
-					- (in.b_in & rot_mod_thing)) 
+				out.out = __rot_temp[(`CPU_WORD_WIDTH 
+					- (in.b_in & __rot_mod_thing)) 
 					+: `CPU_WORD_WIDTH];
 				out.flags_out = in.flags_in;
 			end
@@ -148,7 +148,7 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 			begin
 				//rot_p_temp[(b_in_lo & rot_p_mod_thing) 
 				//+: `alu_inout_pair_width]
-				out.out = rot_temp[(in.b_in & rot_mod_thing) 
+				out.out = __rot_temp[(in.b_in & __rot_mod_thing) 
 					+: `CPU_WORD_WIDTH];
 				out.flags_out = in.flags_in;
 			end
@@ -188,19 +188,6 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 			end
 
 
-			// Used mainly for ldst rA, [rB, rC, simm12]
-			pkg_cpu::Alu_AddThree:
-			begin
-				out.out = in.a_in + in.b_in + in.c_in;
-				out.flags_out = in.flags_in;
-			end
-
-			// Fused multiply-add
-			pkg_cpu::Alu_Fma:
-			begin
-				out.out = in.a_in + (in.b_in * in.c_in);
-				out.flags_out = in.flags_in;
-			end
 
 			//default:
 			//begin
@@ -210,4 +197,30 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 		endcase
 	end
 
+endmodule
+
+module SmallAlu(input pkg_cpu::StrcInSmallAlu in,
+	output pkg_cpu::StrcOutSmallAlu out);
+
+	// Package imports
+	import pkg_cpu::*;
+
+
+	//always_comb // your hair
+	always @ (*)
+	begin
+		case (in.oper)
+			// Used mainly for ldst rA, [rB, rC, simm12]
+			pkg_cpu::SmallAlu_AddThree:
+			begin
+				out.out = in.a_in + in.b_in + in.c_in;
+			end
+
+			// Fused multiply-add
+			pkg_cpu::SmallAlu_Fma:
+			begin
+				out.out = in.a_in + (in.b_in * in.c_in);
+			end
+		endcase
+	end
 endmodule

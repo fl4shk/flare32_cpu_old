@@ -15,7 +15,11 @@ module Cpu(input bit clk,
 	// Package imports
 	import pkg_cpu::*;
 
-	
+	// All the registers
+	pkg_cpu::StrcCpuRegs __regs;
+
+	// Temporaries
+	bit [`CPU_WORD_MSB_POS:0] __temp0, __temp1;
 
 
 	//always @ (posedge clk)
