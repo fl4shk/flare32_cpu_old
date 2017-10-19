@@ -349,19 +349,19 @@ typedef struct packed
 typedef struct packed
 {
 	// General purpose registers
-	bit [`CPU_WORD_MSB_POS:0] gp_regs[0:`WIDTH_TO_MSB_POS(num_regs)];
+	bit [`CPU_WORD_MSB_POS:0] gpr[0:`WIDTH_TO_MSB_POS(num_regs)];
 
 	// Program Counter
-	bit [`CPU_WORD_MSB_POS:0] pc_reg;
+	bit [`CPU_WORD_MSB_POS:0] pc;
 
 	// Interrupt Return Address
-	bit [`CPU_WORD_MSB_POS:0] ira_reg;
+	bit [`CPU_WORD_MSB_POS:0] ira;
 
 	bit [`CPU_ENUM_FLAGS_POS_MSB_POS:0] flags;
 
 	// Whether interrupts are enabled
 	bit ints_enabled;
-} StrcCpuRegs;
+} StrcCpuStorage;
 
 
 
