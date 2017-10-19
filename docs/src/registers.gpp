@@ -9,8 +9,8 @@ pointer is not as general purpose as r1-r14.
 Function argument registers (Don't need to be preserved by callees, though
 interrupts should preserve them):  r1-r4
 r1 is used for return values <= 32 bits
-r1:r2 is used for return values == 64 bits, with r1 as high 32 bits and r2 as
-low 32 bits
+r1:r2 is used for return values == 64 bits, with r1 as high 32 bits and r2
+as low 32 bits
 
 Scratch registers:  r5-r13.  They need to be preserved by the callee.
 
@@ -23,6 +23,7 @@ Stack pointer:  sp, aka r15
 
 -- Special Registers --
 Program counter:  pc
-There won't be any way to perform pc-relative loads.  Instead, there
-will be instructions that permit 32-bit immediate values.
+PC-relative operations are possible via cpy rA, pc
+However, PC-relative operations are typically unnecessary due to the
+existence of 32-bit immediate values.
 

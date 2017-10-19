@@ -54,6 +54,9 @@ typedef enum bit [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]
 	// Fused multiply-add
 	Alu_Fma
 } OperAlu;
+
+
+// ALU Ports
 typedef struct packed
 {
 	bit [`CPU_WORD_MSB_POS:0] a_in, b_in, c_in;
@@ -304,6 +307,41 @@ typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 	Lsr_LongBitShift_3,
 	Asr_LongBitShift_3
 } OperG3;
+
+
+parameter instr_enc_reg_index_width = 4;
+parameter instr_enc_reg_index_msb_pos 
+	= `WIDTH_TO_MSB_POS(instr_enc_reg_index_width);
+
+parameter num_regs = 16;
+parameter sp_reg_index = 15;
+parameter lr_reg_index = 14;
+
+
+typedef struct packed
+{
+	// General purpose registers
+	bit [`CPU_WORD_MSB_POS:0] gp_regs[0:`WIDTH_TO_MSB_POS(num_regs)];
+
+	// Program Counter
+	bit [`CPU_WORD_MSB_POS:0] pc_reg;
+
+	// Interrupt Return Address
+	bit [`CPU_WORD_MSB_POS:0] ira_reg;
+} StrcCpuSpecPurpRegs;
+
+
+
+typedef struct packed
+{
+	bit [`CPU_ENUM_REQ_DATA_SIZE_MSB_POS:0] req_data_size;
+
+	bit [`CPU_DATA_BUS_MAX_MSB_POS:0] data_out;
+	bit [`CPU_ADDR_BUS_MSB_POS:0] addr_out;
+
+	// Request anything, request a write specifically
+	bit req_rdwr, req_write;
+} StrcOutCpu;
 
 
 
