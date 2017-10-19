@@ -294,6 +294,11 @@ module RotateTester(input bit clk, enable);
 			alu_in.a_in, alu_in.b_in, alu_in.oper, alu_in.flags_in,
 			alu_out.out, alu_out.flags_out);
 	endtask
+	task display_alu_binary;
+		$display("%h %b %d %b\t\t%b %b",
+			alu_in.a_in, alu_in.b_in, alu_in.oper, alu_in.flags_in,
+			alu_out.out, alu_out.flags_out);
+	endtask
 	task display_alu_signed;
 		$display("%d %d %d %b\t\t%d %b\t\t%b",
 			$signed(alu_in.a_in), $signed(alu_in.b_in), 
@@ -355,45 +360,26 @@ module RotateTester(input bit clk, enable);
 		end
 	endtask
 
-	//task test_rlc;
-	//	input [`CPU_WORD_MSB_POS:0] some_value;
-	//	input some_carry_in;
+	task exec_rlc;
+		input [`CPU_WORD_MSB_POS:0] some_value;
+		input some_carry_in;
 
-	//	init_alu(`CPU_WORD_WIDTH'd0, some_value, pkg_cpu::Alu_Rlc,
-	//		{3'b000, some_carry_in});
+		init_alu(`CPU_WORD_WIDTH'd0, some_value, pkg_cpu::Alu_Rlc,
+			{3'b00, some_carry_in});
+		`MASTER_CLOCK_DELAY
 
-	//	tester_rlc_out = 1 % (`CPU_WORD_WIDTH + 1);
-	//	tester_rlc_out = ({some_carry_in, some_value} << tester_rlc_out) 
-	//		| ({some_carry_in, some_value} 
-	//		>> ((-tester_rlc_out) % (`CPU_WORD_WIDTH + 1)));
+		display_alu_binary();
+	endtask
+	task exec_rrc;
+		input [`CPU_WORD_MSB_POS:0] some_value;
+		input some_carry_in;
 
-	//	if (tester_rlc_out 
-	//		!= {alu_out.flags_out[pkg_cpu::FlagC], alu_out.out})
-	//	begin
-	//		$display("%h:  Rlc Error with", tester_rlc_out);
-	//		display_alu_unsigned();
-	//	end
-	//endtask
+		init_alu(`CPU_WORD_WIDTH'd0, some_value, pkg_cpu::Alu_Rrc,
+			{3'b00, some_carry_in});
+		`MASTER_CLOCK_DELAY
 
-	//task test_rrc;
-	//	input [`CPU_WORD_MSB_POS:0] some_value;
-	//	input some_carry_in;
-
-	//	init_alu(`CPU_WORD_WIDTH'd0, some_value, pkg_cpu::Alu_Rrc,
-	//		{3'b000, some_carry_in});
-
-	//	tester_rrc_out = 1 % (`CPU_WORD_WIDTH + 1);
-	//	tester_rrc_out = ({some_value, some_carry_in} >> tester_rrc_out) 
-	//		| ({some_value, some_carry_in} 
-	//		<< ((-tester_rrc_out) % (`CPU_WORD_WIDTH + 1)));
-
-	//	if (tester_rrc_out 
-	//		!= {alu_out.out, alu_out.flags_out[pkg_cpu::FlagC]})
-	//	begin
-	//		$display("%h:  Rrc Error with", tester_rrc_out);
-	//		display_alu_unsigned();
-	//	end
-	//endtask
+		display_alu_binary();
+	endtask
 
 
 	initial
@@ -411,16 +397,16 @@ module RotateTester(input bit clk, enable);
 				end
 			end
 
-			//for (i=0; i<`WIDTH_TO_SIZE(`CPU_WORD_WIDTH); i=i+1)
-			//begin
-			//	for (j=0; j<2; j=j+1)
-			//	begin
-			//		tester_a = i;
-			//		tester_carry_in = j;
-			//		test_rlc(tester_a, tester_carry_in);
-			//		test_rrc(tester_a, tester_carry_in);
-			//	end
-			//end
+			for (i=0; i<`WIDTH_TO_SIZE(`CPU_WORD_WIDTH); i=i+1)
+			begin
+				for (j=0; j<2; j=j+1)
+				begin
+					tester_a = i;
+					tester_carry_in = j;
+					//exec_rlc(tester_a, tester_carry_in);
+					//exec_rrc(tester_a, tester_carry_in);
+				end
+			end
 			$finish;
 		end
 	end

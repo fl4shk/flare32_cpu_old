@@ -39,8 +39,8 @@ module TopLevel;
 	//CompareTester cmp_tester(.clk(__master_clk), 
 	//	.enable(__testers_enable));
 
-	RotateTester rotate_tester(.clk(__master_clk),
-		.enable(__testers_enable));
+	//RotateTester rotate_tester(.clk(__master_clk),
+	//	.enable(__testers_enable));
 
 
 endmodule
