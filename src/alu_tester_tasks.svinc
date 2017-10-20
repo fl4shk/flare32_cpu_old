@@ -1,7 +1,7 @@
 	task set_alu_a_b;
 		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
 
-		{alu_in.a_in, alu_in.b_in} = {some_a, some_b};
+		{alu_in.a, alu_in.b} = {some_a, some_b};
 	endtask
 
 	task init_alu;
@@ -11,27 +11,27 @@
 
 		set_alu_a_b(some_a, some_b);
 		alu_in.oper = some_oper;
-		alu_in.flags_in = some_flags_in;
+		alu_in.flags = some_flags_in;
 	endtask
 
 	task display_alu_unsigned;
 		$display("%h %h %d %b\t\t%h %b",
-			alu_in.a_in, alu_in.b_in, alu_in.oper, alu_in.flags_in,
-			alu_out.out, alu_out.flags_out);
+			alu_in.a, alu_in.b, alu_in.oper, alu_in.flags,
+			alu_out.out, alu_out.flags);
 	endtask
 	task display_alu_binary;
 		$display("%h %b %d %b\t\t%b %b",
-			alu_in.a_in, alu_in.b_in, alu_in.oper, alu_in.flags_in,
-			alu_out.out, alu_out.flags_out);
+			alu_in.a, alu_in.b, alu_in.oper, alu_in.flags,
+			alu_out.out, alu_out.flags);
 	endtask
 	task display_alu_signed;
 		$display("%d %d %d %b\t\t%d %b\t\t%b",
-			$signed(alu_in.a_in), $signed(alu_in.b_in), 
-			alu_in.oper, alu_in.flags_in,
-			$signed(alu_out.out), alu_out.flags_out,
+			$signed(alu_in.a), $signed(alu_in.b), 
+			alu_in.oper, alu_in.flags,
+			$signed(alu_out.out), alu_out.flags,
 			
-			(alu_out.flags_out[pkg_cpu::FlagN] 
-			== alu_out.flags_out[pkg_cpu::FlagV]) );
+			(alu_out.flags[pkg_cpu::FlagN] 
+			== alu_out.flags[pkg_cpu::FlagV]) );
 	endtask
 
 	task exec_alu_and_display_unsigned;

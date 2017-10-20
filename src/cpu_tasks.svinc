@@ -7,7 +7,7 @@ task prep_read;
 	input [`CPU_ADDR_BUS_MSB_POS:0] addr_out;
 
 	out.req_data_size = req_data_size;
-	out.addr_out = addr_out;
+	out.addr = addr_out;
 	out.req_rdwr = 1'b1;
 	out.req_write = 1'b0;
 endtask
@@ -23,8 +23,8 @@ task prep_write;
 	input [`CPU_ADDR_BUS_MSB_POS:0] addr_out;
 
 	out.req_data_size = req_data_size;
-	out.data_out = data_out;
-	out.addr_out = addr_out;
+	out.data = data_out;
+	out.addr = addr_out;
 	out.req_rdwr = 1'b1;
 	out.req_write = 1'b1;
 endtask

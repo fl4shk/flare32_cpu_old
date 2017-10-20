@@ -83,17 +83,17 @@ module Cpu(input bit clk,
 	task set_alu_a_b;
 		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
 
-		{alu_in.a_in, alu_in.b_in} = {some_a, some_b};
+		{alu_in.a, alu_in.b} = {some_a, some_b};
 	endtask
 
 	task init_alu;
 		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
 		input [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0] some_oper;
-		input [`CPU_ENUM_FLAGS_POS_MSB_POS:0] some_flags_in;
+		input [`CPU_ENUM_FLAGS_POS_MSB_POS:0] some_flags;
 
 		set_alu_a_b(some_a, some_b);
 		alu_in.oper = some_oper;
-		alu_in.flags_in = some_flags_in;
+		alu_in.flags = some_flags;
 	endtask
 
 	`include "src/cpu_tasks.svinc"

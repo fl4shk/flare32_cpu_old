@@ -2,38 +2,88 @@
 
 
 
+// RAM intended for testbench purposes, but not sure if it'll work in 
+module TestRam #(parameter real_addr_width=16)
+	(input bit clk, enable_readmemh,
+	input pkg_testing::StrcInTestRam in,
+	output bit [`CPU_DATA_BUS_MAX_MSB_POS:0] data_out);
+
+	// Package imports
+	import pkg_cpu::*;
+	import pkg_testing::*;
+
+	// Parameters
+	parameter real_mem_max_offset
+		= `WIDTH_TO_LARGEST_ADDR(real_addr_width);
 
 
-//// For testing instruction decoding
-//module ReadOnlyRam(input bit clk, enable,
-//	input bit [`CPU_ADDR_BUS_MSB_POS:0] addr_in,
-//	output bit [`CPU_DATA_BUS_MAX_MSB_POS:0] data_out);
-//
-//
-//	// Package imports
-//	import pkg_testing::*;
-//
-//	bit [7:0] __mem[0:test_ram_mem_max_offset];
-//
-//	initial $readmemh("readmemh_input.txt.ignore", __mem);
-//
-//	always @ (posedge clk)
-//	begin
-//		if (enable)
-//		begin
-//			data_out <= {__mem[addr_in & 8'hff],
-//				__mem[(addr_in + 1) & 8'hff],
-//
-//				__mem[(addr_in + 2) & 8'hff],
-//				__mem[(addr_in + 3) & 8'hff],
-//
-//				__mem[(addr_in + 4) & 8'hff],
-//				__mem[(addr_in + 5) & 8'hff]};
-//		end
-//	end
-//
-//
-//endmodule
+	// Local vars
+	bit [7:0] __mem[0:real_mem_max_offset];
+
+	initial
+	begin
+		if (enable_readmemh)
+		begin
+			$readmemh("test_ram_readmemh_input.txt.ignore", __mem);
+		end
+	end
+
+
+	always @ (posedge clk)
+	begin
+		if (in.req_write)
+		begin
+			//case (in.req_data_size)
+			//	pkg_cpu::ReqDataSz8:
+			//	begin
+			//		__mem[in.addr & real_mem_max_offset] 
+			//			<= in.data[7:0];
+			//	end
+
+			//	pkg_cpu::ReqDataSz16:
+			//	begin
+			//		{__mem[in.addr & real_mem_max_offset],
+			//			__mem[(in.addr + 1) & real_mem_max_offset]}
+			//			<= in.data[15:0];
+			//	end
+
+			//	pkg_cpu::ReqDataSz32:
+			//	begin
+			//		{__mem[in.addr & real_mem_max_offset],
+			//			__mem[(in.addr + 1) & real_mem_max_offset],
+			//			__mem[(in.addr + 2) & real_mem_max_offset],
+			//			__mem[(in.addr + 3) & real_mem_max_offset]}
+			//			<= in.data[31:0];
+			//	end
+
+			//	pkg_cpu::ReqDataSz48:
+			//	begin
+			//		{__mem[in.addr & real_mem_max_offset],
+			//			__mem[(in.addr + 1) & real_mem_max_offset],
+			//			__mem[(in.addr + 2) & real_mem_max_offset],
+			//			__mem[(in.addr + 3) & real_mem_max_offset],
+			//			__mem[(in.addr + 4) & real_mem_max_offset],
+			//			__mem[(in.addr + 5) & real_mem_max_offset]}
+			//			<= in.data;
+			//	end
+			//endcase
+		end
+
+		data_out <= {__mem[in.addr & real_mem_max_offset],
+			__mem[(in.addr + 1) & real_mem_max_offset],
+
+			__mem[(in.addr + 2) & real_mem_max_offset],
+			__mem[(in.addr + 3) & real_mem_max_offset],
+
+			__mem[(in.addr + 4) & real_mem_max_offset],
+			__mem[(in.addr + 5) & real_mem_max_offset]};
+	end
+
+
+endmodule
+
+
+
 
 
 module CompareTester(input bit clk, enable);
@@ -60,7 +110,7 @@ module CompareTester(input bit clk, enable);
 		// Z == 0
 		if (some_a != some_b)
 		begin
-			if (!(alu_out.flags_out[pkg_cpu::FlagZ] == 0))
+			if (!(alu_out.flags[pkg_cpu::FlagZ] == 0))
 			begin
 				$display("!= Error with");
 				display_alu_unsigned();
@@ -70,7 +120,7 @@ module CompareTester(input bit clk, enable);
 		// Z == 1
 		if (some_a == some_b)
 		begin
-			if (!(alu_out.flags_out[pkg_cpu::FlagZ] == 1))
+			if (!(alu_out.flags[pkg_cpu::FlagZ] == 1))
 			begin
 				$display("== Error with");
 				display_alu_unsigned();
@@ -89,7 +139,7 @@ module CompareTester(input bit clk, enable);
 		// C == 0 [unsigned less than]
 		if (some_a < some_b)
 		begin
-			if (!(alu_out.flags_out[pkg_cpu::FlagC] == 0))
+			if (!(alu_out.flags[pkg_cpu::FlagC] == 0))
 			begin
 				$display("< Error with");
 				display_alu_unsigned();
@@ -99,8 +149,8 @@ module CompareTester(input bit clk, enable);
 		// (C == 0 or Z == 1) [unsigned less than or equal]
 		if (some_a <= some_b)
 		begin
-			if (!((alu_out.flags_out[pkg_cpu::FlagC] == 0)
-				|| (alu_out.flags_out[pkg_cpu::FlagZ] == 1)))
+			if (!((alu_out.flags[pkg_cpu::FlagC] == 0)
+				|| (alu_out.flags[pkg_cpu::FlagZ] == 1)))
 			begin
 				$display("<= Error with");
 				display_alu_unsigned();
@@ -110,8 +160,8 @@ module CompareTester(input bit clk, enable);
 		// (C == 1 and Z == 0) [unsigned greater than]
 		if (some_a > some_b)
 		begin
-			if (!((alu_out.flags_out[pkg_cpu::FlagC] == 1)
-				&& (alu_out.flags_out[pkg_cpu::FlagZ] == 0)))
+			if (!((alu_out.flags[pkg_cpu::FlagC] == 1)
+				&& (alu_out.flags[pkg_cpu::FlagZ] == 0)))
 			begin
 				$display("> Error with");
 				display_alu_unsigned();
@@ -121,7 +171,7 @@ module CompareTester(input bit clk, enable);
 		// C == 1 [unsigned greater than or equal]
 		if (some_a >= some_b)
 		begin
-			if (!(alu_out.flags_out[pkg_cpu::FlagC] == 1))
+			if (!(alu_out.flags[pkg_cpu::FlagC] == 1))
 			begin
 				$display(">= Error with");
 				display_alu_unsigned();
@@ -142,8 +192,8 @@ module CompareTester(input bit clk, enable);
 		// N != V [signed less than]
 		if ($signed(some_a) < $signed(some_b))
 		begin
-			if (!(alu_out.flags_out[pkg_cpu::FlagN]
-				!= alu_out.flags_out[pkg_cpu::FlagV]))
+			if (!(alu_out.flags[pkg_cpu::FlagN]
+				!= alu_out.flags[pkg_cpu::FlagV]))
 			begin
 				$display("Signed < Error with");
 				display_alu_signed();
@@ -153,9 +203,9 @@ module CompareTester(input bit clk, enable);
 		// (N != V or Z == 1) [signed less than or equal]
 		if ($signed(some_a) <= $signed(some_b))
 		begin
-			if (!((alu_out.flags_out[pkg_cpu::FlagN]
-				!= alu_out.flags_out[pkg_cpu::FlagV])
-				|| (alu_out.flags_out[pkg_cpu::FlagZ] == 1)))
+			if (!((alu_out.flags[pkg_cpu::FlagN]
+				!= alu_out.flags[pkg_cpu::FlagV])
+				|| (alu_out.flags[pkg_cpu::FlagZ] == 1)))
 			begin
 				$display("Signed <= Error with");
 				display_alu_signed();
@@ -165,9 +215,9 @@ module CompareTester(input bit clk, enable);
 		// (N == V and Z == 0) [signed greater than]
 		if ($signed(some_a) > $signed(some_b))
 		begin
-			if (!((alu_out.flags_out[pkg_cpu::FlagN]
-				== alu_out.flags_out[pkg_cpu::FlagV])
-				&& (alu_out.flags_out[pkg_cpu::FlagZ] == 0)))
+			if (!((alu_out.flags[pkg_cpu::FlagN]
+				== alu_out.flags[pkg_cpu::FlagV])
+				&& (alu_out.flags[pkg_cpu::FlagZ] == 0)))
 			begin
 				$display("Signed > Error with");
 				display_alu_signed();
@@ -177,8 +227,8 @@ module CompareTester(input bit clk, enable);
 		// N == V [signed greater than or equal]
 		if ($signed(some_a) >= $signed(some_b))
 		begin
-			if (!(alu_out.flags_out[pkg_cpu::FlagN]
-				== alu_out.flags_out[pkg_cpu::FlagV]))
+			if (!(alu_out.flags[pkg_cpu::FlagN]
+				== alu_out.flags[pkg_cpu::FlagV]))
 			begin
 				$display("Signed >= Error with");
 				display_alu_signed();

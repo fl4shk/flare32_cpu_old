@@ -1,14 +1,24 @@
-`include "src/misc_defines.svinc"
+`include "src/cpu_defines.svinc"
 
 
 package pkg_testing;
 
-parameter test_ram_real_addr_width = 8;
-parameter test_ram_real_addr_msb_pos 
-	= `WIDTH_TO_MSB_POS(test_ram_real_addr_width);
+//parameter test_ram_real_addr_width = 16;
+//parameter test_ram_real_addr_msb_pos 
+//	= `WIDTH_TO_MSB_POS(test_ram_real_addr_width);
+//
+//parameter test_ram_mem_max_offset
+//	= `WIDTH_TO_LARGEST_ADDR(test_ram_real_addr_width);
 
-parameter test_ram_mem_max_offset
-	= `WIDTH_TO_LARGEST_ADDR(test_ram_real_addr_width);
+typedef struct packed
+{
+	bit [`CPU_ENUM_REQ_DATA_SIZE_MSB_POS:0] req_data_size;
+	bit [`CPU_DATA_BUS_MAX_MSB_POS:0] data;
+	bit [`CPU_ADDR_BUS_MSB_POS:0] addr;
+
+	// Request anything, request a write specifically
+	bit req_rdwr, req_write;
+} StrcInTestRam;
 
 
 endpackage

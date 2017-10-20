@@ -52,21 +52,21 @@ typedef enum bit [`CPU_ENUM_SMALL_ALU_OPER_SIZE_MSB_POS:0]
 // Alu Ports
 typedef struct packed
 {
-	bit [`CPU_WORD_MSB_POS:0] a_in, b_in, c_in;
+	bit [`CPU_WORD_MSB_POS:0] a, b;
 	bit [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0] oper;
-	bit [`CPU_FLAGS_MSB_POS:0] flags_in;
+	bit [`CPU_FLAGS_MSB_POS:0] flags;
 } StrcInAlu;
 
 typedef struct packed
 {
 	bit [`CPU_WORD_MSB_POS:0] out;
-	bit [`CPU_FLAGS_MSB_POS:0] flags_out;
+	bit [`CPU_FLAGS_MSB_POS:0] flags;
 } StrcOutAlu;
 
 // SmallAlu Ports
 typedef struct packed
 {
-	bit [`CPU_WORD_MSB_POS:0] a_in, b_in, c_in;
+	bit [`CPU_WORD_MSB_POS:0] a, b, c;
 	bit [`CPU_ENUM_SMALL_ALU_OPER_SIZE_MSB_POS:0] oper;
 } StrcInSmallAlu;
 
@@ -348,8 +348,8 @@ typedef struct packed
 {
 	bit [`CPU_ENUM_REQ_DATA_SIZE_MSB_POS:0] req_data_size;
 
-	bit [`CPU_DATA_BUS_MAX_MSB_POS:0] data_out;
-	bit [`CPU_ADDR_BUS_MSB_POS:0] addr_out;
+	bit [`CPU_DATA_BUS_MAX_MSB_POS:0] data;
+	bit [`CPU_ADDR_BUS_MSB_POS:0] addr;
 
 	// Request anything, request a write specifically
 	bit req_rdwr, req_write;
