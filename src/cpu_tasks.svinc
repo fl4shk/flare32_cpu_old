@@ -36,77 +36,40 @@ endtask
 task prep_divide_u32;
 	input [31:0] num, denom;
 
-	divmod32_enable <= 1;
-	divmod32_unsgn_or_sgn <= 0;
-	{divmod32_num, divmod32_denom} <= {num, denom};
+	divmod32_in.enable <= 1;
+	divmod32_in.unsgn_or_sgn <= 0;
+	{divmod32_in.num, divmod32_in.denom} <= {num, denom};
 endtask
 
 task prep_divide_s32;
 	input [31:0] num, denom;
 
-	divmod32_enable <= 1;
-	divmod32_unsgn_or_sgn <= 1;
-	{divmod32_num, divmod32_denom} <= {num, denom};
+	divmod32_in.enable <= 1;
+	divmod32_in.unsgn_or_sgn <= 1;
+	{divmod32_in.num, divmod32_in.denom} <= {num, denom};
 endtask
 
 task prep_divide_u64;
 	input [63:0] num, denom;
 
-	divmod64_enable <= 1;
-	divmod64_unsgn_or_sgn <= 0;
-	{divmod64_num, divmod64_denom} <= {num, denom};
+	divmod64_in.enable <= 1;
+	divmod64_in.unsgn_or_sgn <= 0;
+	{divmod64_in.num, divmod64_in.denom} <= {num, denom};
 endtask
 
 task prep_divide_s64;
 	input [63:0] num, denom;
 
-	divmod64_enable <= 1;
-	divmod64_unsgn_or_sgn <= 1;
-	{divmod64_num, divmod64_denom} <= {num, denom};
+	divmod64_in.enable <= 1;
+	divmod64_in.unsgn_or_sgn <= 1;
+	{divmod64_in.num, divmod64_in.denom} <= {num, denom};
 endtask
 
 
 
-
-task exec_group_0_instr_part_0;
-endtask
-
-task exec_group_1_instr_part_0;
-endtask
-
-task exec_group_2_instr_part_0;
-endtask
-
-task exec_group_3_instr_part_0;
-endtask
-
-
-
-task exec_group_0_instr_part_1;
-endtask
-
-task exec_group_1_instr_part_1;
-endtask
-
-task exec_group_2_instr_part_1;
-endtask
-
-task exec_group_3_instr_part_1;
-endtask
-
-
-
-task exec_group_0_instr_part_2;
-endtask
-
-task exec_group_1_instr_part_2;
-endtask
-
-task exec_group_2_instr_part_2;
-endtask
-
-task exec_group_3_instr_part_2;
-endtask
+`include "src/cpu_exec_instr_part_0_tasks.svinc"
+`include "src/cpu_exec_instr_part_1_tasks.svinc"
+`include "src/cpu_exec_instr_part_2_tasks.svinc"
 
 
 `endif		// cpu_tasks_svinc

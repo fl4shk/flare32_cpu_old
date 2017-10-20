@@ -29,8 +29,6 @@ module Cpu(input bit clk,
 	wire [`CPU_DATA_BUS_MAX_MSB_POS:0] instr_dec_to_decode;
 	pkg_instr_enc::StrcOutInstrDecoder instr_dec_out;
 
-	// Copy of instr_dec_out
-	pkg_instr_enc::StrcOutInstrDecoder __instr_dec_out_buf;
 
 
 	// Connections to alu
@@ -43,22 +41,39 @@ module Cpu(input bit clk,
 
 
 	// Connections to divmod32
-	bit divmod32_enable, divmod32_unsgn_or_sgn;
-	bit [31:0] divmod32_num, divmod32_denom;
+	struct packed
+	{
+		bit enable, unsgn_or_sgn;
+		bit [31:0] num, denom;
+	} divmod32_in;
 
-	wire [31:0] divmod32_quot, divmod32_rem;
-	wire divmod32_can_accept_cmd, divmod32_data_ready;
+	struct packed
+	{
+		bit [31:0] quot, rem;
+		bit can_accept_cmd, data_ready;
+	} divmod32_out;
 
 	// Connections to divmod64
-	bit divmod64_enable, divmod64_unsgn_or_sgn;
-	bit [63:0] divmod64_num, divmod64_denom;
+	struct packed
+	{
+		bit enable, unsgn_or_sgn;
+		bit [63:0] num, denom;
+	} divmod64_in;
 
-	wire [63:0] divmod64_quot, divmod64_rem;
-	wire divmod64_can_accept_cmd, divmod64_data_ready;
+	struct packed
+	{
+		bit [63:0] quot, rem;
+		bit can_accept_cmd, data_ready;
+	} divmod64_out;
 
 
 	// Temporaries
 	bit [`CPU_WORD_MSB_POS:0] __temp0, __temp1;
+
+	// Copies of module outputs
+	pkg_cpu::StrcOutAlu __alu_out_buf;
+	pkg_cpu::StrcOutSmallAlu __smal_alu_out_buf;
+	pkg_instr_enc::StrcOutInstrDecoder __instr_dec_out_buf;
 
 
 	// Assignments
@@ -195,7 +210,7 @@ module Cpu(input bit clk,
 			// division is being performed.
 			else if (__state == pkg_cpu::StFinishExecInstr)
 			begin
-				{divmod32_enable, divmod64_enable} <= 0;
+				{divmod32_in.enable, divmod64_in.enable} <= 0;
 				
 				case (__instr_dec_out_buf.group)
 					2'b00:
@@ -256,16 +271,18 @@ module Cpu(input bit clk,
 	SmallAlu small_alu(.in(small_alu_in), .out(small_alu_out));
 
 	NonRestoringDivider #(32) divmod32(.clk(clk),
-		.enable(divmod32_enable), .unsgn_or_sgn(divmod32_unsgn_or_sgn),
-		.num(divmod32_num), .denom(divmod32_denom),
-		.quot(divmod32_quot), .rem(divmod32_rem),
-		.can_accept_cmd(divmod32_can_accept_cmd),
-		.data_ready(divmod32_data_ready));
+		.enable(divmod32_in.enable), 
+		.unsgn_or_sgn(divmod32_in.unsgn_or_sgn),
+		.num(divmod32_in.num), .denom(divmod32_in.denom),
+		.quot(divmod32_out.quot), .rem(divmod32_out.rem),
+		.can_accept_cmd(divmod32_out.can_accept_cmd),
+		.data_ready(divmod32_out.data_ready));
 	NonRestoringDivider #(64) divmod64(.clk(clk),
-		.enable(divmod64_enable), .unsgn_or_sgn(divmod64_unsgn_or_sgn),
-		.num(divmod64_num), .denom(divmod64_denom),
-		.quot(divmod64_quot), .rem(divmod64_rem),
-		.can_accept_cmd(divmod64_can_accept_cmd),
-		.data_ready(divmod64_data_ready));
+		.enable(divmod64_in.enable), 
+		.unsgn_or_sgn(divmod64_in.unsgn_or_sgn),
+		.num(divmod64_in.num), .denom(divmod64_in.denom),
+		.quot(divmod64_out.quot), .rem(divmod64_out.rem),
+		.can_accept_cmd(divmod64_out.can_accept_cmd),
+		.data_ready(divmod64_out.data_ready));
 
 endmodule

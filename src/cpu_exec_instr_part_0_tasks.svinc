@@ -1,0 +1,18 @@
+`ifndef cpu_exec_instr_part_0_tasks_svinc
+`define cpu_exec_instr_part_0_tasks_svinc
+
+
+task exec_group_0_instr_part_0;
+endtask
+
+task exec_group_1_instr_part_0;
+endtask
+
+task exec_group_2_instr_part_0;
+endtask
+
+task exec_group_3_instr_part_0;
+endtask
+
+
+`endif		// cpu_exec_instr_part_0_tasks_svinc
