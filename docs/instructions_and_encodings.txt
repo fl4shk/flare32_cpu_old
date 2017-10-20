@@ -169,19 +169,19 @@ Group 0 Instructions
 		// This instruction can only affect the C flag.
 		rrc rA, rB
 
-		// Copy rA to the Interrupt Return Address
-		cpy ira, rA
-
-		// Copy the Interrupt Return Address to rA
-		cpy rA, ira
-
-
-
 		// ENable Interrupts
 		eni
 
 		// DIsable Interrupts
 		dii
+
+
+
+		// Copy the Interrupt Return Address to rA
+		cpy rA, ira
+
+		// Copy rA to the Interrupt Return Address
+		cpy ira, rA
 
 		// Set the PC to interrupt RETurn address and enable Interrupts
 		reti
