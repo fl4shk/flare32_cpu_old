@@ -2,7 +2,7 @@
 
 
 
-// RAM intended for testbench purposes, but not sure if it'll work in 
+// RAM intended for testbench purposes, but not sure it's synthesizeable
 module TestRam #(parameter real_addr_width=16)
 	(input bit clk, enable_readmemh,
 	input pkg_testing::StrcInTestRam in,
@@ -33,40 +33,40 @@ module TestRam #(parameter real_addr_width=16)
 	begin
 		if (in.req_write)
 		begin
-			//case (in.req_data_size)
-			//	pkg_cpu::ReqDataSz8:
-			//	begin
-			//		__mem[in.addr & real_mem_max_offset] 
-			//			<= in.data[7:0];
-			//	end
+			case (in.req_data_size)
+				pkg_cpu::ReqDataSz8:
+				begin
+					__mem[in.addr & real_mem_max_offset] 
+						<= in.data[7:0];
+				end
 
-			//	pkg_cpu::ReqDataSz16:
-			//	begin
-			//		{__mem[in.addr & real_mem_max_offset],
-			//			__mem[(in.addr + 1) & real_mem_max_offset]}
-			//			<= in.data[15:0];
-			//	end
+				pkg_cpu::ReqDataSz16:
+				begin
+					{__mem[in.addr & real_mem_max_offset],
+						__mem[(in.addr + 1) & real_mem_max_offset]}
+						<= in.data[15:0];
+				end
 
-			//	pkg_cpu::ReqDataSz32:
-			//	begin
-			//		{__mem[in.addr & real_mem_max_offset],
-			//			__mem[(in.addr + 1) & real_mem_max_offset],
-			//			__mem[(in.addr + 2) & real_mem_max_offset],
-			//			__mem[(in.addr + 3) & real_mem_max_offset]}
-			//			<= in.data[31:0];
-			//	end
+				pkg_cpu::ReqDataSz32:
+				begin
+					{__mem[in.addr & real_mem_max_offset],
+						__mem[(in.addr + 1) & real_mem_max_offset],
+						__mem[(in.addr + 2) & real_mem_max_offset],
+						__mem[(in.addr + 3) & real_mem_max_offset]}
+						<= in.data[31:0];
+				end
 
-			//	pkg_cpu::ReqDataSz48:
-			//	begin
-			//		{__mem[in.addr & real_mem_max_offset],
-			//			__mem[(in.addr + 1) & real_mem_max_offset],
-			//			__mem[(in.addr + 2) & real_mem_max_offset],
-			//			__mem[(in.addr + 3) & real_mem_max_offset],
-			//			__mem[(in.addr + 4) & real_mem_max_offset],
-			//			__mem[(in.addr + 5) & real_mem_max_offset]}
-			//			<= in.data;
-			//	end
-			//endcase
+				pkg_cpu::ReqDataSz48:
+				begin
+					{__mem[in.addr & real_mem_max_offset],
+						__mem[(in.addr + 1) & real_mem_max_offset],
+						__mem[(in.addr + 2) & real_mem_max_offset],
+						__mem[(in.addr + 3) & real_mem_max_offset],
+						__mem[(in.addr + 4) & real_mem_max_offset],
+						__mem[(in.addr + 5) & real_mem_max_offset]}
+						<= in.data;
+				end
+			endcase
 		end
 
 		data_out <= {__mem[in.addr & real_mem_max_offset],

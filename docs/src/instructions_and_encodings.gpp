@@ -377,6 +377,37 @@ GROUP_HEADER(0)
 
 
 
+		// ENable Interrupts
+		INSTR_NO_ARGS(eni)
+
+		// DIsable Interrupts
+		INSTR_NO_ARGS(dii)
+
+		// Set the PC to interrupt RETurn address and enable Interrupts
+		INSTR_NO_ARGS(reti)
+
+		// Set the PC to the Interrupt Return Address, but DON'T enable
+		// interrupts
+		INSTR_IRA(jump)
+
+
+
+		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
+		// value are set to zero before the push)
+		INSTR_FLAGS(push)
+
+		// Pop 8-bit value from the stack and store low 4 bits to flags
+		INSTR_FLAGS(pop)
+
+		// Clear ARG_REG(A), then CoPY FRom Flags to ARG_REG(A)
+		INSTR_RA_FLAGS(cpy)
+
+		// Copy to flags from ARG_REG(A)
+		FLAGS_ALL
+		INSTR_FLAGS_RA(cpy)
+
+
+
 		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
 		DESCRIBE_CALL_RETURN_ADDRESS
 		INSTR_RA_RB(callx)
@@ -405,16 +436,6 @@ GROUP_HEADER(0)
 		RESERVED
 
 
-
-		RESERVED
-		RESERVED
-		RESERVED
-		RESERVED
-
-		RESERVED
-		RESERVED
-		RESERVED
-		RESERVED
 
 		RESERVED
 		RESERVED
@@ -774,21 +795,12 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 				// ARG_REG(X) += 16;
 			Syntax:  stmia ARG_REG(X), {ARG_REG(A), ARG_REG(B), ARG_REG(C), ARG_REG(D)}
 
-		// ENable Interrupts
-		INSTR_NO_ARGS(eni)
 
-		// DIsable Interrupts
-		INSTR_NO_ARGS(dii)
+		RESERVED
+		RESERVED
+		RESERVED
 
-		// Set the PC to interrupt RETurn address and enable Interrupts
-		INSTR_NO_ARGS(reti)
-
-
-
-		// Set the PC to the Interrupt Return Address, but DON'T enable
-		// interrupts
-		INSTR_IRA(jump)
-
+		RESERVED
 		RESERVED
 		RESERVED
 		RESERVED
@@ -1197,23 +1209,6 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 				// ARG_REG(X) += 32;
 			Syntax:  stmia ARG_REG(X), {rA, rB, rC, rD, rE, rF, rG, rH}
 
-		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
-		// value are set to zero before the push)
-		INSTR_FLAGS(push)
-
-		// Pop 8-bit value from the stack and store low 4 bits to flags
-		INSTR_FLAGS(pop)
-
-
-
-		// Clear ARG_REG(A), then CoPY FRom Flags to ARG_REG(A)
-		INSTR_RA_FLAGS(cpy)
-
-		// Copy to flags from ARG_REG(A)
-		FLAGS_ALL
-		INSTR_FLAGS_RA(cpy)
-
-
 		// Unigned 32-bit by 32-bit Multiplication -> Unsigned 64-bit
 		// result,
 		// where rA is high 32 bits of result, rB is low 32 bits of result
@@ -1315,6 +1310,14 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		asr rA:rB, rC:rD, rE:rF
 
 		RESERVED
+
+
+
+		RESERVED
+		RESERVED
+		RESERVED
+		RESERVED
+
 
 
 
