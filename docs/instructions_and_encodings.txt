@@ -5,15 +5,9 @@ first 16-bits.
 
 Group 0 Instructions, for example, use 00 as their group identifier.
 
-To specify that an instruction is permitted to affect flags, append ".f"
-(without quotes) to the end of the instruction name.  
-Example:  "add" becomes "add.f"
 
 Group 0 Instructions
-00fo oooo aaaa bbbb
-
-	f:  1 if can affect flags (and instruction type supports it), 0 if
-	flags unchanged.
+00oo oooo aaaa bbbb
 
 	o:  opcode
 	a: rA (destination register usually)
@@ -53,44 +47,36 @@ Group 0 Instructions
 
 
 		// rA = rA + rB
-		// This instruction can affect N, V, Z, and C flags.
 		add rA, rB
 
 		// rA = rA + rB + carry_flag
 		// Add with carry
-		// This instruction can affect N, V, Z, and C flags.
 		adc rA, rB
 
 		// rA = rA - rB
-		// This instruction can affect N, V, Z, and C flags.
 		sub rA, rB
 
 		// rA = rA + (~rB) + carry_flag
 		// Subtract with borrow (6502 style)
-		// This instruction can affect N, V, Z, and C flags.
 		sbc rA, rB
 
 
 
 		// rA = rB - rA
-		// This instruction can affect N, V, Z, and C flags.
 		rsb rA, rB
 
 		// rA = rA * rB
 		mul rA, rB
 
 		// rA = rA & rB
-		// This instruction can affect the N and Z flags.
 		and rA, rB
 
 		// rA = rA | rB
-		// This instruction can affect the N and Z flags.
 		or rA, rB
 
 
 
 		// rA = rA ^ rB
-		// This instruction can affect the N and Z flags.
 		xor rA, rB
 
 		// Logical shift left
@@ -111,6 +97,70 @@ Group 0 Instructions
 		// Rotate rA right by rB bits, then store result in rA.
 		ror rA, rB
 
+
+
+
+		// rA = rA + rB
+		// This instruction can affect N, V, Z, and C flags.
+		add.f rA, rB
+
+		// rA = rA + rB + carry_flag
+		// Add with carry
+		// This instruction can affect N, V, Z, and C flags.
+		adc.f rA, rB
+
+		// rA = rA - rB
+		// This instruction can affect N, V, Z, and C flags.
+		sub.f rA, rB
+
+		// rA = rA + (~rB) + carry_flag
+		// Subtract with borrow (6502 style)
+		// This instruction can affect N, V, Z, and C flags.
+		sbc.f rA, rB
+
+
+
+		// rA = rB - rA
+		// This instruction can affect N, V, Z, and C flags.
+		rsb.f rA, rB
+
+		// rA = rA * rB
+		mul.f rA, rB
+
+		// rA = rA & rB
+		// This instruction can affect the N and Z flags.
+		and.f rA, rB
+
+		// rA = rA | rB
+		// This instruction can affect the N and Z flags.
+		or.f rA, rB
+
+
+
+		// rA = rA ^ rB
+		// This instruction can affect the N and Z flags.
+		xor.f rA, rB
+
+		// Logical shift left
+		// rA = rA << rB
+		lsl.f rA, rB
+
+		// Logical shift right
+		lsr.f rA, rB
+
+		// Arithmetic shift right
+		asr.f rA, rB
+
+
+
+		// Rotate rA left by rB bits, then store result in rA.
+		rol.f rA, rB
+
+		// Rotate rA right by rB bits, then store result in rA.
+		ror.f rA, rB
+
+
+
 		// Rotate rB left (THROUGH carry) by 1 bit, then store result in rA.
 		// This instruction can only affect the C flag.
 		rlc rA, rB
@@ -119,13 +169,13 @@ Group 0 Instructions
 		// This instruction can only affect the C flag.
 		rrc rA, rB
 
-
-
 		// Copy rA to the Interrupt Return Address
 		cpy ira, rA
 
 		// Copy the Interrupt Return Address to rA
 		cpy rA, ira
+
+
 
 		// Subroutine call using (rA + rB) as destination address. 
 		// The return address is stored in the link register (lr).
@@ -133,8 +183,6 @@ Group 0 Instructions
 
 		// Set pc to destination address in (rA + rB).
 		jumpx rA, rB
-
-
 
 		// Copy (pc when instructions starts + 2) to rA (this can
 		// be used for pc-relative loads and stores)
@@ -144,12 +192,39 @@ Group 0 Instructions
 		// rA = rB
 		cpy rA, rB
 
+
+
 		// rA = Sign extend of low 16 bits in rB
 		// Note that the high 16 bits of rB are ignored
 		seh rA, rB
 
 		// rA = Sign extend of low 8 bits in rB
 		seb rA, rB
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
 
 
 
@@ -170,10 +245,7 @@ Group 0 Instructions
 
 
 Group 1 Instructions
-01fo oooo aaaa bbbb  iiii iiii iiii iiii
-
-	f:  1 if can affect flags (and instruction type supports it), 0 if
-	flags unchanged.
+01oo oooo aaaa bbbb  iiii iiii iiii iiii
 
 	o:  opcode
 	a: rA
@@ -182,44 +254,36 @@ Group 1 Instructions
 
 	Instructions:
 		// rA = rB + (zero-extended imm)
-		// This instruction can affect N, V, Z, and C flags.
 		addi rA, rB, imm
 
 		// rA = rB + (zero-extended imm) + carry_flag
 		// Add with carry
-		// This instruction can affect N, V, Z, and C flags.
 		adci rA, rB, imm
 
 		// rA = rB - (zero-extended imm)
-		// This instruction can affect N, V, Z, and C flags.
 		subi rA, rB, imm
 
 		// rA = rB + (~(zero-extended imm)) + carry_flag
 		// Subtract with borrow (6502 style)
-		// This instruction can affect N, V, Z, and C flags.
 		sbci rA, rB, imm
 
 
 
 		// rA = (zero-extended imm) - rB
-		// This instruction can affect N, V, Z, and C flags.
 		rsbi rA, rB, imm
 
 		// rA = rB * (zero-extended imm)
 		muli rA, rB, imm
 
 		// rA = rB & (zero-extended imm)
-		// This instruction can affect the N and Z flags.
 		andi rA, rB, imm
 
 		// rA = rB | (zero-extended imm)
-		// This instruction can affect the N and Z flags.
 		ori rA, rB, imm
 
 
 
 		// rA = rB ^ (zero-extended imm)
-		// This instruction can affect the N and Z flags.
 		xori rA, rB, imm
 
 		// Logical shift left
@@ -240,6 +304,71 @@ Group 1 Instructions
 		// Rotate  right by (zero-extended imm) bits, then store result in rA.
 		rori rA, rB, imm
 
+
+
+
+		// rA = rB + (zero-extended imm)
+		// This instruction can affect N, V, Z, and C flags.
+		addi.f rA, rB, imm
+
+		// rA = rB + (zero-extended imm) + carry_flag
+		// Add with carry
+		// This instruction can affect N, V, Z, and C flags.
+		adci.f rA, rB, imm
+
+		// rA = rB - (zero-extended imm)
+		// This instruction can affect N, V, Z, and C flags.
+		subi.f rA, rB, imm
+
+		// rA = rB + (~(zero-extended imm)) + carry_flag
+		// Subtract with borrow (6502 style)
+		// This instruction can affect N, V, Z, and C flags.
+		sbci.f rA, rB, imm
+
+
+
+		// rA = (zero-extended imm) - rB
+		// This instruction can affect N, V, Z, and C flags.
+		rsbi.f rA, rB, imm
+
+		// rA = rB * (zero-extended imm)
+		muli.f rA, rB, imm
+
+		// rA = rB & (zero-extended imm)
+		// This instruction can affect the N and Z flags.
+		andi.f rA, rB, imm
+
+		// rA = rB | (zero-extended imm)
+		// This instruction can affect the N and Z flags.
+		ori.f rA, rB, imm
+
+
+
+		// rA = rB ^ (zero-extended imm)
+		// This instruction can affect the N and Z flags.
+		xori.f rA, rB, imm
+
+		// Logical shift left
+		// rA = rB << (zero-extended imm)
+		lsli.f rA, rB, imm
+
+		// Logical shift right
+		lsri.f rA, rB, imm
+
+		// Arithmetic shift right
+		asri.f rA, rB, imm
+
+
+
+		// Rotate  left by (zero-extended imm) bits, then store result in rA.
+		roli.f rA, rB, imm
+
+		// Rotate  right by (zero-extended imm) bits, then store result in rA.
+		rori.f rA, rB, imm
+
+
+
+
 		// Branch always, 
 		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
@@ -249,8 +378,6 @@ Group 1 Instructions
 		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bnv imm
-
-
 
 		// Branch when Z == 0, 
 		// to ((pc when instruction starts + 4)
@@ -262,6 +389,8 @@ Group 1 Instructions
 		// + (sign-extended 16-bit immediate value))
 		beq imm
 
+
+
 		// Branch when C == 0 [unsigned less than], 
 		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
@@ -271,8 +400,6 @@ Group 1 Instructions
 		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bcs imm
-
-
 
 		// Branch when (C == 0 or Z == 1) [unsigned less than or equal], 
 		// to ((pc when instruction starts + 4)
@@ -284,6 +411,8 @@ Group 1 Instructions
 		// + (sign-extended 16-bit immediate value))
 		bhi imm
 
+
+
 		// Branch when N == 0, 
 		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
@@ -293,8 +422,6 @@ Group 1 Instructions
 		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bmi imm
-
-
 
 		// Branch when V == 0, 
 		// to ((pc when instruction starts + 4)
@@ -306,6 +433,8 @@ Group 1 Instructions
 		// + (sign-extended 16-bit immediate value))
 		bvs imm
 
+
+
 		// Branch when N == V [signed greater than or equal], 
 		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
@@ -315,8 +444,6 @@ Group 1 Instructions
 		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		blt imm
-
-
 
 		// Branch when (N == V and Z == 0) [signed greater than], 
 		// to ((pc when instruction starts + 4)
@@ -328,12 +455,39 @@ Group 1 Instructions
 		// + (sign-extended 16-bit immediate value))
 		ble imm
 
+
+
 		// rA = rB ^ (sign-extended imm)
 		// This instruction can affect the N and Z flags.
 		xorsi rA, rB, imm
 
 		// rA bits {31, 30, 29, ..., 18, 17, 16} = 16-bit unsigned immediate value
 		lui rA, imm
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
 
 
 
@@ -382,10 +536,7 @@ Group 1 Instructions
 
 Group 2 Instructions
 Non Block Moves Version:  
-	10fo oooo aaaa bbbb  cccc iiii iiii iiii
-
-	f:  1 if can affect flags (and instruction type supports it), 0 if
-	flags unchanged.
+	10oo oooo aaaa bbbb  cccc iiii iiii iiii
 
 	o:  opcode
 	a: rA
@@ -394,10 +545,7 @@ Non Block Moves Version:
 	i:  12-bit immediate value
 
 Block Moves Version (stmdb, ldmia, stmia, push, pop):  
-	10fo oooo aaaa bbbb  cccc dddd xxxx 00ii
-
-	f:  1 if can affect flags (and instruction type supports it), 0 if
-	flags unchanged.
+	10oo oooo aaaa bbbb  cccc dddd xxxx 00ii
 
 	o:  opcode
 	a: rA
@@ -440,44 +588,36 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 		// rA = rB + rC
-		// This instruction can affect N, V, Z, and C flags.
 		add rA, rB, rC
 
 		// rA = rB + rC + carry_flag
 		// Add with carry
-		// This instruction can affect N, V, Z, and C flags.
 		adc rA, rB, rC
 
 		// rA = rB - rC
-		// This instruction can affect N, V, Z, and C flags.
 		sub rA, rB, rC
 
 		// rA = rB + (~rC) + carry_flag
 		// Subtract with borrow (6502 style)
-		// This instruction can affect N, V, Z, and C flags.
 		sbc rA, rB, rC
 
 
 
 		// rA = rC - rB
-		// This instruction can affect N, V, Z, and C flags.
 		rsb rA, rB, rC
 
 		// rA = rB * rC
 		mul rA, rB, rC
 
 		// rA = rB & rC
-		// This instruction can affect the N and Z flags.
 		and rA, rB, rC
 
 		// rA = rB | rC
-		// This instruction can affect the N and Z flags.
 		or rA, rB, rC
 
 
 
 		// rA = rB ^ rC
-		// This instruction can affect the N and Z flags.
 		xor rA, rB, rC
 
 		// Logical shift left
@@ -498,6 +638,70 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// Rotate rC right by rC bits, then store result in rA.
 		ror rA, rB, rC
 
+
+
+		// rA = rB + rC
+		// This instruction can affect N, V, Z, and C flags.
+		add.f rA, rB, rC
+
+		// rA = rB + rC + carry_flag
+		// Add with carry
+		// This instruction can affect N, V, Z, and C flags.
+		adc.f rA, rB, rC
+
+		// rA = rB - rC
+		// This instruction can affect N, V, Z, and C flags.
+		sub.f rA, rB, rC
+
+		// rA = rB + (~rC) + carry_flag
+		// Subtract with borrow (6502 style)
+		// This instruction can affect N, V, Z, and C flags.
+		sbc.f rA, rB, rC
+
+
+
+		// rA = rC - rB
+		// This instruction can affect N, V, Z, and C flags.
+		rsb.f rA, rB, rC
+
+		// rA = rB * rC
+		mul.f rA, rB, rC
+
+		// rA = rB & rC
+		// This instruction can affect the N and Z flags.
+		and.f rA, rB, rC
+
+		// rA = rB | rC
+		// This instruction can affect the N and Z flags.
+		or.f rA, rB, rC
+
+
+
+		// rA = rB ^ rC
+		// This instruction can affect the N and Z flags.
+		xor.f rA, rB, rC
+
+		// Logical shift left
+		// rA = rB << rC
+		lsl.f rA, rB, rC
+
+		// Logical shift right
+		lsr.f rA, rB, rC
+
+		// Arithmetic shift right
+		asr.f rA, rB, rC
+
+
+
+		// Rotate rC left by rC bits, then store result in rA.
+		rol.f rA, rB, rC
+
+		// Rotate rC right by rC bits, then store result in rA.
+		ror.f rA, rB, rC
+
+
+
+
 		// Fused multiply-add
 		// rA = rA + (rB * rC)
 		fma rA, rB, rC
@@ -506,8 +710,6 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// If rA is the same register as rB, then the 
 		// register will only be written once.
 		cpyp rA, rB, rC
-
-
 
 		// STore Multiple, Decrement Before
 		// Note that this instruction takes multiple forms
@@ -546,7 +748,6 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			Syntax:  stmdb rX, {rA, rB, rC, rD}
 
 
-
 		// LoaD Multiple, Increment After
 		// Note that this instruction takes multiple forms
 		// Form 0:
@@ -582,6 +783,8 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 				// rD = [rX + 12];
 				// rX += 16;
 			Syntax:  ldmia rX, {rA, rB, rC, rD}
+
+
 
 
 		// STore Multiple, Increment After
@@ -623,21 +826,43 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// ENable Interrupts
 		eni
 
-
-
 		// DIsable Interrupts
 		dii
 
 		// Set the PC to interrupt RETurn address and enable Interrupts
 		reti
 
+
+
 		// Set the PC to the Interrupt Return Address, but DON'T enable
 		// interrupts
 		jump ira
 
 		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
 
 
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
 
 
 
@@ -852,10 +1077,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 Group 3 Instructions
 Two Registers Version:  
-	11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
-
-	f:  1 if can affect flags (and instruction type supports it), 0 if
-	flags unchanged.
+	11oo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 
 	o:  opcode
 	a: rA
@@ -863,10 +1085,7 @@ Two Registers Version:
 	i:  32-bit immediate value
 
 Block Moves Version (stmdb, ldmia, stmia, push, pop):  
-	11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 00ii
-
-	f:  1 if can affect flags (and instruction type supports it), 0 if
-	flags unchanged.
+	11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 00ii
 
 	o:  opcode
 	a: rA
@@ -881,10 +1100,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	i:  2-bit immediate value
 
 32-bit by 32-bit -> 64-bit Multiply Version:
-	11fo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
-
-	f:  1 if can affect flags (and instruction type supports it), 0 if
-	flags unchanged.
+	11oo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
 
 	o:  opcode
 	a: rA
@@ -894,10 +1110,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 64-bit by 64-bit -> 64-bit DivMod Version:
-	11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 0000 0000
-
-	f:  1 if can affect flags (and instruction type supports it), 0 if
-	flags unchanged.
+	11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 0000 0000
 
 	o:  opcode
 	a: rA
@@ -910,10 +1123,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	h: rH
 
 32-bit by 32-bit -> 32-bit DivMod Version:
-	11fo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
-
-	f:  1 if can affect flags (and instruction type supports it), 0 if
-	flags unchanged.
+	11oo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
 
 	o:  opcode
 	a: rA
@@ -922,10 +1132,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 	d: rD
 
 64-bit bitshifted by 64-bit -> 64-bit Version:
-	11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 0000 0000
-
-	f:  1 if can affect flags (and instruction type supports it), 0 if
-	flags unchanged.
+	11oo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 0000 0000
 
 	o:  opcode
 	a: rA
@@ -984,7 +1191,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// STore Multiple, Decrement Before
 		// Note that this instruction takes multiple forms
 		// Form 0:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 xxxx 0000
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 xxxx 0000
 			// Effect:  
 				// rX -= 20;
 				// [rX] = rA;
@@ -995,7 +1202,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			Syntax:  stmdb rX, {rA, rB, rC, rD, rE}
 
 		// Form 1:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 xxxx 0001
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 xxxx 0001
 			// Effect:  
 				// rX -= 24;
 				// [rX] = rA;
@@ -1007,7 +1214,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			Syntax:  stmdb rX, {rA, rB, rC, rD, rE, rF}
 
 		// Form 2:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 xxxx 0010
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 xxxx 0010
 			// Effect:  
 				// rX -= 28;
 				// [rX] = rA;
@@ -1020,7 +1227,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			Syntax:  stmdb rX, {rA, rB, rC, rD, rE, rF, rG}
 
 		// Form 3:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 0011
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 0011
 			// Effect:  
 				// rX -= 32;
 				// [rX] = rA;
@@ -1038,7 +1245,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// LoaD Multiple, Increment After
 		// Note that this instruction takes multiple forms
 		// Form 0:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 xxxx 0000
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 xxxx 0000
 			// Effect:  
 				// rA = [rX]; 
 				// rB = [rX + 4];
@@ -1049,7 +1256,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			Syntax:  ldmia rX, {rA, rB, rC, rD, rE}
 
 		// Form 1:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 xxxx 0001
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 xxxx 0001
 			// Effect:  
 				// rA = [rX]; 
 				// rB = [rX + 4];
@@ -1061,7 +1268,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			Syntax:  ldmia rX, {rA, rB, rC, rD, rE, rF}
 
 		// Form 2:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 xxxx 0010
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 xxxx 0010
 			// Effect:  
 				// rA = [rX]; 
 				// rB = [rX + 4];
@@ -1074,7 +1281,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			Syntax:  ldmia rX, {rA, rB, rC, rD, rE, rF, rG}
 
 		// Form 3:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 0011
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 0011
 			// Effect:  
 				// rA = [rX]; 
 				// rB = [rX + 4];
@@ -1091,7 +1298,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// STore Multiple, Increment After
 		// Note that this instruction takes multiple forms
 		// Form 0:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 xxxx 0000
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 xxxx 0000
 			// Effect:  
 				// [rX] = rA;
 				// [rX + 4] = rB;
@@ -1102,7 +1309,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			Syntax:  stmia rX, {rA, rB, rC, rD, rE}
 
 		// Form 1:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 xxxx 0001
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 xxxx 0001
 			// Effect:  
 				// [rX] = rA;
 				// [rX + 4] = rB;
@@ -1114,7 +1321,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			Syntax:  stmia rX, {rA, rB, rC, rD, rE, rF}
 
 		// Form 2:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 xxxx 0010
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 xxxx 0010
 			// Effect:  
 				// [rX] = rA;
 				// [rX + 4] = rB;
@@ -1127,7 +1334,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			Syntax:  stmia rX, {rA, rB, rC, rD, rE, rF, rG}
 
 		// Form 3:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 0011
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 0011
 			// Effect:  
 				// [rX] = rA;
 				// [rX + 4] = rB;
@@ -1269,6 +1476,49 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+
 
 		// Pseudo instruction:
 		//// Subroutine call using (rA + absolute_addr) as destination address. 
@@ -1304,7 +1554,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// Pop
 		// Note that this instruction takes multiple forms
 		// Form 0:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 1111 0000
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 1111 0000
 			// Encoded like this:  ldmia sp, {rA, rB, rC, rD, rE}
 			// Effect:  
 				// rA = [sp]; 
@@ -1316,7 +1566,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			// Syntax:  pop rA, rB, rC, rD, rE
 
 		// Form 1:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 1111 0001
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 1111 0001
 			// Encoded like this:  ldmia sp, {rA, rB, rC, rD, rE, rF}
 			// Effect:  
 				// rA = [sp]; 
@@ -1329,7 +1579,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			// Syntax:  pop rA, rB, rC, rD, rE, rF
 
 		// Form 2:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 1111 0010
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 1111 0010
 			// Encoded like this:  ldmia sp, {rA, rB, rC, rD, rE, rF, rG}
 			// Effect:  
 				// rA = [sp]; 
@@ -1343,7 +1593,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			// Syntax:  pop rA, rB, rC, rD, rE, rF, rG
 
 		// Form 3:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 1111 0011
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 1111 0011
 			// Encoded like this:  ldmia sp, {rA, rB, rC, rD, rE, rF, rG, rH}
 			// Effect:  
 				// rA = [sp]; 
@@ -1362,7 +1612,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// Push
 		// Note that this instruction takes multiple forms
 		// Form 0:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 1111 0000
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee 0000  0000 0000 1111 0000
 			// Encoded like this:  stmdb sp, {rA, rB, rC, rD, rE}
 			// Effect:  
 				// sp -= 20;
@@ -1374,7 +1624,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			// Syntax:  push rA, rB, rC, rD, rE
 
 		// Form 1:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 1111 0001
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 1111 0001
 			// Encoded like this:  stmdb sp, {rA, rB, rC, rD, rE, rF}
 			// Effect:  
 				// sp -= 24;
@@ -1387,7 +1637,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			// Syntax:  push rA, rB, rC, rD, rE, rF
 
 		// Form 2:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 1111 0010
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg 0000 1111 0010
 			// Encoded like this:  stmdb sp, {rA, rB, rC, rD, rE, rF, rG}
 			// Effect:  
 				// sp -= 28;
@@ -1401,7 +1651,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 			// Syntax:  push rA, rB, rC, rD, rE, rF, rG
 
 		// Form 3:
-			// Encoding:  11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 1111 0010
+			// Encoding:  11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 1111 0010
 			// Encoded like this:  stmdb sp, {rA, rB, rC, rD, rE, rF, rG, rH}
 			// Effect:  
 				// sp -= 32;
