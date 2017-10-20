@@ -177,18 +177,19 @@ Group 0 Instructions
 
 
 
-		// Copy the Interrupt Return Address to rA
-		cpy rA, ira
-
-		// Copy rA to the Interrupt Return Address
-		cpy ira, rA
-
 		// Set the PC to interrupt RETurn address and enable Interrupts
 		reti
 
 		// Set the PC to the Interrupt Return Address, but DON'T enable
 		// interrupts
 		jump ira
+
+		// Copy the Interrupt Return Address to rA
+		cpy rA, ira
+
+		// Copy rA to the Interrupt Return Address
+		cpy ira, rA
+
 
 
 

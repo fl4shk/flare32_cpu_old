@@ -377,18 +377,19 @@ GROUP_HEADER(0)
 
 
 
-		// Copy the Interrupt Return Address to ARG_REG(A)
-		INSTR_RA_IRA(cpy)
-
-		// Copy ARG_REG(A) to the Interrupt Return Address
-		INSTR_IRA_RA(cpy)
-
 		// Set the PC to interrupt RETurn address and enable Interrupts
 		INSTR_NO_ARGS(reti)
 
 		// Set the PC to the Interrupt Return Address, but DON'T enable
 		// interrupts
 		INSTR_IRA(jump)
+
+		// Copy the Interrupt Return Address to ARG_REG(A)
+		INSTR_RA_IRA(cpy)
+
+		// Copy ARG_REG(A) to the Interrupt Return Address
+		INSTR_IRA_RA(cpy)
+
 
 
 
