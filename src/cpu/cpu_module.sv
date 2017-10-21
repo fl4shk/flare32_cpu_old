@@ -71,6 +71,12 @@ module Cpu(input bit clk,
 		ig02_f_alu_oc_b = pkg_cpu::AddDotF_RaRb_0,
 		ig1_f_alu_oc_b = pkg_cpu::AddiDotF_RaRbUImm16_1,
 
+		// Push/Pop flags addsub a input
+		pushpop_flags_addsub_a = __gprs[pkg_cpu::sp_reg_index],
+
+		// Push/Pop flags addsub b input
+		pushpop_flags_addsub_b = 1,
+
 		// Block move pointer adder/subtractor a input
 		blkmov_ptr_addsub_a = __gprs[__instr_dec_out_buf.rx_index],
 
@@ -84,6 +90,12 @@ module Cpu(input bit clk,
 
 	wire [`CPU_WORD_MSB_POS:0] ig02_nf_alu_oc_out, ig02_f_alu_oc_out,
 		ig1_f_alu_oc_out, 
+
+		// Push flags subtractor output
+		push_flags_subtractor_out,
+
+		// Pop flags adder output
+		pop_flags_adder_out, 
 
 		// Block move pointer adder outputs
 		blkmov_ptr_adder_4_out, blkmov_ptr_adder_8_out,
@@ -353,6 +365,10 @@ module Cpu(input bit clk,
 	PlainAdder pc_adder_branch(.a(__spec_regs.pc), .b(pc_adder_branch_b),
 		.out(pc_adder_branch_out));
 
+	// Pop flags adder
+	PlainAdder pop_flags_adder(.a(pushpop_flags_addsub_a),
+		.b(pushpop_flags_addsub_b), .out(pop_flags_adder_out));
+
 	// Block move pointer adders
 	PlainAdder blkmov_ptr_adder_4(.a(blkmov_ptr_addsub_a),
 		.b(blkmov_ptr_addsub_4_b), .out(blkmov_ptr_adder_4_out));
@@ -388,6 +404,10 @@ module Cpu(input bit clk,
 	// we'd just be subtracting zero anyway.
 	PlainSubtractor ig1_f_alu_oper_calc(.a(oper_plain_subtractor_a),
 		.b(ig1_f_alu_oc_b), .out(ig1_f_alu_oc_out));
+
+	// Push flags subtractor
+	PlainAdder push_flags_subtractor(.a(pushpop_flags_addsub_a),
+		.b(pushpop_flags_addsub_b), .out(push_flags_subtractor_out));
 
 	// Block move pointer subtractors
 	PlainAdder blkmov_ptr_subtractor_4(.a(blkmov_ptr_addsub_a),
