@@ -24,11 +24,17 @@ module InstrDecoder(input bit [`CPU_INSTR_MAX_MSB_POS:0] to_decode,
 	// Same for every instruction
 	assign out.group = __hw0[pkg_instr_enc::hw0_enc_group__high
 		: pkg_instr_enc::hw0_enc_group__low];
-	assign out.might_affect_flags 
-		= __hw0[pkg_instr_enc::hw0_might_affect_flags__bit];
+	//assign out.might_affect_flags 
+	//	= __hw0[pkg_instr_enc::hw0_might_affect_flags__bit];
+
+
+
 	assign out.oper = __hw0[pkg_instr_enc::hw0_oper__high
 		: pkg_instr_enc::hw0_oper__low];
 	
+	//assign out.might_affect_flags
+	//	= (group == 0) ? ();
+
 	assign out.ra_index = __hw0[pkg_instr_enc::hw0_ra_index__high
 		: pkg_instr_enc::hw0_ra_index__low];
 	assign out.rb_index = __hw0[pkg_instr_enc::hw0_rb_index__high

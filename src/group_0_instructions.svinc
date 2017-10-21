@@ -3,10 +3,7 @@
 
 
 // Group 0 Instructions
-// 00fo oooo aaaa bbbb
-
-	// f:  1 if can affect Flags (and instruction type supports it), 0 if
-	// Flags unchanged.
+// 00oo oooo aaaa bbbb
 
 	// o:  opcode
 	// a: rA (destination register usually)
@@ -105,6 +102,68 @@
 /* Rotate rA right by rB bits, then store result in rA. */ \
 `INSTR_STUFF(0, RaRb, Ror, "ror") \
 \
+\
+/* rA = rA + rB */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+`INSTR_STUFF(0, RaRb, AddDotF, "add.f") \
+\
+/* rA = rA + rB + carry_flag */ \
+/* Add with carry */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+`INSTR_STUFF(0, RaRb, AdcDotF, "adc.f") \
+\
+\
+\
+/* rA = rA - rB */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+`INSTR_STUFF(0, RaRb, SubDotF, "sub.f") \
+\
+/* rA = rA + (~rB) + carry_flag */ \
+/* Subtract with borrow (6502 style) */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+`INSTR_STUFF(0, RaRb, SbcDotF, "sbc.f") \
+\
+/* rA = rB - rA */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+`INSTR_STUFF(0, RaRb, RsbDotF, "rsb.f") \
+\
+/* rA = rA * rB */ \
+`INSTR_STUFF(0, RaRb, MulDotF, "mul.f") \
+\
+\
+\
+/* rA = rA & rB */ \
+/* This instruction can affect the N and Z flags. */ \
+`INSTR_STUFF(0, RaRb, AndDotF, "and.f") \
+\
+/* rA = rA | rB */ \
+/* This instruction can affect the N and Z flags. */ \
+`INSTR_STUFF(0, RaRb, OrDotF, "or.f") \
+\
+/* rA = rA ^ rB */ \
+/* This instruction can affect the N and Z flags. */ \
+`INSTR_STUFF(0, RaRb, XorDotF, "xor.f") \
+\
+/* Logical shift left */ \
+/* rA = rA << rB */ \
+`INSTR_STUFF(0, RaRb, LslDotF, "lsl.f") \
+\
+\
+\
+/* Logical shift right */ \
+`INSTR_STUFF(0, RaRb, LsrDotF, "lsr.f") \
+\
+/* Arithmetic shift right */ \
+`INSTR_STUFF(0, RaRb, AsrDotF, "asr.f") \
+\
+/* Rotate rA left by rB bits, then store result in rA. */ \
+`INSTR_STUFF(0, RaRb, RolDotF, "rol.f") \
+\
+/* Rotate rA right by rB bits, then store result in rA. */ \
+`INSTR_STUFF(0, RaRb, RorDotF, "ror.f") \
+\
+\
+\
 /* Rotate rB left (THROUGH carry) by 1 bit, then store result in rA. */ \
 /* This instruction can only affect the C flag. */ \
 `INSTR_STUFF(0, RaRb, Rlc, "rlc") \
@@ -114,14 +173,53 @@
 `INSTR_STUFF(0, RaRb, Rrc, "rrc")
 
 
+`define LIST_OF_INSTR_G0_NO_ARGS__COLLECTION_0 \
+/* ENable Interrupts */ \
+`INSTR_STUFF(0, NoArgs, Eni, "eni") \
+\
+/* DIsable Interrupts */ \
+`INSTR_STUFF(0, NoArgs, Dii, "dii") \
+\
+\
+\
+/* Set the PC to interrupt RETurn address and enable Interrupts */ \
+`INSTR_STUFF(0, NoArgs, Reti, "reti")
+
+
+`define LIST_OF_INSTR_G0_IRA__COLLECTION_0 \
+/* Set the PC to the Interrupt Return Address, but DON'T enable */ \
+/* interrupts */ \
+`INSTR_STUFF(0, Ira, Jump, "jump")
+
+`define LIST_OF_INSTR_G0_RA_IRA__COLLECTION_0 \
+/* Copy the Interrupt Return Address to rA */ \
+`INSTR_STUFF(0, RaIra, Cpy, "cpy")
 
 `define LIST_OF_INSTR_G0_IRA_RA__COLLECTION_0 \
 /* Copy rA to the Interrupt Return Address */ \
 `INSTR_STUFF(0, IraRa, Cpy, "cpy")
 
-`define LIST_OF_INSTR_G0_RA_IRA__COLLECTION_0 \
-/* Copy the Interrupt Return Address to rA */ \
-`INSTR_STUFF(0, RaIra, Cpy, "cpy")
+
+
+
+`define LIST_OF_INSTR_G0_FLAGS__COLLECTION_0 \
+/* Push flags as 8-bit value onto the stack (high 4 bits of pushed */ \
+/* value are set to zero before the push) */ \
+`INSTR_STUFF(0, Flags, Push, "push") \
+\
+/* Pop 8-bit value from the stack and store low 4 bits to flags */ \
+`INSTR_STUFF(0, Flags, Pop, "pop")
+
+`define LIST_OF_INSTR_G0_RA_FLAGS__COLLECTION_0 \
+/* Clear rA, then CoPY FRom Flags to rA */ \
+`INSTR_STUFF(0, RaFlags, Cpy, "cpy")
+
+`define LIST_OF_INSTR_G0_FLAGS_RA__COLLECTION_0 \
+/* Copy to flags from rA */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+`INSTR_STUFF(0, FlagsRa, Cpy, "cpy")
+
+
 
 `define LIST_OF_INSTR_G0_RA_RB__COLLECTION_1 \
 /* Subroutine call using (rA + rB) as destination address.  */ \
@@ -132,12 +230,10 @@
 `INSTR_STUFF(0, RaRb, Jumpx, "jumpx")
 
 
-
 `define LIST_OF_INSTR_G0_RA_PC__COLLECTION_0 \
-/* Copy pc to rA (this can be used for pc-relative loads */ \
-/* and stores) */ \
+/* Copy (pc when instructions starts + 2) to rA (this can */ \
+/* be used for pc-relative loads and stores) */ \
 `INSTR_STUFF(0, RaPc, Cpy, "cpy")
-
 
 
 `define LIST_OF_INSTR_G0_RA_RB__COLLECTION_2 \
@@ -145,25 +241,63 @@
 /* rA = rB */ \
 `INSTR_STUFF(0, RaRb, Cpy, "cpy") \
 \
+\
+\
 /* rA = Sign extend of low 16 bits in rB */ \
 /* Note that the high 16 bits of rB are ignored */ \
 `INSTR_STUFF(0, RaRb, Seh, "seh") \
 \
 /* rA = Sign extend of low 8 bits in rB */ \
-`INSTR_STUFF(0, RaRb, Seb, "seb")
+`INSTR_STUFF(0, RaRb, Seb, "seb") \
+\
+\
+/* Compare rA to rB */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+`INSTR_STUFF(0, RaRb, Cmp, "cmp")
+
+/* Reserved for future expansion. */
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
 
 
+
+//// Pseudo instruction:
+//// Subroutine call using rB as destination address. 
+//// Encoded like this:  callx r0, rB
+//PSEUDO_INSTR_RB(call)
+//
+//// Pseudo instruction:
+//// Set pc to destination address in rB.
+//// Encoded like this:  jumpx r0, rB
+//PSEUDO_INSTR_RB(jump)
+//
+//// Pseudo instruction:
+//// Set pc to destination address in rB.
+//// Encoded like this:  jumpx r0, rB
+//PSEUDO_INSTR_PC_RB(cpy)
 
 
 
 `define LIST_OF_GROUP_0_INSTRUCTIONS \
 `LIST_OF_INSTR_G0_LDST_RA_RB__COLLECTION_0 \
 `LIST_OF_INSTR_G0_RA_RB__COLLECTION_0 \
-`LIST_OF_INSTR_G0_IRA_RA__COLLECTION_0 \
+`LIST_OF_INSTR_G0_NO_ARGS__COLLECTION_0 \
+`LIST_OF_INSTR_G0_IRA__COLLECTION_0 \
 `LIST_OF_INSTR_G0_RA_IRA__COLLECTION_0 \
+`LIST_OF_INSTR_G0_IRA_RA__COLLECTION_0 \
+`LIST_OF_INSTR_G0_FLAGS__COLLECTION_0 \
+`LIST_OF_INSTR_G0_RA_FLAGS__COLLECTION_0 \
+`LIST_OF_INSTR_G0_FLAGS_RA__COLLECTION_0 \
 `LIST_OF_INSTR_G0_RA_RB__COLLECTION_1 \
 `LIST_OF_INSTR_G0_RA_PC__COLLECTION_0 \
 `LIST_OF_INSTR_G0_RA_RB__COLLECTION_2 \
 
-
-`endif		// group_0_instructions_svinc
+`endif

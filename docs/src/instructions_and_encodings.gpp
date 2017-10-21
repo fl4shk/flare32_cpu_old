@@ -433,7 +433,10 @@ GROUP_HEADER(0)
 		// ARG_REG(A) = Sign extend of low 8 bits in ARG_REG(B)
 		INSTR_RA_RB(seb)
 
-		RESERVED
+		// Compare rA to rB
+		FLAGS_ALL
+		INSTR_RA_RB(cmp)
+
 		RESERVED
 
 
@@ -850,12 +853,6 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 #endif
 
 
-
-		DESCRIBE_PSEUDO_INSTRUCTION
-		//// ARG_TEMP = ARG_REG(B) - ARG_REG(C)
-		//FLAGS_ALL
-		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(sub.f,ARG_REG(B)\, ARG_REG(C))
-		//PSEUDO_INSTR_RB_RC(cmp)
 
 		DESCRIBE_PSEUDO_INSTRUCTION
 		//// ARG_TEMP = ARG_REG(B) - (-ARG_REG(C))

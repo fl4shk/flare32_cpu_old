@@ -233,7 +233,10 @@ Group 0 Instructions
 		// rA = Sign extend of low 8 bits in rB
 		seb rA, rB
 
-		// Reserved for future expansion.
+		// Compare rA to rB
+		// This instruction can affect N, V, Z, and C flags.
+		cmp rA, rB
+
 		// Reserved for future expansion.
 
 
@@ -974,12 +977,6 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//stbxi rA, [rB, imm]
 
 
-
-		// Pseudo instruction:
-		//// temp = rB - rC
-		//// This instruction can affect N, V, Z, and C flags.
-		//// Encoded like this:  sub.f r0, rB, rC
-		//cmp rB, rC
 
 		// Pseudo instruction:
 		//// temp = rB - (-rC)

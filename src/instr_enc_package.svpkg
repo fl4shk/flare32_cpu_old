@@ -12,17 +12,8 @@ parameter hw0_enc_group__low = 14;
 
 
 
-// If flags are possible to change (some instructions don't affect
-// flags anyway though)
-//
-// I guess "pop flags" discards the results despite affecting the stack
-// pointer?  I might want to change that....
-parameter hw0_might_affect_flags__bit = 13;
-
-
-
 // What type of operation (add, sub, ldr, mul, subi, etc.)
-parameter hw0_oper__high = 12;
+parameter hw0_oper__high = 13;
 parameter hw0_oper__low = 8;
 
 
@@ -42,10 +33,7 @@ parameter hw0_rb_index__low = 0;
 
 
 // [Encoding of] Group 1 Instructions
-// 01fo oooo aaaa bbbb  iiii iiii iiii iiii
-
-	// f:  1 if can affect flags (and instruction type supports it), 0
-	// if flags unchanged.
+// 01oo oooo aaaa bbbb  iiii iiii iiii iiii
 
 	// o:  opcode
 	// a: rA
@@ -65,10 +53,7 @@ parameter g1_hw1_imm_value__low = 0;
 
 // [Encoding of] Group 2 Instructions
 // Non Block Moves Version:  
-	// 10fo oooo aaaa bbbb  cccc iiii iiii iiii
-
-	// f:  1 if can affect flags (and instruction type supports it), 0
-	// if flags unchanged.
+	// 10oo oooo aaaa bbbb  cccc iiii iiii iiii
 
 	// o:  opcode
 	// a: rA
@@ -77,10 +62,7 @@ parameter g1_hw1_imm_value__low = 0;
 	// i:  12-bit immediate value
 
 // Block Moves Version (stmdb, ldmia, stmia, push, pop):  
-	// 10fo oooo aaaa bbbb  cccc dddd xxxx 00ii
-
-	// f:  1 if can affect flags (and instruction type supports it), 0
-	// if flags unchanged.
+	// 10oo oooo aaaa bbbb  cccc dddd xxxx 00ii
 
 	// o:  opcode
 	// a: rA
@@ -120,10 +102,7 @@ parameter block_move_num_regs__low = 0;
 
 // Group 3 Instructions
 // Two Registers Version:  
-	// 11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
-
-	// f:  1 if can affect flags (and instruction type supports it), 0
-	// if flags unchanged.
+	// 11oo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 
 	// o:  opcode
 	// a: rA
@@ -132,10 +111,7 @@ parameter block_move_num_regs__low = 0;
 
 // More Than Two Registers Version (stmdb, ldmia, stmia, push, pop,
 // umul, smul, udivmod, sdivmod, lsl, lsr, asr):  
-	// 11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 00ii
-
-	// f:  1 if can affect flags (and instruction type supports it), 0
-	// if flags unchanged.
+	// 11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 00ii
 
 	// o:  opcode
 	// a: rA
