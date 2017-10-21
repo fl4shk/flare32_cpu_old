@@ -226,8 +226,22 @@ module SmallAlu(input pkg_cpu::StrcInSmallAlu in,
 endmodule
 
 
-module PlainAdder(input wire [`CPU_ADDR_BUS_MSB_POS:0] a, b,
-	output wire [`CPU_ADDR_BUS_MSB_POS:0] out);
+module SignExtender16(input wire [`CPU_WORD_MSB_POS:0] in,
+	input wire [`CPU_WORD_MSB_POS:0] out);
+
+	assign out = (in[15]) ? {16'hffff, in[15:0]} : {16'h0000, in[15:0]};
+endmodule
+
+module SignExtender8(input wire [`CPU_WORD_MSB_POS:0] in,
+	input wire [`CPU_WORD_MSB_POS:0] out);
+
+	assign out = (in[7]) 
+		? {24'hff_ffff, in[7:0]} 
+		: {24'h00_0000, in[7:0]};
+endmodule
+
+module PlainAdder(input wire [`CPU_WORD_MSB_POS:0] a, b,
+	output wire [`CPU_WORD_MSB_POS:0] out);
 
 	assign out = a + b;
 endmodule

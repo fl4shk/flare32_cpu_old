@@ -73,7 +73,7 @@ module Cpu(input bit clk,
 
 		// Block move pointer adder/subtractor a input
 		blkmov_ptr_addsub_a = __gprs[__instr_dec_out_buf.rx_index],
-		
+
 		// Block move pointer adder/subtractor b inputs
 		blkmov_ptr_addsub_4_b = 4, blkmov_ptr_addsub_8_b = 8,
 		blkmov_ptr_addsub_12_b = 12, 
