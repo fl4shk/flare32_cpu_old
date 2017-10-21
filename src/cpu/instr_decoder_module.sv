@@ -13,9 +13,10 @@ module InstrDecoder(input bit [`CPU_INSTR_MAX_MSB_POS:0] to_decode,
 	import pkg_instr_enc::*;
 
 
-	// Local wires
+	// Local variables
 	wire [`CPU_HALF_WORD_MSB_POS:0] __hw0, __hw1, __hw2;
 	wire [3:0] __alu_can_affect_flags;
+	bit __ldst_req_data_size, __ldst_req_signed;
 
 
 
@@ -28,12 +29,12 @@ module InstrDecoder(input bit [`CPU_INSTR_MAX_MSB_POS:0] to_decode,
 		= (((out.oper >= pkg_cpu::AddDotF_RaRb_0)
 		&& (out.oper <= pkg_cpu::Rrc_RaRb_0))
 		|| (out.oper == pkg_cpu::Cmp_RaRb_0));
-	
+
 	// Group 1 instructions
 	assign __alu_can_affect_flags[1]
 		= ((out.oper >= pkg_cpu::AddiDotF_RaRbUImm16_1)
 		&& (out.oper <= pkg_cpu::RoriDotF_RaRbUImm16_1));
-	
+
 	// Group 2 instructions
 	assign __alu_can_affect_flags[2]
 		= ((out.oper >= pkg_cpu::AddDotF_RaRbRc_2)
@@ -54,6 +55,8 @@ module InstrDecoder(input bit [`CPU_INSTR_MAX_MSB_POS:0] to_decode,
 		: pkg_instr_enc::hw0_oper__low];
 
 	assign out.alu_can_affect_flags = __alu_can_affect_flags[out.group];
+	assign out.ldst_req_data_size = __ldst_req_data_size;
+	assign out.ldst_req_signed = __ldst_req_signed;
 
 	assign out.ra_index = __hw0[pkg_instr_enc::hw0_ra_index__high
 		: pkg_instr_enc::hw0_ra_index__low];
@@ -106,5 +109,78 @@ module InstrDecoder(input bit [`CPU_INSTR_MAX_MSB_POS:0] to_decode,
 		: pkg_instr_enc::multi_regs_rf_index__low],
 		__hw2[pkg_instr_enc::multi_regs_rg_index__high
 		: pkg_instr_enc::multi_regs_rh_index__low]};
+
+	//always_comb // your hair
+	always @ (*)
+	begin
+		// Make use of the fact that every non-block-move load/store
+		// operation is ordered in a regular way
+		if (out.group != 2'd1)
+		begin
+			case (out.oper[2:0])
+				// 32-bit load
+				3'd0:
+				begin
+					__ldst_req_data_size = pkg_cpu::ReqDataSz32;
+					__ldst_req_signed = 0;
+				end
+
+				// 16-bit zero-extended load
+				3'd1:
+				begin
+					__ldst_req_data_size = pkg_cpu::ReqDataSz16;
+					__ldst_req_signed = 0;
+				end
+
+				// 16-bit sign-extended load
+				3'd2:
+				begin
+					__ldst_req_data_size = pkg_cpu::ReqDataSz16;
+					__ldst_req_signed = 1;
+				end
+
+				// 8-bit zero-extended load
+				3'd3:
+				begin
+					__ldst_req_data_size = pkg_cpu::ReqDataSz8;
+					__ldst_req_signed = 0;
+				end
+
+				// 8-bit sign-extended load
+				3'd4:
+				begin
+					__ldst_req_data_size = pkg_cpu::ReqDataSz8;
+					__ldst_req_signed = 1;
+				end
+
+				// 32-bit store
+				3'd5:
+				begin
+					__ldst_req_data_size = pkg_cpu::ReqDataSz32;
+					__ldst_req_signed = 0;
+				end
+
+				// 16-bit store
+				3'd6:
+				begin
+					__ldst_req_data_size = pkg_cpu::ReqDataSz16;
+					__ldst_req_signed = 0;
+				end
+
+				// 8-bit store
+				3'd7:
+				begin
+					__ldst_req_data_size = pkg_cpu::ReqDataSz8;
+					__ldst_req_signed = 0;
+				end
+			endcase
+		end
+
+		else
+		begin
+			__ldst_req_data_size = 0;
+			__ldst_req_signed = 0;
+		end
+	end
 
 endmodule

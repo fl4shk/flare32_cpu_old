@@ -3,6 +3,33 @@
 
 
 task exec_group_0_instr_part_0;
+	// Load
+	if ((__instr_dec_out_buf.oper >= pkg_cpu::Ldr_LdStRaRb_0)
+		&& (__instr_dec_out_buf.oper <= pkg_cpu::Ldsb_LdStRaRb_0))
+	begin
+		prep_read(__instr_dec_out_buf.ldst_req_data_size, 
+			__gprs[__instr_dec_out_buf.rb_index]);
+	end
+
+	// Store
+	else if ((__instr_dec_out_buf.oper >= pkg_cpu::Str_LdStRaRb_0)
+		&& (__instr_dec_out_buf.oper <= pkg_cpu::Stb_LdStRaRb_0))
+	begin
+		prep_write(__instr_dec_out_buf.ldst_req_data_size, 
+			__gprs[__instr_dec_out_buf.ra_index],
+			__gprs[__instr_dec_out_buf.rb_index]);
+	end
+
+	// Non flags affecting two-register ALU operation
+	else if ((__instr_dec_out_buf.oper >= pkg_cpu::Add_RaRb_0)
+		&& (__instr_dec_out_buf.oper <= pkg_cpu::Ror_RaRb_0))
+	begin
+		init_alu(__gprs[__instr_dec_out_buf.ra_index],
+			__gprs[__instr_dec_out_buf.rb_index],
+			ig0_nf_aoc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0], 
+			__spec_regs.flags);
+	end
+
 endtask
 
 task exec_group_1_instr_part_0;

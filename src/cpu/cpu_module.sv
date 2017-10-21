@@ -36,12 +36,6 @@ module Cpu(input bit clk,
 	bit __instr_is_alu_op;
 
 
-	// Connections to the PcAdder's
-	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_add_amount,
-		pc_adder_4_add_amount, pc_adder_6_add_amount,
-		pc_adder_branch_add_amount;
-	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_pc_out,
-		pc_adder_4_pc_out, pc_adder_6_pc_out, pc_adder_branch_pc_out;
 
 	// Connections to the Long ArithLog modules
 	bit [pkg_cpu::long_arithlog_operand_msb_pos:0] 
@@ -54,9 +48,28 @@ module Cpu(input bit clk,
 
 
 	// Connections to instr_dec
-	wire [`CPU_DATA_BUS_MAX_MSB_POS:0] instr_dec_to_decode;
+	wire [`CPU_DATA_BUS_MAX_MSB_POS:0] instr_dec_to_decode = data_in;
 	pkg_instr_enc::StrcOutInstrDecoder instr_dec_out;
 
+	// Connections to the PcAdder's
+	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_add_amount = 2,
+		pc_adder_4_add_amount = 4, pc_adder_6_add_amount = 6;
+
+	// Since we don't know if the branch happened until late into
+	// execution, use __instr_dec_out_buf instead of instr_dec_out.
+	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_branch_add_amount
+		= __instr_dec_out_buf.imm_val_s16;
+
+	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_pc_out,
+		pc_adder_4_pc_out, pc_adder_6_pc_out, pc_adder_branch_pc_out;
+
+	
+	// Connections to the PlainSubtractor's
+	wire [`CPU_WORD_MSB_POS:0] 
+		oper_plain_subtractor_a = __instr_dec_out_buf.oper,
+		ig0_nf_aoc_b = pkg_cpu::Add_RaRb_0;
+
+	wire [`CPU_WORD_MSB_POS:0] ig0_nf_aoc_out;
 
 
 	// Connections to alu
@@ -105,25 +118,6 @@ module Cpu(input bit clk,
 	pkg_instr_enc::StrcOutInstrDecoder __instr_dec_out_buf;
 
 
-	// Assignments
-	assign instr_dec_to_decode = data_in;
-
-
-	assign pc_adder_2_add_amount = 2;
-	assign pc_adder_4_add_amount = 4;
-	assign pc_adder_6_add_amount = 6;
-
-	// Since we don't know if the branch happened until late into
-	// execution, use __instr_dec_out_buf instead of instr_dec_out.
-	assign pc_adder_branch_add_amount = __instr_dec_out_buf.imm_val_s16;
-
-
-	//assign long_bitshift_a = {__gprs[__instr_dec_out_buf.rc_index],
-	//	__gprs[__instr_dec_out_buf.rd_index]};
-	//assign long_bitshift_b = {__gprs[__instr_dec_out_buf.re_index],
-	//	__gprs[__instr_dec_out_buf.rf_index]};
-	//assign long_mul_a = __gprs[__instr_dec_out_buf.rc_index];
-	//assign long_mul_b = __gprs[__instr_dec_out_buf.rd_index];
 
 
 	// Tasks
@@ -334,6 +328,10 @@ module Cpu(input bit clk,
 	PcAdder pc_adder_branch(.pc_in(__spec_regs.pc),
 		.add_amount(pc_adder_branch_add_amount),
 		.pc_out(pc_adder_branch_pc_out));
+
+	// "nf" means "non-flags"
+	PlainSubtractor ig0_nf_alu_oper_calc(.a(oper_plain_subtractor_a),
+		.b(ig0_nf_aoc_b), .out(ig0_nf_aoc_out));
 
 	// Long bitshifts
 	LongLsl long_lsl(.a(long_bitshift_a), .b(long_bitshift_b),
