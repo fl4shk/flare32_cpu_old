@@ -133,6 +133,7 @@ typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 	Rol_RaRb_0,
 	Ror_RaRb_0,
 
+	// These can affect flags
 	AddDotF_RaRb_0,
 	AdcDotF_RaRb_0,
 	SubDotF_RaRb_0,

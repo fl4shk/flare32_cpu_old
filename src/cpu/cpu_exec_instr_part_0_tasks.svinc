@@ -26,7 +26,7 @@ task exec_group_0_instr_part_0;
 	begin
 		init_alu(__gprs[__instr_dec_out_buf.ra_index],
 			__gprs[__instr_dec_out_buf.rb_index],
-			ig0_nf_aoc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0], 
+			ig02_nf_alu_oc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0], 
 			__spec_regs.flags);
 	end
 

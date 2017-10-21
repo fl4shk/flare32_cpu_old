@@ -67,9 +67,10 @@ module Cpu(input bit clk,
 	// Connections to the PlainSubtractor's
 	wire [`CPU_WORD_MSB_POS:0] 
 		oper_plain_subtractor_a = __instr_dec_out_buf.oper,
-		ig0_nf_aoc_b = pkg_cpu::Add_RaRb_0;
+		ig02_nf_alu_oc_b = pkg_cpu::Add_RaRb_0,
+		ig02_f_alu_oc_b = pkg_cpu::AddDotF_RaRb_0;
 
-	wire [`CPU_WORD_MSB_POS:0] ig0_nf_aoc_out;
+	wire [`CPU_WORD_MSB_POS:0] ig02_nf_alu_oc_out, ig02_f_alu_oc_out;
 
 
 	// Connections to alu
@@ -329,9 +330,18 @@ module Cpu(input bit clk,
 		.add_amount(pc_adder_branch_add_amount),
 		.pc_out(pc_adder_branch_pc_out));
 
-	// "nf" means "non-flags"
-	PlainSubtractor ig0_nf_alu_oper_calc(.a(oper_plain_subtractor_a),
-		.b(ig0_nf_aoc_b), .out(ig0_nf_aoc_out));
+
+	// "_nf_" means "non-flags"
+	// This works for both instruction groups 0 and 2 due to how their
+	// instructions are encoded.
+	PlainSubtractor ig02_nf_alu_oper_calc(.a(oper_plain_subtractor_a),
+		.b(ig02_nf_alu_oc_b), .out(ig02_nf_alu_oc_out));
+	
+	// "_f_" means "affects flags"
+	// This works for both instruction groups 0 and 2 due to how their
+	// instructions are encoded.
+	PlainSubtractor ig02_f_alu_oper_calc(.a(oper_plain_subtractor_a),
+		.b(ig02_f_alu_oc_b), .out(ig02_f_alu_oc_out));
 
 	// Long bitshifts
 	LongLsl long_lsl(.a(long_bitshift_a), .b(long_bitshift_b),
