@@ -406,25 +406,25 @@ module Cpu(input bit clk,
 		.b(ig1_f_alu_oc_b), .out(ig1_f_alu_oc_out));
 
 	// Push flags subtractor
-	PlainAdder push_flags_subtractor(.a(pushpop_flags_addsub_a),
+	PlainSubtractor push_flags_subtractor(.a(pushpop_flags_addsub_a),
 		.b(pushpop_flags_addsub_b), .out(push_flags_subtractor_out));
 
 	// Block move pointer subtractors
-	PlainAdder blkmov_ptr_subtractor_4(.a(blkmov_ptr_addsub_a),
+	PlainSubtractor blkmov_ptr_subtractor_4(.a(blkmov_ptr_addsub_a),
 		.b(blkmov_ptr_addsub_4_b), .out(blkmov_ptr_subtractor_4_out));
-	PlainAdder blkmov_ptr_subtractor_8(.a(blkmov_ptr_addsub_a),
+	PlainSubtractor blkmov_ptr_subtractor_8(.a(blkmov_ptr_addsub_a),
 		.b(blkmov_ptr_addsub_8_b), .out(blkmov_ptr_subtractor_8_out));
-	PlainAdder blkmov_ptr_subtractor_12(.a(blkmov_ptr_addsub_a),
+	PlainSubtractor blkmov_ptr_subtractor_12(.a(blkmov_ptr_addsub_a),
 		.b(blkmov_ptr_addsub_12_b), .out(blkmov_ptr_subtractor_12_out));
-	PlainAdder blkmov_ptr_subtractor_16(.a(blkmov_ptr_addsub_a),
+	PlainSubtractor blkmov_ptr_subtractor_16(.a(blkmov_ptr_addsub_a),
 		.b(blkmov_ptr_addsub_16_b), .out(blkmov_ptr_subtractor_16_out));
-	PlainAdder blkmov_ptr_subtractor_20(.a(blkmov_ptr_addsub_a),
+	PlainSubtractor blkmov_ptr_subtractor_20(.a(blkmov_ptr_addsub_a),
 		.b(blkmov_ptr_addsub_20_b), .out(blkmov_ptr_subtractor_20_out));
-	PlainAdder blkmov_ptr_subtractor_24(.a(blkmov_ptr_addsub_a),
+	PlainSubtractor blkmov_ptr_subtractor_24(.a(blkmov_ptr_addsub_a),
 		.b(blkmov_ptr_addsub_24_b), .out(blkmov_ptr_subtractor_24_out));
-	PlainAdder blkmov_ptr_subtractor_28(.a(blkmov_ptr_addsub_a),
+	PlainSubtractor blkmov_ptr_subtractor_28(.a(blkmov_ptr_addsub_a),
 		.b(blkmov_ptr_addsub_28_b), .out(blkmov_ptr_subtractor_28_out));
-	PlainAdder blkmov_ptr_subtractor_32(.a(blkmov_ptr_addsub_a),
+	PlainSubtractor blkmov_ptr_subtractor_32(.a(blkmov_ptr_addsub_a),
 		.b(blkmov_ptr_addsub_32_b), .out(blkmov_ptr_subtractor_32_out));
 
 
