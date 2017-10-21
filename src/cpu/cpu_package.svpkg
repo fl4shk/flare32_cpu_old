@@ -179,7 +179,7 @@ typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 	// cpy rA, flags
 	Cpy_RaFlags_0,
 
-	// flags, rA
+	// cpy flags, rA
 	Cpy_FlagsRa_0,
 
 	// call/jump to address contained in (rA + rB)

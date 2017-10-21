@@ -133,11 +133,10 @@ module Cpu(input bit clk,
 	task init_alu;
 		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
 		input [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0] some_oper;
-		input [`CPU_ENUM_FLAGS_POS_MSB_POS:0] some_flags;
 
 		set_alu_a_b(some_a, some_b);
 		alu_in.oper = some_oper;
-		alu_in.flags = some_flags;
+		alu_in.flags = __spec_regs.flags;
 	endtask
 
 	`include "src/cpu/cpu_tasks.svinc"
