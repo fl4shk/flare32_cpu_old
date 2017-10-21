@@ -309,6 +309,20 @@ module Cpu(input bit clk,
 		.add_amount(pc_adder_branch_add_amount),
 		.pc_out(pc_adder_branch_pc_out));
 
+	// Long bitshifts
+	LongLsl long_lsl(.a(long_bitshift_a), .b(long_bitshift_b),
+		.out(long_lsl_out));
+	LongLsl long_lsr(.a(long_bitshift_a), .b(long_bitshift_b),
+		.out(long_lsr_out));
+	LongLsl long_asr(.a(long_bitshift_a), .b(long_bitshift_b),
+		.out(long_asr_out));
+
+	// 32-bit * 32-bit -> 64-bit multipliers
+	LongUMul long_umul(.a(long_mul_a), .b(long_mul_b),
+		.out(long_umul_out));
+	LongUMul long_smul(.a(long_mul_a), .b(long_mul_b),
+		.out(long_smul_out));
+
 	InstrDecoder instr_dec(.to_decode(instr_dec_to_decode),
 		.out(instr_dec_out));
 	Alu alu(.in(alu_in), .out(alu_out));
