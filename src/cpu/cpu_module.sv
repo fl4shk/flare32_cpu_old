@@ -68,9 +68,11 @@ module Cpu(input bit clk,
 	wire [`CPU_WORD_MSB_POS:0] 
 		oper_plain_subtractor_a = __instr_dec_out_buf.oper,
 		ig02_nf_alu_oc_b = pkg_cpu::Add_RaRb_0,
-		ig02_f_alu_oc_b = pkg_cpu::AddDotF_RaRb_0;
+		ig02_f_alu_oc_b = pkg_cpu::AddDotF_RaRb_0,
+		ig1_f_alu_oc_b = pkg_cpu::AddiDotF_RaRbUImm16_1;
 
-	wire [`CPU_WORD_MSB_POS:0] ig02_nf_alu_oc_out, ig02_f_alu_oc_out;
+	wire [`CPU_WORD_MSB_POS:0] ig02_nf_alu_oc_out, ig02_f_alu_oc_out,
+		ig1_f_alu_oc_out;
 
 
 	// Connections to alu
@@ -342,6 +344,11 @@ module Cpu(input bit clk,
 	// instructions are encoded.
 	PlainSubtractor ig02_f_alu_oper_calc(.a(oper_plain_subtractor_a),
 		.b(ig02_f_alu_oc_b), .out(ig02_f_alu_oc_out));
+
+	// We don't need a subtractor for non-flags group 1 instructions since
+	// we'd just be subtracting zero anyway.
+	PlainSubtractor ig1_f_alu_oper_calc(.a(oper_plain_subtractor_a),
+		.b(ig1_f_alu_oc_b), .out(ig1_f_alu_oc_out));
 
 	// Long bitshifts
 	LongLsl long_lsl(.a(long_bitshift_a), .b(long_bitshift_b),
