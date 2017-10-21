@@ -1,7 +1,7 @@
 `ifndef cpu_instr_encoding_defines_svinc
 `define cpu_instr_encoding_defines_svinc
 
-`include "src/misc_defines.svinc"
+`include "src/cpu/misc_defines.svinc"
 
 
 `define CPU_INSTR_MAX_WIDTH 48

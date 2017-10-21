@@ -1,8 +1,8 @@
-`include "src/cpu_defines.svinc"
-//`include "src/group_0_instructions.svinc"
-//`include "src/group_1_instructions.svinc"
-//`include "src/group_2_instructions.svinc"
-//`include "src/group_3_instructions.svinc"
+`include "src/cpu/cpu_defines.svinc"
+//`include "src/cpu/group_0_instructions.svinc"
+//`include "src/cpu/group_1_instructions.svinc"
+//`include "src/cpu/group_2_instructions.svinc"
+//`include "src/cpu/group_3_instructions.svinc"
 
 package pkg_cpu;
 

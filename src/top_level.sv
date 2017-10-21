@@ -1,4 +1,4 @@
-`include "src/cpu_defines.svinc"
+`include "src/cpu/cpu_defines.svinc"
 
 
 

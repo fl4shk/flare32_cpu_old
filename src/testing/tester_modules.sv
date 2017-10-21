@@ -1,4 +1,4 @@
-`include "src/cpu_defines.svinc"
+`include "src/cpu/cpu_defines.svinc"
 
 
 
@@ -97,7 +97,7 @@ module CompareTester(input bit clk, enable);
 
 	longint i, j;
 	
-	`include "src/alu_tester_tasks.svinc"
+	`include "src/testing/alu_tester_tasks.svinc"
 
 
 	task test_eq_ne_compare;
@@ -281,7 +281,7 @@ module RotateTester(input bit clk, enable);
 
 	longint i, j;
 
-	`include "src/alu_tester_tasks.svinc"
+	`include "src/testing/alu_tester_tasks.svinc"
 
 
 
@@ -389,7 +389,7 @@ endmodule
 //
 //	longint i, j;
 //
-//	`include "src/alu_tester_tasks.svinc"
+//	`include "src/testing/alu_tester_tasks.svinc"
 //
 //	Alu alu(.in(alu_in), .out(alu_out));
 //endmodule

@@ -1,7 +1,7 @@
 `ifndef cpu_defines_svinc
 `define cpu_defines_svinc
 
-`include "src/misc_defines.svinc"
+`include "src/cpu/misc_defines.svinc"
 
 
 // General defines
@@ -62,7 +62,7 @@
 
 
 // Instruction encoding defines
-`include "src/cpu_instr_encoding_defines.svinc"
+`include "src/cpu/cpu_instr_encoding_defines.svinc"
 
 
 

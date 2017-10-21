@@ -1,7 +1,7 @@
 # start stuff
 
 # Edit these variables if more directories are needed.
-SRCDIRS		:=	$(CURDIR) src
+SRCDIRS		:=	$(CURDIR) src src/cpu src/testing
 
 # end stuff
 

@@ -1,4 +1,4 @@
-`include "src/cpu_defines.svinc"
+`include "src/cpu/cpu_defines.svinc"
 
 
 
@@ -37,6 +37,14 @@ module Cpu(input bit clk,
 		pc_adder_branch_add_amount;
 	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_pc_out,
 		pc_adder_4_pc_out, pc_adder_6_pc_out, pc_adder_branch_pc_out;
+
+	// Connections to the Long ArithLog modules
+	wire [pkg_cpu::long_arithlog_operand_msb_pos:0] 
+		long_bitshift_a, long_bitshift_b;
+	wire [pkg_cpu::long_arithlog_operand_msb_pos:0] long_mul_a, long_mul_b;
+	wire [pkg_cpu::long_arithlog_operand_msb_pos:0] 
+		long_lsl_out, long_lsr_out, long_asr_out,
+		long_umul_out, long_smul_out;
 
 
 
@@ -122,7 +130,7 @@ module Cpu(input bit clk,
 		alu_in.flags = some_flags;
 	endtask
 
-	`include "src/cpu_tasks.svinc"
+	`include "src/cpu/cpu_tasks.svinc"
 
 
 

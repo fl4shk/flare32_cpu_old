@@ -1,4 +1,4 @@
-`include "src/cpu_defines.svinc"
+`include "src/cpu/cpu_defines.svinc"
 
 // Combinational logic to decode an instruction
 module InstrDecoder(input bit [`CPU_INSTR_MAX_MSB_POS:0] to_decode,
