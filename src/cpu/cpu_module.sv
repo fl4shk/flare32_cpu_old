@@ -136,7 +136,7 @@ module Cpu(input bit clk,
 
 
 	// Temporaries
-	bit [`CPU_WORD_MSB_POS:0] __temp0, __temp1;
+	bit [`CPU_WORD_MSB_POS:0] __temp[0:7];
 
 	// Copies of module outputs
 	pkg_cpu::StrcOutAlu __alu_out_buf;

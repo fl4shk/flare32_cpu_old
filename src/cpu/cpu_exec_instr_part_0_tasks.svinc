@@ -40,38 +40,46 @@ task exec_group_0_instr_part_0;
 	// Enable/disable interrupts
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Eni_NoArgs_0)
 	begin
-		__spec_regs.ints_enabled = 1;
+		//__spec_regs.ints_enabled <= 1;
+		__temp[0] <= 1;
 	end
 
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Dii_NoArgs_0)
 	begin
-		__spec_regs.ints_enabled = 0;
+		//__spec_regs.ints_enabled <= 0;
+		__temp[0] <= 0;
 	end
 
 
-	// Return from interrupt
+	// Return from interrupt (enables interrupts in the process)
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Reti_NoArgs_0)
 	begin
-		
+		//__spec_regs.pc <= __spec_regs.ira;
+		//__spec_regs.ints_enabled <= 1;
+		__temp[0] <= __spec_regs.ira;
+		__temp[1] <= 1;
 	end
 
 	// Jump to the Interrupt Return Address without affecting the status of
 	// whether interrupts are enabled
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Jump_Ira_0)
 	begin
-		
+		//__spec_regs.pc <= __spec_regs.ira;
+		__temp[0] <= __spec_regs.ira;
 	end
 
 	// cpy rA, ira
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaIra_0)
 	begin
-		
+		// __gprs[__instr_dec_out_buf.ra_index] <= __spec_regs.ira;
+		__temp[0] <= __spec_regs.ira;
 	end
 
 	// cpy ira, rA
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_IraRa_0)
 	begin
-		
+		// __spec_regs.ira <= __gprs[__instr_dec_out_buf.ra_index];
+		__temp[0] <= __gprs[__instr_dec_out_buf.ra_index];
 	end
 
 
