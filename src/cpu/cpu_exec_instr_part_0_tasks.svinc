@@ -40,12 +40,15 @@ task exec_group_0_instr_part_0;
 	// Enable/disable interrupts
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Eni_NoArgs_0)
 	begin
+		// Save doing this for the writeback stage
 		//__spec_regs.ints_enabled <= 1;
+
 		__temp[0] <= 1;
 	end
 
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Dii_NoArgs_0)
 	begin
+		// Save doing this for the writeback stage
 		//__spec_regs.ints_enabled <= 0;
 		__temp[0] <= 0;
 	end
@@ -54,6 +57,7 @@ task exec_group_0_instr_part_0;
 	// Return from interrupt (enables interrupts in the process)
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Reti_NoArgs_0)
 	begin
+		// Save doing this for the writeback stage
 		//__spec_regs.pc <= __spec_regs.ira;
 		//__spec_regs.ints_enabled <= 1;
 		__temp[0] <= __spec_regs.ira;
@@ -64,6 +68,7 @@ task exec_group_0_instr_part_0;
 	// whether interrupts are enabled
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Jump_Ira_0)
 	begin
+		// Save doing this for the writeback stage
 		//__spec_regs.pc <= __spec_regs.ira;
 		__temp[0] <= __spec_regs.ira;
 	end
@@ -71,6 +76,7 @@ task exec_group_0_instr_part_0;
 	// cpy rA, ira
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaIra_0)
 	begin
+		// Save doing this for the writeback stage
 		// __gprs[__instr_dec_out_buf.ra_index] <= __spec_regs.ira;
 		__temp[0] <= __spec_regs.ira;
 	end
@@ -78,6 +84,7 @@ task exec_group_0_instr_part_0;
 	// cpy ira, rA
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_IraRa_0)
 	begin
+		// Save doing this for the writeback stage
 		// __spec_regs.ira <= __gprs[__instr_dec_out_buf.ra_index];
 		__temp[0] <= __gprs[__instr_dec_out_buf.ra_index];
 	end
