@@ -430,4 +430,9 @@ typedef enum bit [`CPU_ENUM_STATE_MSB_POS:0]
 parameter irq_jump_location = 32'h0000;
 
 
+parameter long_arithlog_operand_width = 64;
+parameter long_arithlog_operand_msb_pos 
+	= `WIDTH_TO_MSB_POS(long_arithlog_operand_width);
+
+
 endpackage

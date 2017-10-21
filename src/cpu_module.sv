@@ -20,11 +20,15 @@ module Cpu(input bit clk,
 	// Package imports
 	import pkg_cpu::*;
 
+
+	// Local vars (not connections to other modules)
 	// All the registers, as well as flags and whether interrupts are
 	// enabled
 	pkg_cpu::StrcCpuStorage __stor;
 
 	pkg_cpu::State __state;
+
+	bit __instr_is_alu_op;
 
 
 	// Connections to the PcAdder's
@@ -124,11 +128,6 @@ module Cpu(input bit clk,
 
 	initial
 	begin
-		//{__stor.gpr[0], __stor.gpr[1], __stor.gpr[2], __stor.gpr[3],
-		//__stor.gpr[4], __stor.gpr[5], __stor.gpr[6], __stor.gpr[7],
-		//__stor.gpr[8], __stor.gpr[9], __stor.gpr[10], __stor.gpr[11],
-		//__stor.gpr[12], __stor.gpr[13], __stor.gpr[14], __stor.gpr[15]}
-		//	= 0;
 		__stor.gpr = 0;
 
 		__stor.pc = 0;

@@ -241,3 +241,50 @@ module PcAdder(input wire [`CPU_ADDR_BUS_MSB_POS:0] pc_in,
 	end
 
 endmodule
+
+
+module LongLsl
+	(input wire [pkg_cpu::long_arithlog_operand_msb_pos:0] a, b,
+	output wire [pkg_cpu::long_arithlog_operand_msb_pos:0] out);
+
+	import pkg_cpu::*;
+
+	assign out = a << b;
+endmodule
+
+module LongLsr
+	(input wire [pkg_cpu::long_arithlog_operand_msb_pos:0] a, b,
+	output wire [pkg_cpu::long_arithlog_operand_msb_pos:0] out);
+
+	import pkg_cpu::*;
+
+	assign out = a >> b;
+endmodule
+
+module LongAsr
+	(input wire [pkg_cpu::long_arithlog_operand_msb_pos:0] a, b,
+	output wire [pkg_cpu::long_arithlog_operand_msb_pos:0] out);
+
+	import pkg_cpu::*;
+
+	assign out = $signed(a >>> b);
+endmodule
+
+
+module LongUMul
+	(input wire [pkg_cpu::long_arithlog_operand_msb_pos:0] a, b,
+	output wire [pkg_cpu::long_arithlog_operand_msb_pos:0] out);
+
+	import pkg_cpu::*;
+
+	assign out = a * b;
+endmodule
+
+module LongSMul
+	(input wire [pkg_cpu::long_arithlog_operand_msb_pos:0] a, b,
+	output wire [pkg_cpu::long_arithlog_operand_msb_pos:0] out);
+
+	import pkg_cpu::*;
+
+	assign out = $signed(a) * $signed(b);
+endmodule
