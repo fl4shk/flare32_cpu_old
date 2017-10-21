@@ -167,8 +167,8 @@ typedef struct packed
 	// Instruction group
 	bit [`CPU_INSTR_ENC_GROUP_MSB_POS:0] group;
 
-	// If this instruction is permitted to affect flags
-	bit might_affect_flags;
+	// If an ALU instruction is permitted to affect flags
+	bit alu_can_affect_flags;
 
 	// The 5-bit operation within the particular group
 	bit [`CPU_INSTR_ENC_OPER_MSB_POS:0] oper;

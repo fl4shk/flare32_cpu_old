@@ -15,25 +15,45 @@ module InstrDecoder(input bit [`CPU_INSTR_MAX_MSB_POS:0] to_decode,
 
 	// Local wires
 	wire [`CPU_HALF_WORD_MSB_POS:0] __hw0, __hw1, __hw2;
+	wire [3:0] __alu_can_affect_flags;
+
 
 
 	// Assignments
 	assign {__hw0, __hw1, __hw2} = to_decode;
 
 
+	// Group 0 instructions
+	assign __alu_can_affect_flags[0]
+		= (((out.oper >= pkg_cpu::AddDotF_RaRb_0)
+		&& (out.oper <= pkg_cpu::Rrc_RaRb_0))
+		|| (out.oper == pkg_cpu::Cmp_RaRb_0));
+	
+	// Group 1 instructions
+	assign __alu_can_affect_flags[1]
+		= ((out.oper >= pkg_cpu::AddiDotF_RaRbUImm16_1)
+		&& (out.oper <= pkg_cpu::RoriDotF_RaRbUImm16_1));
+	
+	// Group 2 instructions
+	assign __alu_can_affect_flags[2]
+		= ((out.oper >= pkg_cpu::AddDotF_RaRbRc_2)
+		&& (out.oper <= pkg_cpu::RorDotF_RaRbRc_2));
+
+	// Group 3 instructions
+	assign __alu_can_affect_flags[3]
+		= 0;
+
+
 	// Same for every instruction
 	assign out.group = __hw0[pkg_instr_enc::hw0_enc_group__high
 		: pkg_instr_enc::hw0_enc_group__low];
-	//assign out.might_affect_flags 
-	//	= __hw0[pkg_instr_enc::hw0_might_affect_flags__bit];
 
 
 
 	assign out.oper = __hw0[pkg_instr_enc::hw0_oper__high
 		: pkg_instr_enc::hw0_oper__low];
-	
-	//assign out.might_affect_flags
-	//	= (group == 0) ? ();
+
+	assign out.alu_can_affect_flags = __alu_can_affect_flags[out.group];
 
 	assign out.ra_index = __hw0[pkg_instr_enc::hw0_ra_index__high
 		: pkg_instr_enc::hw0_ra_index__low];
