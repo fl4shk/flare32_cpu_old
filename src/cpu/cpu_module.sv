@@ -3,6 +3,7 @@
 
 
 
+
 module Cpu(input bit clk,
 
 	// If an interrupt is being requested
@@ -24,7 +25,11 @@ module Cpu(input bit clk,
 	// Local vars (not connections to other modules)
 	// All the registers, as well as flags and whether interrupts are
 	// enabled
-	pkg_cpu::StrcCpuStorage __stor;
+	pkg_cpu::StrcCpuSpecRegs __spec_regs;
+
+	// General purpose registers
+	bit [`CPU_WORD_MSB_POS:0] __gprs
+		[0:`WIDTH_TO_MSB_POS(pkg_cpu::num_regs)];
 
 	pkg_cpu::State __state;
 
@@ -39,9 +44,9 @@ module Cpu(input bit clk,
 		pc_adder_4_pc_out, pc_adder_6_pc_out, pc_adder_branch_pc_out;
 
 	// Connections to the Long ArithLog modules
-	wire [pkg_cpu::long_arithlog_operand_msb_pos:0] 
+	bit [pkg_cpu::long_arithlog_operand_msb_pos:0] 
 		long_bitshift_a, long_bitshift_b;
-	wire [pkg_cpu::long_arithlog_operand_msb_pos:0] long_mul_a, long_mul_b;
+	bit [`CPU_WORD_MSB_POS:0] long_mul_a, long_mul_b;
 	wire [pkg_cpu::long_arithlog_operand_msb_pos:0] 
 		long_lsl_out, long_lsr_out, long_asr_out,
 		long_umul_out, long_smul_out;
@@ -113,6 +118,14 @@ module Cpu(input bit clk,
 	assign pc_adder_branch_add_amount = __instr_dec_out_buf.imm_val_s16;
 
 
+	//assign long_bitshift_a = {__gprs[__instr_dec_out_buf.rc_index],
+	//	__gprs[__instr_dec_out_buf.rd_index]};
+	//assign long_bitshift_b = {__gprs[__instr_dec_out_buf.re_index],
+	//	__gprs[__instr_dec_out_buf.rf_index]};
+	//assign long_mul_a = __gprs[__instr_dec_out_buf.rc_index];
+	//assign long_mul_b = __gprs[__instr_dec_out_buf.rd_index];
+
+
 	// Tasks
 	task set_alu_a_b;
 		input [`CPU_WORD_MSB_POS:0] some_a, some_b;
@@ -136,13 +149,17 @@ module Cpu(input bit clk,
 
 	initial
 	begin
-		__stor.gpr = 0;
+		{__gprs[0], __gprs[1], __gprs[2], __gprs[3],
+		__gprs[4], __gprs[5], __gprs[6], __gprs[7],
+		__gprs[8], __gprs[9], __gprs[10], __gprs[11],
+		__gprs[12], __gprs[13], __gprs[14], __gprs[15]} = 0;
 
-		__stor.pc = 0;
-		__stor.ira = 0;
-		__stor.flags = 0;
 
-		__stor.ints_enabled = 0;
+		__spec_regs.pc = 0;
+		__spec_regs.ira = 0;
+		__spec_regs.flags = 0;
+
+		__spec_regs.ints_enabled = 0;
 
 		__state = pkg_cpu::StInit;
 	end
@@ -159,13 +176,13 @@ module Cpu(input bit clk,
 
 			else if (__state == pkg_cpu::StDecodeInstr)
 			begin
-				if (__stor.ints_enabled && req_interrupt)
+				if (__spec_regs.ints_enabled && req_interrupt)
 				begin
 					// Keep the same state
 
-					__stor.ira <= __stor.pc;
-					__stor.pc <= pkg_cpu::irq_jump_location;
-					__stor.ints_enabled <= 1'b0;
+					__spec_regs.ira <= __spec_regs.pc;
+					__spec_regs.pc <= pkg_cpu::irq_jump_location;
+					__spec_regs.ints_enabled <= 1'b0;
 					prep_read(pkg_cpu::ReqDataSz32,
 						pkg_cpu::irq_jump_location);
 				end
@@ -175,6 +192,15 @@ module Cpu(input bit clk,
 
 					__instr_dec_out_buf <= instr_dec_out;
 
+
+					long_bitshift_a <= {__gprs[instr_dec_out.rc_index],
+						__gprs[instr_dec_out.rd_index]};
+					long_bitshift_b <= {__gprs[instr_dec_out.re_index],
+						__gprs[instr_dec_out.rf_index]};
+					long_mul_a <= __gprs[instr_dec_out.rc_index];
+					long_mul_b <= __gprs[instr_dec_out.rd_index];
+
+
 					// Disable reading/writing
 					disab_rdwr();
 
@@ -182,29 +208,29 @@ module Cpu(input bit clk,
 						// 16-bit (2 bytes)
 						2'b00:
 						begin
-							//__stor.pc <= __stor.pc + 2;
-							__stor.pc <= pc_adder_2_pc_out;
+							//__spec_regs.pc <= __spec_regs.pc + 2;
+							__spec_regs.pc <= pc_adder_2_pc_out;
 						end
 
 						// 32-bit (4 bytes)
 						2'b01:
 						begin
-							//__stor.pc <= __stor.pc + 4;
-							__stor.pc <= pc_adder_4_pc_out;
+							//__spec_regs.pc <= __spec_regs.pc + 4;
+							__spec_regs.pc <= pc_adder_4_pc_out;
 						end
 
 						// 32-bit (4 bytes)
 						2'b10:
 						begin
-							//__stor.pc <= __stor.pc + 4;
-							__stor.pc <= pc_adder_4_pc_out;
+							//__spec_regs.pc <= __spec_regs.pc + 4;
+							__spec_regs.pc <= pc_adder_4_pc_out;
 						end
 
 						// 48-bit (6 bytes)
 						2'b11:
 						begin
-							//__stor.pc <= __stor.pc + 6;
-							__stor.pc <= pc_adder_6_pc_out;
+							//__spec_regs.pc <= __spec_regs.pc + 6;
+							__spec_regs.pc <= pc_adder_6_pc_out;
 						end
 					endcase
 				end
@@ -299,13 +325,13 @@ module Cpu(input bit clk,
 
 
 	// Module instantiations
-	PcAdder pc_adder_2(.pc_in(__stor.pc),
+	PcAdder pc_adder_2(.pc_in(__spec_regs.pc),
 		.add_amount(pc_adder_2_add_amount), .pc_out(pc_adder_2_pc_out));
-	PcAdder pc_adder_4(.pc_in(__stor.pc),
+	PcAdder pc_adder_4(.pc_in(__spec_regs.pc),
 		.add_amount(pc_adder_4_add_amount), .pc_out(pc_adder_4_pc_out));
-	PcAdder pc_adder_6(.pc_in(__stor.pc),
+	PcAdder pc_adder_6(.pc_in(__spec_regs.pc),
 		.add_amount(pc_adder_6_add_amount), .pc_out(pc_adder_6_pc_out));
-	PcAdder pc_adder_branch(.pc_in(__stor.pc),
+	PcAdder pc_adder_branch(.pc_in(__spec_regs.pc),
 		.add_amount(pc_adder_branch_add_amount),
 		.pc_out(pc_adder_branch_pc_out));
 
@@ -328,6 +354,7 @@ module Cpu(input bit clk,
 	Alu alu(.in(alu_in), .out(alu_out));
 	SmallAlu small_alu(.in(small_alu_in), .out(small_alu_out));
 
+	// Dividers
 	NonRestoringDivider #(32) divmod32(.clk(clk),
 		.enable(divmod32_in.enable), 
 		.unsgn_or_sgn(divmod32_in.unsgn_or_sgn),

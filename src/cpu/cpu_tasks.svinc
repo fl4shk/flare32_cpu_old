@@ -13,7 +13,7 @@ task prep_read;
 endtask
 
 task prep_load_instr;
-	prep_read(pkg_cpu::ReqDataSz32, __stor.pc);
+	prep_read(pkg_cpu::ReqDataSz32, __spec_regs.pc);
 	__state <= pkg_cpu::StDecodeInstr;
 endtask
 

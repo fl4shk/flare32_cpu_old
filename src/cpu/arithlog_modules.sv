@@ -271,8 +271,7 @@ module LongAsr
 endmodule
 
 
-module LongUMul
-	(input wire [pkg_cpu::long_arithlog_operand_msb_pos:0] a, b,
+module LongUMul(input wire [`CPU_WORD_MSB_POS:0] a, b,
 	output wire [pkg_cpu::long_arithlog_operand_msb_pos:0] out);
 
 	import pkg_cpu::*;
@@ -280,8 +279,7 @@ module LongUMul
 	assign out = a * b;
 endmodule
 
-module LongSMul
-	(input wire [pkg_cpu::long_arithlog_operand_msb_pos:0] a, b,
+module LongSMul(input wire [`CPU_WORD_MSB_POS:0] a, b,
 	output wire [pkg_cpu::long_arithlog_operand_msb_pos:0] out);
 
 	import pkg_cpu::*;
