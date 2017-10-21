@@ -29,7 +29,7 @@ module Cpu(input bit clk,
 
 	// General purpose registers
 	bit [`CPU_WORD_MSB_POS:0] __gprs
-		[0:`WIDTH_TO_MSB_POS(pkg_cpu::num_regs)];
+		[0:`WIDTH_TO_MSB_POS(pkg_cpu::num_gprs)];
 
 	pkg_cpu::State __state;
 
@@ -149,10 +149,10 @@ module Cpu(input bit clk,
 
 	initial
 	begin
-		{__gprs[0], __gprs[1], __gprs[2], __gprs[3],
-		__gprs[4], __gprs[5], __gprs[6], __gprs[7],
-		__gprs[8], __gprs[9], __gprs[10], __gprs[11],
-		__gprs[12], __gprs[13], __gprs[14], __gprs[15]} = 0;
+		for (byte i=0; i<pkg_cpu::num_gprs; i=i+1)
+		begin
+			__gprs[i] = 0;
+		end
 
 
 		__spec_regs.pc = 0;

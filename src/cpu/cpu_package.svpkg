@@ -370,7 +370,7 @@ parameter instr_enc_reg_index_width = 4;
 parameter instr_enc_reg_index_msb_pos 
 	= `WIDTH_TO_MSB_POS(instr_enc_reg_index_width);
 
-parameter num_regs = 16;
+parameter num_gprs = 16;
 parameter sp_reg_index = 15;
 parameter lr_reg_index = 14;
 
