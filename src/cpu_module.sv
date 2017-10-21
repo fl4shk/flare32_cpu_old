@@ -2,6 +2,7 @@
 
 
 
+
 module Cpu(input bit clk,
 
 	// If an interrupt is being requested
@@ -25,6 +26,16 @@ module Cpu(input bit clk,
 
 	pkg_cpu::State __state;
 
+
+	// Connections to the PcAdder's
+	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_add_amount,
+		pc_adder_4_add_amount, pc_adder_6_add_amount,
+		pc_adder_branch_add_amount;
+	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_pc_out,
+		pc_adder_4_pc_out, pc_adder_6_pc_out, pc_adder_branch_pc_out;
+
+
+
 	// Connections to instr_dec
 	wire [`CPU_DATA_BUS_MAX_MSB_POS:0] instr_dec_to_decode;
 	pkg_instr_enc::StrcOutInstrDecoder instr_dec_out;
@@ -34,6 +45,7 @@ module Cpu(input bit clk,
 	// Connections to alu
 	pkg_cpu::StrcInAlu alu_in;
 	pkg_cpu::StrcOutAlu alu_out;
+
 
 	// Connections to small_alu
 	pkg_cpu::StrcInSmallAlu small_alu_in;
@@ -78,6 +90,16 @@ module Cpu(input bit clk,
 
 	// Assignments
 	assign instr_dec_to_decode = data_in;
+
+
+	assign pc_adder_2_add_amount = 2;
+	assign pc_adder_4_add_amount = 4;
+	assign pc_adder_6_add_amount = 6;
+
+	// Since we don't know if the branch happened until late into
+	// execution, use __instr_dec_out_buf instead of instr_dec_out.
+	assign pc_adder_branch_add_amount = __instr_dec_out_buf.imm_val_s16;
+
 
 	// Tasks
 	task set_alu_a_b;
@@ -152,25 +174,29 @@ module Cpu(input bit clk,
 						// 16-bit (2 bytes)
 						2'b00:
 						begin
-							__stor.pc <= __stor.pc + 2;
+							//__stor.pc <= __stor.pc + 2;
+							__stor.pc <= pc_adder_2_pc_out;
 						end
 
 						// 32-bit (4 bytes)
 						2'b01:
 						begin
-							__stor.pc <= __stor.pc + 4;
+							//__stor.pc <= __stor.pc + 4;
+							__stor.pc <= pc_adder_4_pc_out;
 						end
 
 						// 32-bit (4 bytes)
 						2'b10:
 						begin
-							__stor.pc <= __stor.pc + 4;
+							//__stor.pc <= __stor.pc + 4;
+							__stor.pc <= pc_adder_4_pc_out;
 						end
 
 						// 48-bit (6 bytes)
 						2'b11:
 						begin
-							__stor.pc <= __stor.pc + 6;
+							//__stor.pc <= __stor.pc + 6;
+							__stor.pc <= pc_adder_6_pc_out;
 						end
 					endcase
 				end
@@ -265,6 +291,16 @@ module Cpu(input bit clk,
 
 
 	// Module instantiations
+	PcAdder pc_adder_2(.pc_in(__stor.pc),
+		.add_amount(pc_adder_2_add_amount), .pc_out(pc_adder_2_pc_out));
+	PcAdder pc_adder_4(.pc_in(__stor.pc),
+		.add_amount(pc_adder_4_add_amount), .pc_out(pc_adder_4_pc_out));
+	PcAdder pc_adder_6(.pc_in(__stor.pc),
+		.add_amount(pc_adder_6_add_amount), .pc_out(pc_adder_6_pc_out));
+	PcAdder pc_adder_branch(.pc_in(__stor.pc),
+		.add_amount(pc_adder_branch_add_amount),
+		.pc_out(pc_adder_branch_pc_out));
+
 	InstrDecoder instr_dec(.to_decode(instr_dec_to_decode),
 		.out(instr_dec_out));
 	Alu alu(.in(alu_in), .out(alu_out));
