@@ -69,10 +69,33 @@ module Cpu(input bit clk,
 		oper_plain_subtractor_a = __instr_dec_out_buf.oper,
 		ig02_nf_alu_oc_b = pkg_cpu::Add_RaRb_0,
 		ig02_f_alu_oc_b = pkg_cpu::AddDotF_RaRb_0,
-		ig1_f_alu_oc_b = pkg_cpu::AddiDotF_RaRbUImm16_1;
+		ig1_f_alu_oc_b = pkg_cpu::AddiDotF_RaRbUImm16_1,
+
+		// Block move pointer adder/subtractor a input
+		blkmov_ptr_addsub_a = __gprs[__instr_dec_out_buf.rx_index],
+		
+		// Block move pointer adder/subtractor b inputs
+		blkmov_ptr_addsub_4_b = 4, blkmov_ptr_addsub_8_b = 8,
+		blkmov_ptr_addsub_12_b = 12, 
+
+		blkmov_ptr_addsub_16_b = 16, blkmov_ptr_addsub_20_b = 20,
+		blkmov_ptr_addsub_24_b = 24, blkmov_ptr_addsub_28_b = 28,
+		blkmov_ptr_addsub_32_b = 32;
 
 	wire [`CPU_WORD_MSB_POS:0] ig02_nf_alu_oc_out, ig02_f_alu_oc_out,
-		ig1_f_alu_oc_out;
+		ig1_f_alu_oc_out, 
+
+		// Block move pointer adder outputs
+		blkmov_ptr_adder_4_out, blkmov_ptr_adder_8_out,
+		blkmov_ptr_adder_12_out, blkmov_ptr_adder_16_out,
+		blkmov_ptr_adder_20_out, blkmov_ptr_adder_24_out,
+		blkmov_ptr_adder_28_out, blkmov_ptr_adder_32_out,
+
+		// Block move pointer subtractor outputs
+		blkmov_ptr_subtractor_4_out, blkmov_ptr_subtractor_8_out,
+		blkmov_ptr_subtractor_12_out, blkmov_ptr_subtractor_16_out,
+		blkmov_ptr_subtractor_20_out, blkmov_ptr_subtractor_24_out,
+		blkmov_ptr_subtractor_28_out, blkmov_ptr_subtractor_32_out;
 
 
 	// Connections to alu
@@ -330,6 +353,24 @@ module Cpu(input bit clk,
 	PlainAdder pc_adder_branch(.a(__spec_regs.pc), .b(pc_adder_branch_b),
 		.out(pc_adder_branch_out));
 
+	// Block move pointer adders
+	PlainAdder blkmov_ptr_adder_4(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_4_b), .out(blkmov_ptr_adder_4_out));
+	PlainAdder blkmov_ptr_adder_8(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_8_b), .out(blkmov_ptr_adder_8_out));
+	PlainAdder blkmov_ptr_adder_12(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_12_b), .out(blkmov_ptr_adder_12_out));
+	PlainAdder blkmov_ptr_adder_16(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_16_b), .out(blkmov_ptr_adder_16_out));
+	PlainAdder blkmov_ptr_adder_20(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_20_b), .out(blkmov_ptr_adder_20_out));
+	PlainAdder blkmov_ptr_adder_24(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_24_b), .out(blkmov_ptr_adder_24_out));
+	PlainAdder blkmov_ptr_adder_28(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_28_b), .out(blkmov_ptr_adder_28_out));
+	PlainAdder blkmov_ptr_adder_32(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_32_b), .out(blkmov_ptr_adder_32_out));
+
 
 	// "_nf_" means "non-flags"
 	// This works for both instruction groups 0 and 2 due to how their
@@ -347,6 +388,24 @@ module Cpu(input bit clk,
 	// we'd just be subtracting zero anyway.
 	PlainSubtractor ig1_f_alu_oper_calc(.a(oper_plain_subtractor_a),
 		.b(ig1_f_alu_oc_b), .out(ig1_f_alu_oc_out));
+
+	// Block move pointer subtractors
+	PlainAdder blkmov_ptr_subtractor_4(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_4_b), .out(blkmov_ptr_subtractor_4_out));
+	PlainAdder blkmov_ptr_subtractor_8(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_8_b), .out(blkmov_ptr_subtractor_8_out));
+	PlainAdder blkmov_ptr_subtractor_12(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_12_b), .out(blkmov_ptr_subtractor_12_out));
+	PlainAdder blkmov_ptr_subtractor_16(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_16_b), .out(blkmov_ptr_subtractor_16_out));
+	PlainAdder blkmov_ptr_subtractor_20(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_20_b), .out(blkmov_ptr_subtractor_20_out));
+	PlainAdder blkmov_ptr_subtractor_24(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_24_b), .out(blkmov_ptr_subtractor_24_out));
+	PlainAdder blkmov_ptr_subtractor_28(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_28_b), .out(blkmov_ptr_subtractor_28_out));
+	PlainAdder blkmov_ptr_subtractor_32(.a(blkmov_ptr_addsub_a),
+		.b(blkmov_ptr_addsub_32_b), .out(blkmov_ptr_subtractor_32_out));
 
 
 
