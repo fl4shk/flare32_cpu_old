@@ -51,17 +51,17 @@ module Cpu(input bit clk,
 	wire [`CPU_DATA_BUS_MAX_MSB_POS:0] instr_dec_to_decode = data_in;
 	pkg_instr_enc::StrcOutInstrDecoder instr_dec_out;
 
-	// Connections to the PcAdder's
-	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_add_amount = 2,
-		pc_adder_4_add_amount = 4, pc_adder_6_add_amount = 6;
+	// Connections to the PlainAdder's
+	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_b = 2,
+		pc_adder_4_b = 4, pc_adder_6_b = 6;
 
 	// Since we don't know if the branch happened until late into
 	// execution, use __instr_dec_out_buf instead of instr_dec_out.
-	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_branch_add_amount
+	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_branch_b
 		= __instr_dec_out_buf.imm_val_s16;
 
-	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_pc_out,
-		pc_adder_4_pc_out, pc_adder_6_pc_out, pc_adder_branch_pc_out;
+	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_out, pc_adder_4_out, 
+		pc_adder_6_out, pc_adder_branch_out;
 
 	
 	// Connections to the PlainSubtractor's
@@ -205,28 +205,28 @@ module Cpu(input bit clk,
 						2'b00:
 						begin
 							//__spec_regs.pc <= __spec_regs.pc + 2;
-							__spec_regs.pc <= pc_adder_2_pc_out;
+							__spec_regs.pc <= pc_adder_2_out;
 						end
 
 						// 32-bit (4 bytes)
 						2'b01:
 						begin
 							//__spec_regs.pc <= __spec_regs.pc + 4;
-							__spec_regs.pc <= pc_adder_4_pc_out;
+							__spec_regs.pc <= pc_adder_4_out;
 						end
 
 						// 32-bit (4 bytes)
 						2'b10:
 						begin
 							//__spec_regs.pc <= __spec_regs.pc + 4;
-							__spec_regs.pc <= pc_adder_4_pc_out;
+							__spec_regs.pc <= pc_adder_4_out;
 						end
 
 						// 48-bit (6 bytes)
 						2'b11:
 						begin
 							//__spec_regs.pc <= __spec_regs.pc + 6;
-							__spec_regs.pc <= pc_adder_6_pc_out;
+							__spec_regs.pc <= pc_adder_6_out;
 						end
 					endcase
 				end
@@ -321,15 +321,14 @@ module Cpu(input bit clk,
 
 
 	// Module instantiations
-	PcAdder pc_adder_2(.pc_in(__spec_regs.pc),
-		.add_amount(pc_adder_2_add_amount), .pc_out(pc_adder_2_pc_out));
-	PcAdder pc_adder_4(.pc_in(__spec_regs.pc),
-		.add_amount(pc_adder_4_add_amount), .pc_out(pc_adder_4_pc_out));
-	PcAdder pc_adder_6(.pc_in(__spec_regs.pc),
-		.add_amount(pc_adder_6_add_amount), .pc_out(pc_adder_6_pc_out));
-	PcAdder pc_adder_branch(.pc_in(__spec_regs.pc),
-		.add_amount(pc_adder_branch_add_amount),
-		.pc_out(pc_adder_branch_pc_out));
+	PlainAdder pc_adder_2(.a(__spec_regs.pc), .b(pc_adder_2_b), 
+		.out(pc_adder_2_out));
+	PlainAdder pc_adder_4(.a(__spec_regs.pc), .b(pc_adder_4_b), 
+		.out(pc_adder_4_out));
+	PlainAdder pc_adder_6(.a(__spec_regs.pc), .b(pc_adder_6_b), 
+		.out(pc_adder_6_out));
+	PlainAdder pc_adder_branch(.a(__spec_regs.pc), .b(pc_adder_branch_b),
+		.out(pc_adder_branch_out));
 
 
 	// "_nf_" means "non-flags"
@@ -348,6 +347,8 @@ module Cpu(input bit clk,
 	// we'd just be subtracting zero anyway.
 	PlainSubtractor ig1_f_alu_oper_calc(.a(oper_plain_subtractor_a),
 		.b(ig1_f_alu_oc_b), .out(ig1_f_alu_oc_out));
+
+
 
 	// Long bitshifts
 	LongLsl long_lsl(.a(long_bitshift_a), .b(long_bitshift_b),

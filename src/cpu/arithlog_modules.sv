@@ -226,22 +226,17 @@ module SmallAlu(input pkg_cpu::StrcInSmallAlu in,
 endmodule
 
 
+module PlainAdder(input wire [`CPU_ADDR_BUS_MSB_POS:0] a, b,
+	output wire [`CPU_ADDR_BUS_MSB_POS:0] out);
+
+	assign out = a + b;
+endmodule
 module PlainSubtractor(input wire [`CPU_WORD_MSB_POS:0] a, b,
 	output wire [`CPU_WORD_MSB_POS:0] out);
 
 	assign out = a - b;
-
 endmodule
 
-
-// This module only exists to make updating the program counter be
-// conceptually more like actual hardware.
-module PcAdder(input wire [`CPU_ADDR_BUS_MSB_POS:0] pc_in,
-	input wire [`CPU_ADDR_BUS_MSB_POS:0] add_amount,
-	output wire [`CPU_ADDR_BUS_MSB_POS:0] pc_out);
-
-	assign pc_out = pc_in + add_amount;
-endmodule
 
 
 module LongLsl
