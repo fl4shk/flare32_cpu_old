@@ -20,7 +20,9 @@ module Cpu(input bit clk,
 
 	// Package imports
 	import pkg_cpu::*;
+	import pkg_temp_ind::*;
 
+	
 
 	// Local vars (not connections to other modules)
 	// All the registers, as well as flags and whether interrupts are
@@ -64,7 +66,7 @@ module Cpu(input bit clk,
 		pc_adder_6_out, pc_adder_branch_out;
 
 	
-	// Connections to the PlainSubtractor's
+	// Connections to the PlainAdder's/PlainSubtractor's
 	wire [`CPU_WORD_MSB_POS:0] 
 		oper_plain_subtractor_a = __instr_dec_out_buf.oper,
 		ig02_nf_alu_oc_b = pkg_cpu::Add_RaRb_0,
@@ -87,6 +89,7 @@ module Cpu(input bit clk,
 		blkmov_ptr_addsub_16_b = 16, blkmov_ptr_addsub_20_b = 20,
 		blkmov_ptr_addsub_24_b = 24, blkmov_ptr_addsub_28_b = 28,
 		blkmov_ptr_addsub_32_b = 32;
+
 
 	wire [`CPU_WORD_MSB_POS:0] ig02_nf_alu_oc_out, ig02_f_alu_oc_out,
 		ig1_f_alu_oc_out, 
@@ -147,7 +150,7 @@ module Cpu(input bit clk,
 	} divmod64_out;
 
 
-	// Temporaries
+	//// Temporaries
 	bit [`CPU_WORD_MSB_POS:0] __temp[0:7];
 
 	// Copies of module outputs

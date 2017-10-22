@@ -1,0 +1,24 @@
+`include "src/cpu/cpu_defines.svinc"
+
+
+package pkg_temp_ind;
+
+parameter high = 2;
+
+enum bit [high:0]
+{
+	Ig0Eni_Ie
+} Ig0Eni;
+
+enum bit [high:0]
+{
+	Ig0Dii_Ie
+} Ig0Dii;
+
+enum bit [high:0]
+{
+	Ig0Reti_Ira,
+	Ig0Reti_Ie
+} Ig0Reti;
+
+endpackage
