@@ -20,7 +20,7 @@ module Cpu(input bit clk,
 
 	// Package imports
 	import pkg_cpu::*;
-	import pkg_temp_ind::*;
+	import pkg_temp_ind_0::*;
 
 	
 

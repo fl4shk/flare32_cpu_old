@@ -43,14 +43,14 @@ task exec_group_0_instr_part_0;
 		// Save doing this for the writeback stage
 		//__spec_regs.ints_enabled <= 1;
 
-		__temp[pkg_temp_ind::Ig0Eni_Ie] <= 1;
+		__temp[pkg_temp_ind_0::Eni_Ie] <= 1;
 	end
 
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Dii_NoArgs_0)
 	begin
 		// Save doing this for the writeback stage
 		//__spec_regs.ints_enabled <= 0;
-		__temp[pkg_temp_ind::Ig0Dii_Ie] <= 0;
+		__temp[pkg_temp_ind_0::Dii_Ie] <= 0;
 	end
 
 
@@ -60,8 +60,8 @@ task exec_group_0_instr_part_0;
 		// Save doing this for the writeback stage
 		//__spec_regs.pc <= __spec_regs.ira;
 		//__spec_regs.ints_enabled <= 1;
-		__temp[pkg_temp_ind::Ig0Reti_Ira] <= __spec_regs.ira;
-		__temp[pkg_temp_ind::Ig0Reti_Ie]<= 1;
+		__temp[pkg_temp_ind_0::Reti_Ira] <= __spec_regs.ira;
+		__temp[pkg_temp_ind_0::Reti_Ie]<= 1;
 	end
 
 	// Jump to the Interrupt Return Address without affecting the status of
@@ -71,7 +71,7 @@ task exec_group_0_instr_part_0;
 		// Save doing this for the writeback stage
 		//__spec_regs.pc <= __spec_regs.ira;
 		//__temp[0] <= __spec_regs.ira;
-		__temp[pkg_temp_ind::Ig0JumpIra_Ira] <= __spec_regs.ira;
+		__temp[pkg_temp_ind_0::JumpIra_Ira] <= __spec_regs.ira;
 	end
 
 	// cpy rA, ira
@@ -80,9 +80,9 @@ task exec_group_0_instr_part_0;
 		// Save doing this for the writeback stage
 		// __gprs[__instr_dec_out_buf.ra_index] <= __spec_regs.ira;
 		//__temp[0] <= __spec_regs.ira;
-		__temp[pkg_temp_ind::Ig0CpyRaIra_RaIndex]
+		__temp[pkg_temp_ind_0::CpyRaIra_RaIndex]
 			<= __instr_dec_out_buf.ra_index;
-		__temp[pkg_temp_ind::Ig0CpyRaIra_Ira] <= __spec_regs.ira;
+		__temp[pkg_temp_ind_0::CpyRaIra_Ira] <= __spec_regs.ira;
 	end
 
 	// cpy ira, rA
@@ -91,7 +91,7 @@ task exec_group_0_instr_part_0;
 		// Save doing this for the writeback stage
 		// __spec_regs.ira <= __gprs[__instr_dec_out_buf.ra_index];
 		//__temp[0] <= __gprs[__instr_dec_out_buf.ra_index];
-		__temp[pkg_temp_ind::Ig0CpyIraRa_Ra] 
+		__temp[pkg_temp_ind_0::CpyIraRa_Ra] 
 			<= __gprs[__instr_dec_out_buf.ra_index];
 	end
 
@@ -99,13 +99,13 @@ task exec_group_0_instr_part_0;
 	// push/pop flags
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Push_Flags_0)
 	begin
-		__temp[pkg_temp_ind::Ig0PushFlags_Sp]
+		__temp[pkg_temp_ind_0::PushFlags_Sp]
 			<= __gprs[pkg_cpu::sp_reg_index];
-		__temp[pkg_temp_ind::Ig0PushFlags_Flags] <= __spec_regs.flags;
+		__temp[pkg_temp_ind_0::PushFlags_Flags] <= __spec_regs.flags;
 	end
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Pop_Flags_0)
 	begin
-		__temp[pkg_temp_ind::Ig0PopFlags_Sp]
+		__temp[pkg_temp_ind_0::PopFlags_Sp]
 			<= __gprs[pkg_cpu::sp_reg_index];
 	end
 
@@ -113,27 +113,27 @@ task exec_group_0_instr_part_0;
 	// cpy rA, flags
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaFlags_0)
 	begin
-		__temp[pkg_temp_ind::Ig0CpyRaFlags_RaIndex]
+		__temp[pkg_temp_ind_0::CpyRaFlags_RaIndex]
 			<= __instr_dec_out_buf.ra_index;
-		__temp[pkg_temp_ind::Ig0CpyRaFlags_Flags] <= __spec_regs.flags;
+		__temp[pkg_temp_ind_0::CpyRaFlags_Flags] <= __spec_regs.flags;
 	end
 
 	// cpy flags, rA
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_FlagsRa_0)
 	begin
-		__temp[pkg_temp_ind::Ig0CpyFlagsRa_Ra]
+		__temp[pkg_temp_ind_0::CpyFlagsRa_Ra]
 			<= __gprs[__instr_dec_out_buf.ra_index];
 	end
 
 	// call/jump to address contained in (rA + rB)
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Callx_RaRb_0)
 	begin
-		__temp[pkg_temp_ind::Ig0CallRaRb_Dst] 
+		__temp[pkg_temp_ind_0::CallRaRb_Dst] 
 			<= callx_or_jumpx_dst_adder_out;
 	end
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Jumpx_RaRb_0)
 	begin
-		__temp[pkg_temp_ind::Ig0CallRaRb_Dst] 
+		__temp[pkg_temp_ind_0::CallRaRb_Dst] 
 			<= callx_or_jumpx_dst_adder_out;
 	end
 

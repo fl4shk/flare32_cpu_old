@@ -1,0 +1,83 @@
+`include "src/cpu/cpu_defines.svinc"
+
+
+package pkg_temp_ind_0;
+
+parameter high = 2;
+
+typedef enum bit [high:0]
+{
+	Eni_Ie
+} Eni;
+
+typedef enum bit [high:0]
+{
+	Dii_Ie
+} Dii;
+
+typedef enum bit [high:0]
+{
+	Reti_Ira,
+	Reti_Ie
+} Reti;
+
+typedef enum bit [high:0]
+{
+	JumpIra_Ira
+} JumpIra;
+
+
+// cpy rA, ira
+typedef enum bit [high:0]
+{
+	CpyRaIra_RaIndex,
+	CpyRaIra_Ira
+} CpyRaIra;
+
+// cpy ira, rA
+typedef enum bit [high:0]
+{
+	CpyIraRa_Ra
+} CpyIraRa;
+
+// push flags
+typedef enum bit [high:0]
+{
+	PushFlags_Sp,
+	PushFlags_Flags
+} PushFlags;
+
+// pop flags
+typedef enum bit [high:0]
+{
+	PopFlags_Sp
+} PopFlags;
+
+// cpy rA, flags
+typedef enum bit [high:0]
+{
+	CpyRaFlags_RaIndex,
+	CpyRaFlags_Flags
+} CpyRaFlags;
+
+// cpy flags, rA
+typedef enum bit [high:0]
+{
+	CpyFlagsRa_Ra
+} CpyFlagsRa;
+
+// call rA, rB
+typedef enum bit [high:0]
+{
+	// Destination (rA + rB)
+	CallRaRb_Dst
+} CallRaRb;
+
+// jump rA, rB
+typedef enum bit [high:0]
+{
+	// Destination (rA + rB)
+	JumpRaRb_Dst
+} JumpRaRb;
+
+endpackage
