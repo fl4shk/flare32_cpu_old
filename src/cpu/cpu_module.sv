@@ -88,7 +88,11 @@ module Cpu(input bit clk,
 
 		blkmov_ptr_addsub_16_b = 16, blkmov_ptr_addsub_20_b = 20,
 		blkmov_ptr_addsub_24_b = 24, blkmov_ptr_addsub_28_b = 28,
-		blkmov_ptr_addsub_32_b = 32;
+		blkmov_ptr_addsub_32_b = 32,
+
+		// callx/jumpx destination calculator inputs
+		callx_or_jumpx_dst_adder_a = __gprs[__instr_dec_out_buf.ra_index],
+		callx_or_jumpx_dst_adder_b = __gprs[__instr_dec_out_buf.rb_index];
 
 
 	wire [`CPU_WORD_MSB_POS:0] ig02_nf_alu_oc_out, ig02_f_alu_oc_out,
@@ -110,8 +114,10 @@ module Cpu(input bit clk,
 		blkmov_ptr_subtractor_4_out, blkmov_ptr_subtractor_8_out,
 		blkmov_ptr_subtractor_12_out, blkmov_ptr_subtractor_16_out,
 		blkmov_ptr_subtractor_20_out, blkmov_ptr_subtractor_24_out,
-		blkmov_ptr_subtractor_28_out, blkmov_ptr_subtractor_32_out;
+		blkmov_ptr_subtractor_28_out, blkmov_ptr_subtractor_32_out,
 
+		// callx/jumpx destination calculator output
+		callx_or_jumpx_dst_adder_out;
 
 	// Connections to alu
 	pkg_cpu::StrcInAlu alu_in;
@@ -389,6 +395,11 @@ module Cpu(input bit clk,
 		.b(blkmov_ptr_addsub_28_b), .out(blkmov_ptr_adder_28_out));
 	PlainAdder blkmov_ptr_adder_32(.a(blkmov_ptr_addsub_a),
 		.b(blkmov_ptr_addsub_32_b), .out(blkmov_ptr_adder_32_out));
+	
+	// callx/jumpx destination calculator
+	PlainAdder callx_or_jumpx_dst_adder(.a(callx_or_jumpx_dst_adder_a),
+		.b(callx_or_jumpx_dst_adder_b),
+		.out(callx_or_jumpx_dst_adder_out));
 
 
 	// "_nf_" means "non-flags"

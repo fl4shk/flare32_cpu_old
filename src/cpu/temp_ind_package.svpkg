@@ -27,15 +27,59 @@ package pkg_temp_ind;
 	Ig0JumpIra_Ira
 } Ig0JumpIra;
 
+
+// cpy rA, ira
 `TDE
 {
+	Ig0CpyRaIra_RaIndex,
 	Ig0CpyRaIra_Ira
 } Ig0CpyRaIra;
 
+// cpy ira, rA
 `TDE
 {
-	Ig0CpyIraRa_RaIndex
+	Ig0CpyIraRa_Ra
 } Ig0CpyIraRa;
+
+// push flags
+`TDE
+{
+	Ig0PushFlags_Sp,
+	Ig0PushFlags_Flags
+} Ig0PushFlags;
+
+// pop flags
+`TDE
+{
+	Ig0PopFlags_Sp
+} Ig0PopFlags;
+
+// cpy rA, flags
+`TDE
+{
+	Ig0CpyRaFlags_RaIndex,
+	Ig0CpyRaFlags_Flags
+} Ig0CpyRaFlags;
+
+// cpy flags, rA
+`TDE
+{
+	Ig0CpyFlagsRa_Ra
+} Ig0CpyFlagsRa;
+
+// call rA, rB
+`TDE
+{
+	// Destination (rA + rB)
+	Ig0CallRaRb_Dst
+} Ig0CallRaRb;
+
+// jump rA, rB
+`TDE
+{
+	// Destination (rA + rB)
+	Ig0JumpRaRb_Dst
+} Ig0JumpRaRb;
 
 endpackage
 
