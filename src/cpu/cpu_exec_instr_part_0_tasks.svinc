@@ -71,6 +71,7 @@ task exec_group_0_instr_part_0;
 		// Save doing this for the writeback stage
 		//__spec_regs.pc <= __spec_regs.ira;
 		//__temp[0] <= __spec_regs.ira;
+		__temp[pkg_temp_ind::Ig0JumpIra_Ira] <= __spec_regs.ira;
 	end
 
 	// cpy rA, ira
@@ -79,6 +80,7 @@ task exec_group_0_instr_part_0;
 		// Save doing this for the writeback stage
 		// __gprs[__instr_dec_out_buf.ra_index] <= __spec_regs.ira;
 		//__temp[0] <= __spec_regs.ira;
+		__temp[pkg_temp_ind::Ig0CpyRaIra_Ira] <= __spec_regs.ira;
 	end
 
 	// cpy ira, rA
@@ -87,6 +89,8 @@ task exec_group_0_instr_part_0;
 		// Save doing this for the writeback stage
 		// __spec_regs.ira <= __gprs[__instr_dec_out_buf.ra_index];
 		//__temp[0] <= __gprs[__instr_dec_out_buf.ra_index];
+		__temp[pkg_temp_ind::Ig0CpyIraRa_RaIndex] 
+			<= __gprs[__instr_dec_out_buf.ra_index];
 	end
 
 

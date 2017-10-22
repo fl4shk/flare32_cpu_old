@@ -1,0 +1,42 @@
+`include "src/cpu/cpu_defines.svinc"
+
+
+`define TDE typedef enum bit [2:0]
+
+package pkg_temp_ind;
+
+
+`TDE
+{
+	Ig0Eni_Ie
+} Ig0Eni;
+
+`TDE
+{
+	Ig0Dii_Ie
+} Ig0Dii;
+
+`TDE
+{
+	Ig0Reti_Ira,
+	Ig0Reti_Ie
+} Ig0Reti;
+
+`TDE
+{
+	Ig0JumpIra_Ira
+} Ig0JumpIra;
+
+`TDE
+{
+	Ig0CpyRaIra_Ira
+} Ig0CpyRaIra;
+
+`TDE
+{
+	Ig0CpyIraRa_RaIndex
+} Ig0CpyIraRa;
+
+endpackage
+
+`undef TDE
