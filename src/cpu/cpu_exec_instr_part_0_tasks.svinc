@@ -3,18 +3,23 @@
 
 
 task exec_group_0_instr_part_0;
+	// Group 0 instructions always go to StWriteBack
+	__state <= pkg_cpu::StWriteBack;
+
 	// Load
 	if ((__instr_dec_out_buf.oper >= pkg_cpu::Ldr_LdStRaRb_0)
 		&& (__instr_dec_out_buf.oper <= pkg_cpu::Ldsb_LdStRaRb_0))
 	begin
 		prep_read(__instr_dec_out_buf.ldst_req_data_size, 
 			__gprs[__instr_dec_out_buf.rb_index]);
+		__temp[pkg_temp_ind_0::Ld_RaIndex] <= __instr_dec_out_buf.ra_index;
 	end
 
 	// Store
 	else if ((__instr_dec_out_buf.oper >= pkg_cpu::Str_LdStRaRb_0)
 		&& (__instr_dec_out_buf.oper <= pkg_cpu::Stb_LdStRaRb_0))
 	begin
+		// Don't need to keep track of anything for the next cycle
 		prep_write(__instr_dec_out_buf.ldst_req_data_size, 
 			__gprs[__instr_dec_out_buf.ra_index],
 			__gprs[__instr_dec_out_buf.rb_index]);
@@ -27,6 +32,8 @@ task exec_group_0_instr_part_0;
 		init_alu(__gprs[__instr_dec_out_buf.ra_index],
 			__gprs[__instr_dec_out_buf.rb_index],
 			ig02_nf_alu_oc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
+		__temp[pkg_temp_ind_0::AluOp_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
 	end
 
 	else if ((__instr_dec_out_buf.oper >= pkg_cpu::AddDotF_RaRb_0)
@@ -35,6 +42,8 @@ task exec_group_0_instr_part_0;
 		init_alu(__gprs[__instr_dec_out_buf.ra_index],
 			__gprs[__instr_dec_out_buf.rb_index],
 			ig02_f_alu_oc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
+		__temp[pkg_temp_ind_0::AluOp_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
 	end
 
 	// Enable/disable interrupts
@@ -140,13 +149,18 @@ task exec_group_0_instr_part_0;
 	// cpy rA, pc
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaPc_0)
 	begin
-		
+		__temp[pkg_temp_ind_0::CpyRaPc_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
+		__temp[pkg_temp_ind_0::CpyRaPc_Pc] <= __spec_regs.pc;
 	end
 
 	// cpy rA, rB
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaRb_0)
 	begin
-		
+		__temp[pkg_temp_ind_0::CpyRaRb_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
+		__temp[pkg_temp_ind_0::CpyRaRb_Rb]
+			<= __gprs[__instr_dec_out_buf.rb_index];
 	end
 
 	// Sign extend

@@ -227,13 +227,13 @@ endmodule
 
 
 module SignExtender16(input wire [`CPU_WORD_MSB_POS:0] in,
-	input wire [`CPU_WORD_MSB_POS:0] out);
+	output wire [`CPU_WORD_MSB_POS:0] out);
 
 	assign out = (in[15]) ? {16'hffff, in[15:0]} : {16'h0000, in[15:0]};
 endmodule
 
 module SignExtender8(input wire [`CPU_WORD_MSB_POS:0] in,
-	input wire [`CPU_WORD_MSB_POS:0] out);
+	output wire [`CPU_WORD_MSB_POS:0] out);
 
 	assign out = (in[7]) 
 		? {24'hff_ffff, in[7:0]} 

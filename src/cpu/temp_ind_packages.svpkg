@@ -7,6 +7,16 @@ parameter high = 2;
 
 typedef enum bit [high:0]
 {
+	Ld_RaIndex
+} Ld;
+
+typedef enum bit [high:0]
+{
+	AluOp_RaIndex
+} AluOp;
+
+typedef enum bit [high:0]
+{
 	Eni_Ie
 } Eni;
 
@@ -79,5 +89,34 @@ typedef enum bit [high:0]
 	// Destination (rA + rB)
 	JumpRaRb_Dst
 } JumpRaRb;
+
+// cpy rA, pc
+typedef enum bit [high:0]
+{
+	CpyRaPc_RaIndex,
+	CpyRaPc_Pc
+} CpyRaPc;
+
+// cpy rA, rB
+typedef enum bit [high:0]
+{
+	CpyRaRb_RaIndex,
+	CpyRaRb_Rb
+} CpyRaRb;
+
+// seh rA, rB
+typedef enum bit [high:0]
+{
+	SehRaRb_RaIndex,
+	SehRaRb_Rb
+} SehRaRb;
+
+// seb rA, rB
+typedef enum bit [high:0]
+{
+	SebRaRb_RaIndex,
+	SebRaRb_Rb
+} SebRaRb;
+
 
 endpackage

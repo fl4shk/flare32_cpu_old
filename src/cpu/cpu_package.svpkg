@@ -423,8 +423,7 @@ typedef enum bit [`CPU_ENUM_STATE_MSB_POS:0]
 {
 	StInit,
 	StDecodeInstr,
-	StStartExecInstr,
-	StFinishExecInstr,
+	StExecInstr,
 	StWriteBack
 } State;
 

@@ -35,7 +35,7 @@ module Cpu(input bit clk,
 
 	pkg_cpu::State __state;
 
-	bit __instr_is_alu_op;
+	//bit __instr_is_alu_op;
 
 
 
@@ -118,6 +118,16 @@ module Cpu(input bit clk,
 
 		// callx/jumpx destination calculator output
 		callx_or_jumpx_dst_adder_out;
+	
+	// Connections to the SignExtender16 and SignExtender8
+	wire [`CPU_WORD_MSB_POS:0] 
+		ig0_seh_signext16_in = __gprs[__instr_dec_out_buf.rb_index],
+
+		ig0_seb_signext8_in = __gprs[__instr_dec_out_buf.rb_index];
+	
+	wire [`CPU_WORD_MSB_POS:0]
+		ig0_seh_signext16_out, ig0_seb_signext8_out;
+
 
 	// Connections to alu
 	pkg_cpu::StrcInAlu alu_in;
@@ -228,7 +238,7 @@ module Cpu(input bit clk,
 				end
 				else
 				begin
-					__state <= pkg_cpu::StStartExecInstr;
+					__state <= pkg_cpu::StExecInstr;
 
 					__instr_dec_out_buf <= instr_dec_out;
 
@@ -276,11 +286,14 @@ module Cpu(input bit clk,
 				end
 			end
 
-			else if (__state == pkg_cpu::StStartExecInstr)
+			// Note that this state may take multiple cycles to complete if
+			// either a block move is being performed or an integer
+			// division is being performed.
+			else if (__state == pkg_cpu::StExecInstr)
 			begin
-				// For eventual conversion to use a pipeline, go ahead and
-				// always go to pkg_cpu::StFinishExecInstr every time.
-				__state <= pkg_cpu::StFinishExecInstr;
+				//// For eventual conversion to use a pipeline, go ahead and
+				//// always go to pkg_cpu::StWriteBack every time.
+				//__state <= pkg_cpu::StWriteBack;
 				case (__instr_dec_out_buf.group)
 					2'b00:
 					begin
@@ -305,12 +318,11 @@ module Cpu(input bit clk,
 			end
 
 
-			// Note that this state may take multiple cycles to complete if
-			// either a block move is being performed or an integer
-			// division is being performed.
-			else if (__state == pkg_cpu::StFinishExecInstr)
+			else if (__state == pkg_cpu::StWriteBack)
 			begin
 				{divmod32_in.enable, divmod64_in.enable} <= 0;
+				__state <= pkg_cpu::StDecodeInstr;
+				prep_load_instr();
 				
 				case (__instr_dec_out_buf.group)
 					2'b00:
@@ -334,148 +346,10 @@ module Cpu(input bit clk,
 					end
 				endcase
 			end
-
-			else if (__state == pkg_cpu::StWriteBack)
-			begin
-				prep_load_instr();
-				case (__instr_dec_out_buf.group)
-					2'b00:
-					begin
-						exec_group_0_instr_part_2();
-					end
-
-					2'b01:
-					begin
-						exec_group_1_instr_part_2();
-					end
-
-					2'b10:
-					begin
-						exec_group_2_instr_part_2();
-					end
-
-					2'b11:
-					begin
-						exec_group_3_instr_part_2();
-					end
-				endcase
-			end
 		end
 	end
 
 
-	// Module instantiations
-	PlainAdder pc_adder_2(.a(__spec_regs.pc), .b(pc_adder_2_b), 
-		.out(pc_adder_2_out));
-	PlainAdder pc_adder_4(.a(__spec_regs.pc), .b(pc_adder_4_b), 
-		.out(pc_adder_4_out));
-	PlainAdder pc_adder_6(.a(__spec_regs.pc), .b(pc_adder_6_b), 
-		.out(pc_adder_6_out));
-	PlainAdder pc_adder_branch(.a(__spec_regs.pc), .b(pc_adder_branch_b),
-		.out(pc_adder_branch_out));
-
-	// Pop flags adder
-	PlainAdder pop_flags_adder(.a(pushpop_flags_addsub_a),
-		.b(pushpop_flags_addsub_b), .out(pop_flags_adder_out));
-
-	// Block move pointer adders
-	PlainAdder blkmov_ptr_adder_4(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_4_b), .out(blkmov_ptr_adder_4_out));
-	PlainAdder blkmov_ptr_adder_8(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_8_b), .out(blkmov_ptr_adder_8_out));
-	PlainAdder blkmov_ptr_adder_12(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_12_b), .out(blkmov_ptr_adder_12_out));
-	PlainAdder blkmov_ptr_adder_16(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_16_b), .out(blkmov_ptr_adder_16_out));
-	PlainAdder blkmov_ptr_adder_20(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_20_b), .out(blkmov_ptr_adder_20_out));
-	PlainAdder blkmov_ptr_adder_24(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_24_b), .out(blkmov_ptr_adder_24_out));
-	PlainAdder blkmov_ptr_adder_28(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_28_b), .out(blkmov_ptr_adder_28_out));
-	PlainAdder blkmov_ptr_adder_32(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_32_b), .out(blkmov_ptr_adder_32_out));
-	
-	// callx/jumpx destination calculator
-	PlainAdder callx_or_jumpx_dst_adder(.a(callx_or_jumpx_dst_adder_a),
-		.b(callx_or_jumpx_dst_adder_b),
-		.out(callx_or_jumpx_dst_adder_out));
-
-
-	// "_nf_" means "non-flags"
-	// This works for both instruction groups 0 and 2 due to how their
-	// instructions are encoded.
-	PlainSubtractor ig02_nf_alu_oper_calc(.a(oper_plain_subtractor_a),
-		.b(ig02_nf_alu_oc_b), .out(ig02_nf_alu_oc_out));
-	
-	// "_f_" means "affects flags"
-	// This works for both instruction groups 0 and 2 due to how their
-	// instructions are encoded.
-	PlainSubtractor ig02_f_alu_oper_calc(.a(oper_plain_subtractor_a),
-		.b(ig02_f_alu_oc_b), .out(ig02_f_alu_oc_out));
-
-	// We don't need a subtractor for non-flags group 1 instructions since
-	// we'd just be subtracting zero anyway.
-	PlainSubtractor ig1_f_alu_oper_calc(.a(oper_plain_subtractor_a),
-		.b(ig1_f_alu_oc_b), .out(ig1_f_alu_oc_out));
-
-	// Push flags subtractor
-	PlainSubtractor push_flags_subtractor(.a(pushpop_flags_addsub_a),
-		.b(pushpop_flags_addsub_b), .out(push_flags_subtractor_out));
-
-	// Block move pointer subtractors
-	PlainSubtractor blkmov_ptr_subtractor_4(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_4_b), .out(blkmov_ptr_subtractor_4_out));
-	PlainSubtractor blkmov_ptr_subtractor_8(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_8_b), .out(blkmov_ptr_subtractor_8_out));
-	PlainSubtractor blkmov_ptr_subtractor_12(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_12_b), .out(blkmov_ptr_subtractor_12_out));
-	PlainSubtractor blkmov_ptr_subtractor_16(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_16_b), .out(blkmov_ptr_subtractor_16_out));
-	PlainSubtractor blkmov_ptr_subtractor_20(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_20_b), .out(blkmov_ptr_subtractor_20_out));
-	PlainSubtractor blkmov_ptr_subtractor_24(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_24_b), .out(blkmov_ptr_subtractor_24_out));
-	PlainSubtractor blkmov_ptr_subtractor_28(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_28_b), .out(blkmov_ptr_subtractor_28_out));
-	PlainSubtractor blkmov_ptr_subtractor_32(.a(blkmov_ptr_addsub_a),
-		.b(blkmov_ptr_addsub_32_b), .out(blkmov_ptr_subtractor_32_out));
-
-
-
-	// Long bitshifts
-	LongLsl long_lsl(.a(long_bitshift_a), .b(long_bitshift_b),
-		.out(long_lsl_out));
-	LongLsl long_lsr(.a(long_bitshift_a), .b(long_bitshift_b),
-		.out(long_lsr_out));
-	LongLsl long_asr(.a(long_bitshift_a), .b(long_bitshift_b),
-		.out(long_asr_out));
-
-	// 32-bit * 32-bit -> 64-bit multipliers
-	LongUMul long_umul(.a(long_mul_a), .b(long_mul_b),
-		.out(long_umul_out));
-	LongUMul long_smul(.a(long_mul_a), .b(long_mul_b),
-		.out(long_smul_out));
-
-	InstrDecoder instr_dec(.to_decode(instr_dec_to_decode),
-		.out(instr_dec_out));
-	Alu alu(.in(alu_in), .out(alu_out));
-	SmallAlu small_alu(.in(small_alu_in), .out(small_alu_out));
-
-	// Dividers
-	NonRestoringDivider #(32) divmod32(.clk(clk),
-		.enable(divmod32_in.enable), 
-		.unsgn_or_sgn(divmod32_in.unsgn_or_sgn),
-		.num(divmod32_in.num), .denom(divmod32_in.denom),
-		.quot(divmod32_out.quot), .rem(divmod32_out.rem),
-		.can_accept_cmd(divmod32_out.can_accept_cmd),
-		.data_ready(divmod32_out.data_ready));
-	NonRestoringDivider #(64) divmod64(.clk(clk),
-		.enable(divmod64_in.enable), 
-		.unsgn_or_sgn(divmod64_in.unsgn_or_sgn),
-		.num(divmod64_in.num), .denom(divmod64_in.denom),
-		.quot(divmod64_out.quot), .rem(divmod64_out.rem),
-		.can_accept_cmd(divmod64_out.can_accept_cmd),
-		.data_ready(divmod64_out.data_ready));
+	`include "src/cpu/cpu_internal_modules.svinc"
 
 endmodule
