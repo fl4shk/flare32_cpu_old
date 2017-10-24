@@ -21,6 +21,9 @@ module Cpu(input bit clk,
 	// Package imports
 	import pkg_cpu::*;
 	import pkg_temp_ind_0::*;
+	import pkg_temp_ind_1::*;
+	import pkg_temp_ind_2::*;
+	import pkg_temp_ind_3::*;
 
 	
 
@@ -59,8 +62,6 @@ module Cpu(input bit clk,
 	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_b = 2,
 		pc_adder_4_b = 4, pc_adder_6_b = 6;
 
-	// Since we don't know if the branch happened until late into
-	// execution, use __instr_dec_out_buf instead of instr_dec_out.
 	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_branch_b
 		= __instr_dec_out_buf.imm_val_s16;
 

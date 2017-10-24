@@ -3,7 +3,7 @@
 
 package pkg_temp_ind_0;
 
-parameter high = 2;
+parameter high = 3;
 
 typedef enum bit [high:0]
 {
@@ -122,6 +122,36 @@ typedef enum bit [high:0]
 //typedef enum bit [high:0]
 //{
 //} CmpRaRb;
+
+
+endpackage
+
+
+
+package pkg_temp_ind_1;
+
+parameter high = 3;
+
+typedef enum bit [high:0]
+{
+	AluOp_RaIndex
+} AluOp;
+
+
+endpackage
+
+
+package pkg_temp_ind_2;
+
+parameter high = 3;
+
+
+endpackage
+
+
+package pkg_temp_ind_3;
+
+parameter high = 3;
 
 
 endpackage

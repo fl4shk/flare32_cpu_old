@@ -188,6 +188,27 @@ task exec_group_0_instr_part_0;
 endtask
 
 task exec_group_1_instr_part_0;
+	// Non flags affecting ALU operations with zero-extended 16-bit
+	// immediate
+	if ((__instr_dec_out_buf.oper >= pkg_cpu::Add_RaRb_0)
+		&& (__instr_dec_out_buf.oper <= pkg_cpu::Ror_RaRb_0))
+	begin
+		init_alu(__gprs[__instr_dec_out_buf.rb_index],
+			__instr_dec_out_buf.imm_val_u16,
+			__instr_dec_out_buf.oper[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
+		__temp[pkg_temp_ind_1::AluOp_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
+	end
+
+	else if ((__instr_dec_out_buf.oper >= pkg_cpu::AddDotF_RaRb_0)
+		&& (__instr_dec_out_buf.oper <= pkg_cpu::Rrc_RaRb_0))
+	begin
+		init_alu(__gprs[__instr_dec_out_buf.rb_index],
+			__instr_dec_out_buf.imm_val_u16,
+			ig1_f_alu_oc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
+		__temp[pkg_temp_ind_1::AluOp_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
+	end
 endtask
 
 task exec_group_2_instr_part_0;
