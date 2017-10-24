@@ -35,6 +35,8 @@ module Cpu(input bit clk,
 
 	pkg_cpu::State __state;
 
+	bit __waiting_for_divmod;
+
 	//bit __instr_is_alu_op;
 
 
@@ -166,8 +168,8 @@ module Cpu(input bit clk,
 	} divmod64_out;
 
 
-	//// Temporaries
-	bit [`CPU_WORD_MSB_POS:0] __temp[0:7];
+	// Temporaries
+	bit [`CPU_WORD_MSB_POS:0] __temp[0:15];
 
 	// Copies of module outputs
 	pkg_cpu::StrcOutAlu __alu_out_buf;
@@ -250,6 +252,8 @@ module Cpu(input bit clk,
 					long_mul_a <= __gprs[instr_dec_out.rc_index];
 					long_mul_b <= __gprs[instr_dec_out.rd_index];
 
+					__waiting_for_divmod = 0;
+
 
 					// Disable reading/writing
 					disab_rdwr();
@@ -320,7 +324,7 @@ module Cpu(input bit clk,
 
 			else if (__state == pkg_cpu::StWriteBack)
 			begin
-				{divmod32_in.enable, divmod64_in.enable} <= 0;
+				//{divmod32_in.enable, divmod64_in.enable} <= 0;
 				__state <= pkg_cpu::StDecodeInstr;
 				prep_load_instr();
 				

@@ -166,11 +166,17 @@ task exec_group_0_instr_part_0;
 	// Sign extend
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Seh_RaRb_0)
 	begin
-		
+		__temp[pkg_temp_ind_0::SehRaRb_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
+		__temp[pkg_temp_ind_0::SehRaRb_Rb]
+			<= __gprs[__instr_dec_out_buf.rb_index];
 	end
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Seb_RaRb_0)
 	begin
-		
+		__temp[pkg_temp_ind_0::SebRaRb_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
+		__temp[pkg_temp_ind_0::SebRaRb_Rb]
+			<= __gprs[__instr_dec_out_buf.rb_index];
 	end
 
 	// Compare rA to rB

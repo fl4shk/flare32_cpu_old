@@ -118,5 +118,10 @@ typedef enum bit [high:0]
 	SebRaRb_Rb
 } SebRaRb;
 
+//// cmp rA, rB
+//typedef enum bit [high:0]
+//{
+//} CmpRaRb;
+
 
 endpackage
