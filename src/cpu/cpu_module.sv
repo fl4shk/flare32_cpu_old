@@ -62,11 +62,14 @@ module Cpu(input bit clk,
 	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_b = 2,
 		pc_adder_4_b = 4, pc_adder_6_b = 6;
 
-	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_branch_b
-		= __instr_dec_out_buf.imm_val_s16;
-
 	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_adder_2_out, pc_adder_4_out, 
-		pc_adder_6_out, pc_adder_branch_out;
+		pc_adder_6_out; 
+
+	// Connections to PlainAddThree's
+	wire [`CPU_WORD_MSB_POS:0] 
+		pc_addthree_branch_b = __instr_dec_out_buf.imm_val_s16,
+		pc_addthree_branch_c = pc_adder_4_b;
+	wire [`CPU_ADDR_BUS_MSB_POS:0] pc_addthree_branch_out;
 
 	
 	// Connections to the PlainAdder's/PlainSubtractor's
@@ -100,6 +103,7 @@ module Cpu(input bit clk,
 
 	wire [`CPU_WORD_MSB_POS:0] ig02_nf_alu_oc_out, ig02_f_alu_oc_out,
 		ig1_f_alu_oc_out, 
+		branch_taken_oc_out,
 
 		// Push flags subtractor output
 		push_flags_subtractor_out,

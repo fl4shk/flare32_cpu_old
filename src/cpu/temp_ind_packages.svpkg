@@ -137,6 +137,20 @@ typedef enum bit [high:0]
 	AluOp_RaIndex
 } AluOp;
 
+typedef enum bit [high:0]
+{
+	// Destination
+	BranchOp_Dst,
+
+	// Whether the branch will be taken
+	BranchOp_BranchTaken
+} BranchOp;
+
+typedef enum bit [high:0]
+{
+	XorsiOp_RaIndex
+} XorsiOp;
+
 
 endpackage
 

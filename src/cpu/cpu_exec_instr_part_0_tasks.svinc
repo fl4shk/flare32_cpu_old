@@ -190,8 +190,8 @@ endtask
 task exec_group_1_instr_part_0;
 	// Non flags affecting ALU operations with zero-extended 16-bit
 	// immediate
-	if ((__instr_dec_out_buf.oper >= pkg_cpu::Add_RaRb_0)
-		&& (__instr_dec_out_buf.oper <= pkg_cpu::Ror_RaRb_0))
+	if ((__instr_dec_out_buf.oper >= pkg_cpu::Addi_RaRbUImm16_1)
+		&& (__instr_dec_out_buf.oper <= pkg_cpu::Rori_RaRbUImm16_1))
 	begin
 		init_alu(__gprs[__instr_dec_out_buf.rb_index],
 			__instr_dec_out_buf.imm_val_u16,
@@ -200,8 +200,8 @@ task exec_group_1_instr_part_0;
 			<= __instr_dec_out_buf.ra_index;
 	end
 
-	else if ((__instr_dec_out_buf.oper >= pkg_cpu::AddDotF_RaRb_0)
-		&& (__instr_dec_out_buf.oper <= pkg_cpu::Rrc_RaRb_0))
+	else if ((__instr_dec_out_buf.oper >= pkg_cpu::AddiDotF_RaRbUImm16_1)
+		&& (__instr_dec_out_buf.oper <= pkg_cpu::RoriDotF_RaRbUImm16_1))
 	begin
 		init_alu(__gprs[__instr_dec_out_buf.rb_index],
 			__instr_dec_out_buf.imm_val_u16,
@@ -209,6 +209,147 @@ task exec_group_1_instr_part_0;
 		__temp[pkg_temp_ind_1::AluOp_RaIndex]
 			<= __instr_dec_out_buf.ra_index;
 	end
+
+	else if ((__instr_dec_out_buf.oper >= pkg_cpu::Bra_Branch_1)
+		&& (__instr_dec_out_buf.oper <= pkg_cpu::Ble_Branch_1))
+	begin
+		__temp[pkg_temp_ind_1::BranchOp_Dst] <= pc_addthree_branch_out;
+
+		case (branch_taken_oc_out)
+			// Bra_Branch_1
+			`CPU_WORD_WIDTH'd0:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken] <= 1;
+			end
+
+			// Bnv_Branch_1
+			`CPU_WORD_WIDTH'd1:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken] <= 0;
+			end
+
+			// Bne_Branch_1
+			`CPU_WORD_WIDTH'd2:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken] 
+					<= (!__spec_regs.flags[pkg_cpu::FlagZ]);
+			end
+
+			// Beq_Branch_1
+			`CPU_WORD_WIDTH'd3:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken] 
+					<= (__spec_regs.flags[pkg_cpu::FlagZ]);
+			end
+
+			// Bcc_Branch_1
+			`CPU_WORD_WIDTH'd4:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken] 
+					<= (!__spec_regs.flags[pkg_cpu::FlagC]);
+			end
+
+			// Bcs_Branch_1
+			`CPU_WORD_WIDTH'd5:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken] 
+					<= (__spec_regs.flags[pkg_cpu::FlagC]);
+			end
+
+			// Bls_Branch_1
+			// Branch when (C == 0 or Z == 1) [unsigned less than or
+			// equal]
+			`CPU_WORD_WIDTH'd6:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken]
+					<= ((!__spec_regs.flags[pkg_cpu::FlagC])
+					|| (__spec_regs.flags[pkg_cpu::FlagZ]));
+			end
+
+			// Bhi_Branch_1
+			// Branch when (C == 1 and Z == 0) [unsigned greater than]
+			`CPU_WORD_WIDTH'd7:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken]
+					<= ((__spec_regs.flags[pkg_cpu::FlagC])
+					&& (!__spec_regs.flags[pkg_cpu::FlagZ]));
+			end
+
+			// Bpl_Branch_1
+			`CPU_WORD_WIDTH'd8:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken]
+					<= (!__spec_regs.flags[pkg_cpu::FlagN]);
+			end
+
+			// Bmi_Branch_1
+			`CPU_WORD_WIDTH'd9:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken]
+					<= (__spec_regs.flags[pkg_cpu::FlagN]);
+			end
+
+			// Bvc_Branch_1
+			`CPU_WORD_WIDTH'd10:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken]
+					<= (!__spec_regs.flags[pkg_cpu::FlagV]);
+			end
+
+			// Bvs_Branch_1
+			`CPU_WORD_WIDTH'd11:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken]
+					<= (__spec_regs.flags[pkg_cpu::FlagV]);
+			end
+
+			// Bge_Branch_1
+			// Branch when N == V [signed greater than or equal],
+			`CPU_WORD_WIDTH'd12:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken]
+					<= (__spec_regs.flags[pkg_cpu::FlagN]
+					== __spec_regs.flags[pkg_cpu::FlagV]);
+			end
+
+			// Blt_Branch_1
+			// Branch when N != V [signed less than]
+			`CPU_WORD_WIDTH'd13:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken]
+					<= (__spec_regs.flags[pkg_cpu::FlagN]
+					!= __spec_regs.flags[pkg_cpu::FlagV]);
+			end
+
+			// Bgt_Branch_1
+			// Branch when (N == V and Z == 0) [signed greater than]
+			`CPU_WORD_WIDTH'd14:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken]
+					<= ((__spec_regs.flags[pkg_cpu::FlagN]
+					== __spec_regs.flags[pkg_cpu::FlagV])
+					&& (!__spec_regs.flags[pkg_cpu::FlagZ]));
+			end
+
+			// Ble_Branch_1
+			// Branch when (N != V or Z == 1) [signed less than or equal]
+			`CPU_WORD_WIDTH'd15:
+			begin
+				__temp[pkg_temp_ind_1::BranchOp_BranchTaken]
+					<= ((__spec_regs.flags[pkg_cpu::FlagN]
+					!= __spec_regs.flags[pkg_cpu::FlagV])
+					|| (__spec_regs.flags[pkg_cpu::FlagZ]));
+			end
+
+
+			default:
+			begin
+				$display("Branch Taken Eek!");
+			end
+		endcase
+
+	end
+
 endtask
 
 task exec_group_2_instr_part_0;

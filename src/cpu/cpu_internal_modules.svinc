@@ -3,14 +3,6 @@
 `define MAKE_ANY_SUBTRACTOR(some_name, some_a, some_b, some_out) \
 	PlainAdder some_name(.a(some_a), .b(some_b), .out(some_out));
 
-//`define MAKE_BLKMOV_PTR_ADDER(num) \
-//	PlainAdder blkmov_ptr_adder_``num\
-//	((blkmov_ptr_addsub, \
-//	blkmov_ptr_addsub_``num, blkmov_ptr_adder_``num));
-//`define MAKE_BLKMOV_PTR_SUBTRACTOR(num) \
-//	PlainSubtractor blkmov_ptr_subtractor_``num\
-//	(`PLAIN_ADDSUB_CONNECTIONS(blkmov_ptr_addsub, \
-//	blkmov_ptr_addsub_``num, blkmov_ptr_subtractor_``num));
 `define MAKE_BLKMOV_PTR_ADDER(num) \
 	`MAKE_ANY_ADDER(blkmov_ptr_adder_``num, \
 	blkmov_ptr_addsub_a, blkmov_ptr_addsub_``num``_b, \
@@ -29,8 +21,11 @@
 		.out(pc_adder_4_out));
 	PlainAdder pc_adder_6(.a(__spec_regs.pc), .b(pc_adder_6_b), 
 		.out(pc_adder_6_out));
-	PlainAdder pc_adder_branch(.a(__spec_regs.pc), .b(pc_adder_branch_b),
-		.out(pc_adder_branch_out));
+	//PlainAdder pc_adder_branch(.a(__spec_regs.pc), .b(pc_adder_branch_b),
+	//	.out(pc_adder_branch_out));
+	PlainAddThree pc_addthree_branch(.a(__spec_regs.pc),
+		.b(pc_addthree_branch_b), .c(pc_addthree_branch_c),
+		.out(pc_addthree_branch_out));
 
 	// Pop flags adder
 	PlainAdder pop_flags_adder(.a(pushpop_flags_addsub_a),
@@ -69,6 +64,7 @@
 	// we'd just be subtracting zero anyway.
 	PlainSubtractor ig1_f_alu_oper_calc(.a(oper_plain_subtractor_a),
 		.b(ig1_f_alu_oc_b), .out(ig1_f_alu_oc_out));
+
 
 	// Push flags subtractor
 	PlainSubtractor push_flags_subtractor(.a(pushpop_flags_addsub_a),

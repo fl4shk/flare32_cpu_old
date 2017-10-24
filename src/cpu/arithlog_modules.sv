@@ -245,6 +245,11 @@ module PlainAdder(input wire [`CPU_WORD_MSB_POS:0] a, b,
 
 	assign out = a + b;
 endmodule
+module PlainAddThree(input wire [`CPU_WORD_MSB_POS:0] a, b, c,
+	output wire [`CPU_WORD_MSB_POS:0] out);
+
+	assign out = a + b + c;
+endmodule
 module PlainSubtractor(input wire [`CPU_WORD_MSB_POS:0] a, b,
 	output wire [`CPU_WORD_MSB_POS:0] out);
 
