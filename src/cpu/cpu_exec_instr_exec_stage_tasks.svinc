@@ -200,6 +200,9 @@ task exec_comb_logic_group_0_instr_exec_stage;
 endtask
 
 task exec_seq_logic_group_0_instr_exec_stage;
+	// Group 0 instructions always go to the WriteBack stage on the next
+	// cycle
+	__state <= pkg_cpu::StWriteBack;
 	`CONSTRUCT_EXEC_GROUP_0_EXEC_STAGE_TASK_CONTENTS(seq)
 endtask
 
