@@ -157,3 +157,28 @@ task exec_seq_logic_group_0_pop_flags;
 	//__temp[pkg_temp_ind_0::PopFlags_NewSp] <= alu_out.out;
 	set_wbs_sp(alu_out.out);
 endtask
+
+
+
+// cpy rA, flags
+task exec_comb_logic_group_0_cpy_ra_flags;
+endtask
+
+task exec_seq_logic_group_0_cpy_ra_flags;
+	//__temp[pkg_temp_ind_0::CpyRaFlags_RaIndex]
+	//	<= __instr_dec_out_buf.ra_index;
+	//__temp[pkg_temp_ind_0::CpyRaFlags_Flags]
+	//	<= __spec_regs.flags;
+	set_wbs_ra(__spec_regs.flags);
+endtask
+
+
+// cpy flags, rA
+task exec_comb_logic_group_0_cpy_flags_ra;
+endtask
+
+task exec_seq_logic_group_0_cpy_flags_ra;
+	//__temp[pkg_temp_ind_0::CpyFlagsRa_Ra]
+	//	<= __gprs[__instr_dec_out_buf.ra_index];
+	set_wbs_flags(__gprs[__instr_dec_out_buf.ra_index]);
+endtask

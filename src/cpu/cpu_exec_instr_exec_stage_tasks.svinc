@@ -158,15 +158,17 @@ task exec_comb_logic_group_0_instr_exec_stage;
 	end
 
 
-	//// cpy rA, flags
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaFlags_0)
-	//begin
-	//end
+	// cpy rA, flags
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaFlags_0)
+	begin
+		exec_comb_logic_group_0_cpy_ra_flags();
+	end
 
-	//// cpy flags, rA
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_FlagsRa_0)
-	//begin
-	//end
+	// cpy flags, rA
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_FlagsRa_0)
+	begin
+		exec_comb_logic_group_0_cpy_flags_ra();
+	end
 
 	// call/jump to address contained in (rA + rB)
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Callx_RaRb_0)
@@ -319,6 +321,7 @@ task exec_seq_logic_group_0_instr_exec_stage;
 		//	<= __instr_dec_out_buf.ra_index;
 		//__temp[pkg_temp_ind_0::CpyRaFlags_Flags]
 		//	<= __spec_regs.flags;
+		exec_seq_logic_group_0_cpy_ra_flags();
 	end
 
 	// cpy flags, rA
@@ -326,6 +329,7 @@ task exec_seq_logic_group_0_instr_exec_stage;
 	begin
 		//__temp[pkg_temp_ind_0::CpyFlagsRa_Ra]
 		//	<= __gprs[__instr_dec_out_buf.ra_index];
+		exec_seq_logic_group_0_cpy_flags_ra();
 	end
 
 
