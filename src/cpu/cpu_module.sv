@@ -222,6 +222,7 @@ module Cpu(input bit clk,
 	end
 
 
+	// Sequential logic
 	always @ (posedge clk)
 	begin
 		if (enable)
@@ -267,28 +268,24 @@ module Cpu(input bit clk,
 						// 16-bit (2 bytes)
 						2'b00:
 						begin
-							//__spec_regs.pc <= __spec_regs.pc + 2;
 							__spec_regs.pc <= pc_adder_2_out;
 						end
 
 						// 32-bit (4 bytes)
 						2'b01:
 						begin
-							//__spec_regs.pc <= __spec_regs.pc + 4;
 							__spec_regs.pc <= pc_adder_4_out;
 						end
 
 						// 32-bit (4 bytes)
 						2'b10:
 						begin
-							//__spec_regs.pc <= __spec_regs.pc + 4;
 							__spec_regs.pc <= pc_adder_4_out;
 						end
 
 						// 48-bit (6 bytes)
 						2'b11:
 						begin
-							//__spec_regs.pc <= __spec_regs.pc + 6;
 							__spec_regs.pc <= pc_adder_6_out;
 						end
 					endcase
@@ -306,22 +303,22 @@ module Cpu(input bit clk,
 				case (__instr_dec_out_buf.group)
 					2'b00:
 					begin
-						exec_group_0_instr_part_0();
+						exec_seq_logic_group_0_instr_exec_stage();
 					end
 
 					2'b01:
 					begin
-						exec_group_1_instr_part_0();
+						exec_seq_logic_group_1_instr_exec_stage();
 					end
 
 					2'b10:
 					begin
-						exec_group_2_instr_part_0();
+						exec_seq_logic_group_2_instr_exec_stage();
 					end
 
 					2'b11:
 					begin
-						exec_group_3_instr_part_0();
+						exec_seq_logic_group_3_instr_exec_stage();
 					end
 				endcase
 			end
@@ -336,22 +333,80 @@ module Cpu(input bit clk,
 				case (__instr_dec_out_buf.group)
 					2'b00:
 					begin
-						exec_group_0_instr_part_1();
+						exec_seq_logic_group_0_instr_write_back_stage();
 					end
 
 					2'b01:
 					begin
-						exec_group_1_instr_part_1();
+						exec_seq_logic_group_1_instr_write_back_stage();
 					end
 
 					2'b10:
 					begin
-						exec_group_2_instr_part_1();
+						exec_seq_logic_group_2_instr_write_back_stage();
 					end
 
 					2'b11:
 					begin
-						exec_group_3_instr_part_1();
+						exec_seq_logic_group_3_instr_write_back_stage();
+					end
+				endcase
+			end
+		end
+	end
+
+	// Combinational logic
+	//always_comb // your hair
+	always @ (*)
+	begin
+		if (enable)
+		begin
+			if (__state == pkg_cpu::StExecInstr)
+			begin
+				case (__instr_dec_out_buf.group)
+					2'b00:
+					begin
+						exec_comb_logic_group_0_instr_exec_stage();
+					end
+
+					2'b01:
+					begin
+						exec_comb_logic_group_1_instr_exec_stage();
+					end
+
+					2'b10:
+					begin
+						exec_comb_logic_group_2_instr_exec_stage();
+					end
+
+					2'b11:
+					begin
+						exec_comb_logic_group_3_instr_exec_stage();
+					end
+				endcase
+			end
+
+			else if (__state == pkg_cpu::StWriteBack)
+			begin
+				case (__instr_dec_out_buf.group)
+					2'b00:
+					begin
+						exec_comb_logic_group_0_instr_write_back_stage();
+					end
+
+					2'b01:
+					begin
+						exec_comb_logic_group_1_instr_write_back_stage();
+					end
+
+					2'b10:
+					begin
+						exec_comb_logic_group_2_instr_write_back_stage();
+					end
+
+					2'b11:
+					begin
+						exec_comb_logic_group_3_instr_write_back_stage();
 					end
 				endcase
 			end

@@ -6,76 +6,6 @@
 
 package pkg_cpu;
 
-
-
-typedef enum bit [`CPU_ENUM_FLAGS_POS_MSB_POS:0]
-{
-	FlagC,
-	FlagZ,
-	FlagV,
-	FlagN
-} FlagsPos;
-
-typedef enum bit [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]
-{
-	Alu_Add,
-	Alu_Adc,
-	Alu_Sub,
-	Alu_Sbc,
-	Alu_Rsb,
-	Alu_Mul,
-	Alu_And,
-	Alu_Or,
-	Alu_Xor,
-	Alu_Lsl,
-	Alu_Lsr,
-	Alu_Asr,
-	Alu_Rol,
-	Alu_Ror,
-
-	Alu_Rlc,
-
-	Alu_Rrc
-} OperAlu;
-
-
-typedef enum bit [`CPU_ENUM_SMALL_ALU_OPER_SIZE_MSB_POS:0]
-{
-	// Used mainly for ldst rA, [rB, rC, simm12]
-	SmallAlu_AddThree,
-
-	// Fused multiply-add
-	SmallAlu_Fma
-} OperSmallAlu;
-
-
-// Alu Ports
-typedef struct packed
-{
-	bit [`CPU_WORD_MSB_POS:0] a, b;
-	bit [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0] oper;
-	bit [`CPU_FLAGS_MSB_POS:0] flags;
-} StrcInAlu;
-
-typedef struct packed
-{
-	bit [`CPU_WORD_MSB_POS:0] out;
-	bit [`CPU_FLAGS_MSB_POS:0] flags;
-} StrcOutAlu;
-
-// SmallAlu Ports
-typedef struct packed
-{
-	bit [`CPU_WORD_MSB_POS:0] a, b, c;
-	bit [`CPU_ENUM_SMALL_ALU_OPER_SIZE_MSB_POS:0] oper;
-} StrcInSmallAlu;
-
-typedef struct packed
-{
-	bit [`CPU_WORD_MSB_POS:0] out;
-} StrcOutSmallAlu;
-
-
 //`define INSTR_STUFF(group, args, ident, str) \
 //	ident``_``args``_``group,
 //
@@ -105,6 +35,7 @@ typedef struct packed
 //`undef INSTR_STUFF
 
 
+// Group 0 instructions
 typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 {
 	// ldst rA, [rB]
@@ -201,6 +132,7 @@ typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 
 } OperG0;
 
+// Group 1 instructions
 typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 {
 	// rA <= rB op (zero-extended 16-bit immediate)
@@ -262,6 +194,7 @@ typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 	Lui_RaUImm16_1
 } OperG1;
 
+// Group 2 instructions
 typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 {
 	// ldst rA, [rB, rC, (sign-extended 12-bit immediate)
@@ -320,6 +253,7 @@ typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 } OperG2;
 
 
+// Group 3 instructions
 typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 {
 	// ldst rA, [rB, (32-bit immediate)]
@@ -369,6 +303,76 @@ typedef enum bit [`CPU_ENUM_OPER_SIZE_MSB_POS:0]
 	Lsr_LongBitShift_3,
 	Asr_LongBitShift_3
 } OperG3;
+
+
+typedef enum bit [`CPU_ENUM_FLAGS_POS_MSB_POS:0]
+{
+	FlagC,
+	FlagZ,
+	FlagV,
+	FlagN
+} FlagsPos;
+
+typedef enum bit [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]
+{
+	Alu_Add,
+	Alu_Adc,
+	Alu_Sub,
+	Alu_Sbc,
+	Alu_Rsb,
+	Alu_Mul,
+	Alu_And,
+	Alu_Or,
+	Alu_Xor,
+	Alu_Lsl,
+	Alu_Lsr,
+	Alu_Asr,
+	Alu_Rol,
+	Alu_Ror,
+
+	Alu_Rlc,
+
+	Alu_Rrc
+} OperAlu;
+
+
+typedef enum bit [`CPU_ENUM_SMALL_ALU_OPER_SIZE_MSB_POS:0]
+{
+	// Used mainly for ldst rA, [rB, rC, simm12]
+	SmallAlu_AddThree,
+
+	// Fused multiply-add
+	SmallAlu_Fma
+} OperSmallAlu;
+
+
+// Alu Ports
+typedef struct packed
+{
+	bit [`CPU_WORD_MSB_POS:0] a, b;
+	bit [`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0] oper;
+	bit [`CPU_FLAGS_MSB_POS:0] flags;
+} StrcInAlu;
+
+typedef struct packed
+{
+	bit [`CPU_WORD_MSB_POS:0] out;
+	bit [`CPU_FLAGS_MSB_POS:0] flags;
+} StrcOutAlu;
+
+// SmallAlu Ports
+typedef struct packed
+{
+	bit [`CPU_WORD_MSB_POS:0] a, b, c;
+	bit [`CPU_ENUM_SMALL_ALU_OPER_SIZE_MSB_POS:0] oper;
+} StrcInSmallAlu;
+
+typedef struct packed
+{
+	bit [`CPU_WORD_MSB_POS:0] out;
+} StrcOutSmallAlu;
+
+
 
 
 

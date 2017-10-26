@@ -108,14 +108,14 @@ typedef enum bit [high:0]
 typedef enum bit [high:0]
 {
 	SehRaRb_RaIndex,
-	SehRaRb_Rb
+	SehRaRb_Output
 } SehRaRb;
 
 // seb rA, rB
 typedef enum bit [high:0]
 {
 	SebRaRb_RaIndex,
-	SebRaRb_Rb
+	SebRaRb_Output
 } SebRaRb;
 
 //// cmp rA, rB
@@ -150,6 +150,12 @@ typedef enum bit [high:0]
 {
 	XorsiOp_RaIndex
 } XorsiOp;
+
+typedef enum bit [high:0]
+{
+	LuiOp_RaIndex,
+	LuiOp_UImm16
+} LuiOp;
 
 
 endpackage

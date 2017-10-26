@@ -1,0 +1,33 @@
+`ifndef cpu_exec_instr_write_back_stage_tasks_svinc
+`define cpu_exec_instr_write_back_stage_tasks_svinc
+
+
+task exec_comb_logic_group_0_instr_write_back_stage;
+endtask
+
+task exec_seq_logic_group_0_instr_write_back_stage;
+endtask
+
+
+task exec_comb_logic_group_1_instr_write_back_stage;
+endtask
+
+task exec_seq_logic_group_1_instr_write_back_stage;
+endtask
+
+
+task exec_comb_logic_group_2_instr_write_back_stage;
+endtask
+
+task exec_seq_logic_group_2_instr_write_back_stage;
+endtask
+
+
+task exec_comb_logic_group_3_instr_write_back_stage;
+endtask
+
+task exec_seq_logic_group_3_instr_write_back_stage;
+endtask
+
+
+`endif		// cpu_exec_instr_write_back_stage_tasks_svinc

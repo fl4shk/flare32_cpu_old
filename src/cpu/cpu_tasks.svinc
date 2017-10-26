@@ -66,8 +66,8 @@ endtask
 
 
 
-`include "src/cpu/cpu_exec_instr_part_0_tasks.svinc"
-`include "src/cpu/cpu_exec_instr_part_1_tasks.svinc"
+`include "src/cpu/cpu_exec_instr_exec_stage_tasks.svinc"
+`include "src/cpu/cpu_exec_instr_write_back_stage_tasks.svinc"
 
 
 `endif		// cpu_tasks_svinc
