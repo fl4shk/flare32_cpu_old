@@ -190,31 +190,32 @@ task exec_comb_logic_group_0_instr_exec_stage;
 		exec_comb_logic_group_0_jumpx_ra_rb();
 	end
 
-	//// cpy rA, pc
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaPc_0)
-	//begin
-	//end
+	// cpy rA, pc
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaPc_0)
+	begin
+		exec_comb_logic_group_0_cpy_ra_pc();
+	end
 
-	//// cpy rA, rB
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaRb_0)
-	//begin
-	//end
+	// cpy rA, rB
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaRb_0)
+	begin
+		exec_comb_logic_group_0_cpy_ra_rb();
+	end
 
-	//// Sign extend
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Seh_RaRb_0)
-	//begin
-	//end
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Seb_RaRb_0)
-	//begin
-	//end
+	// Sign extend
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Seh_RaRb_0)
+	begin
+		exec_comb_logic_group_0_seh_ra_rb();
+	end
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Seb_RaRb_0)
+	begin
+		exec_comb_logic_group_0_seb_ra_rb();
+	end
 
 	// Compare rA to rB
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cmp_RaRb_0)
 	begin
-		init_alu(__gprs[__instr_dec_out_buf.ra_index],
-			__gprs[__instr_dec_out_buf.rb_index],
-			pkg_cpu::Alu_Sub);
-
+		exec_comb_logic_group_0_cmp_ra_rb();
 	end
 endtask
 
@@ -363,6 +364,7 @@ task exec_seq_logic_group_0_instr_exec_stage;
 		//__temp[pkg_temp_ind_0::CpyRaPc_RaIndex]
 		//	<= __instr_dec_out_buf.ra_index;
 		//__temp[pkg_temp_ind_0::CpyRaPc_Pc] <= __spec_regs.pc;
+		exec_seq_logic_group_0_cpy_ra_pc();
 	end
 
 	// cpy rA, rB
@@ -372,6 +374,7 @@ task exec_seq_logic_group_0_instr_exec_stage;
 		//	<= __instr_dec_out_buf.ra_index;
 		//__temp[pkg_temp_ind_0::CpyRaRb_Rb]
 		//	<= __gprs[__instr_dec_out_buf.rb_index];
+		exec_seq_logic_group_0_cpy_ra_rb();
 	end
 
 	// Sign extend
@@ -380,18 +383,21 @@ task exec_seq_logic_group_0_instr_exec_stage;
 		//__temp[pkg_temp_ind_0::SehRaRb_RaIndex]
 		//	<= __instr_dec_out_buf.ra_index;
 		//__temp[pkg_temp_ind_0::SehRaRb_SehOut] <= ig0_seh_signext16_out;
+		exec_seq_logic_group_0_seh_ra_rb();
 	end
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Seb_RaRb_0)
 	begin
 		//__temp[pkg_temp_ind_0::SebRaRb_RaIndex]
 		//	<= __instr_dec_out_buf.ra_index;
 		//__temp[pkg_temp_ind_0::SebRaRb_SebOut] <= ig0_seb_signext8_out;
+		exec_seq_logic_group_0_seb_ra_rb();
 	end
 
 	// Compare rA to rB
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cmp_RaRb_0)
 	begin
 		//__temp[pkg_temp_ind_0::CmpRaRb_NewFlags] <= alu_out.flags;
+		exec_seq_logic_group_0_cmp_ra_rb();
 	end
 endtask
 

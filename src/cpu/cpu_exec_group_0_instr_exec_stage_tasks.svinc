@@ -6,7 +6,6 @@ task exec_comb_logic_group_0_load;
 endtask
 
 task exec_seq_logic_group_0_load;
-	///__temp[pkg_temp_ind_0::Ld_RaIndex] <= __instr_dec_out_buf.ra_index;
 	set_wbs_ra(0);
 endtask
 
@@ -32,9 +31,6 @@ task exec_comb_logic_group_0_nf_alu_op;
 endtask
 
 task exec_seq_logic_group_0_nf_alu_op;
-	//__temp[pkg_temp_ind_0::AluOp_RaIndex]
-	//	<= __instr_dec_out_buf.ra_index;
-	//__temp[pkg_temp_ind_0::AluOp_AluOut] <= alu_out.out;
 	set_wbs_ra(alu_out.out);
 endtask
 
@@ -47,10 +43,6 @@ task exec_comb_logic_group_0_f_alu_op;
 endtask
 
 task exec_seq_logic_group_0_f_alu_op;
-	//__temp[pkg_temp_ind_0::AluDotFOp_RaIndex]
-	//	<= __instr_dec_out_buf.ra_index;
-	//__temp[pkg_temp_ind_0::AluDotFOp_AluOut] <= alu_out.out;
-	//__temp[pkg_temp_ind_0::AluDotFOp_FlagsOut] <= alu_out.flags;
 	set_wbs_ra(alu_out.out);
 	set_wbs_flags(alu_out.flags);
 endtask
@@ -96,7 +88,6 @@ task exec_comb_logic_group_0_jump_ira;
 endtask
 
 task exec_seq_logic_group_0_jump_ira;
-	//__temp[pkg_temp_ind_0::JumpIra_Pc] <= __spec_regs.ira;
 	set_wbs_pc(__spec_regs.ira);
 endtask
 
@@ -106,9 +97,6 @@ task exec_comb_logic_group_0_cpy_ra_ira;
 endtask
 
 task exec_seq_logic_group_0_cpy_ra_ira;
-	//__temp[pkg_temp_ind_0::CpyRaIra_RaIndex]
-	//	<= __instr_dec_out_buf.ra_index;
-	//__temp[pkg_temp_ind_0::CpyRaIra_Ira] <= __spec_regs.ira;
 	set_wbs_ra(__spec_regs.ira);
 endtask
 
@@ -119,8 +107,6 @@ endtask
 
 
 task exec_seq_logic_group_0_cpy_ira_ra;
-	//__temp[pkg_temp_ind_0::CpyIraRa_Ra] 
-	//	<= __gprs[__instr_dec_out_buf.ra_index];
 	set_wbs_ira(__gprs[__instr_dec_out_buf.ra_index]);
 endtask
 
@@ -138,7 +124,6 @@ endtask
 task exec_seq_logic_group_0_push_flags;
 	// sp -= 1;
 	// [sp] = flags;
-	//__temp[pkg_temp_ind_0::PushFlags_NewSp] <= alu_out.out;
 	set_wbs_sp(alu_out.out);
 endtask
 
@@ -154,7 +139,6 @@ endtask
 task exec_seq_logic_group_0_pop_flags;
 	// flags = [sp];
 	// sp += 1;
-	//__temp[pkg_temp_ind_0::PopFlags_NewSp] <= alu_out.out;
 	set_wbs_sp(alu_out.out);
 endtask
 
@@ -165,10 +149,6 @@ task exec_comb_logic_group_0_cpy_ra_flags;
 endtask
 
 task exec_seq_logic_group_0_cpy_ra_flags;
-	//__temp[pkg_temp_ind_0::CpyRaFlags_RaIndex]
-	//	<= __instr_dec_out_buf.ra_index;
-	//__temp[pkg_temp_ind_0::CpyRaFlags_Flags]
-	//	<= __spec_regs.flags;
 	set_wbs_ra(__spec_regs.flags);
 endtask
 
@@ -178,8 +158,6 @@ task exec_comb_logic_group_0_cpy_flags_ra;
 endtask
 
 task exec_seq_logic_group_0_cpy_flags_ra;
-	//__temp[pkg_temp_ind_0::CpyFlagsRa_Ra]
-	//	<= __gprs[__instr_dec_out_buf.ra_index];
 	set_wbs_flags(__gprs[__instr_dec_out_buf.ra_index]);
 endtask
 
@@ -191,8 +169,6 @@ task exec_comb_logic_group_0_callx_ra_rb;
 endtask
 
 task exec_seq_logic_group_0_callx_ra_rb;
-	//__temp[pkg_temp_ind_0::CallxRaRb_Lr] <= __spec_regs.pc;
-	//__temp[pkg_temp_ind_0::CallxRaRb_Dst] <= alu_out.out;
 	set_wbs_lr(__spec_regs.pc);
 	set_wbs_pc(alu_out.out);
 endtask
@@ -204,6 +180,59 @@ task exec_comb_logic_group_0_jumpx_ra_rb;
 endtask
 
 task exec_seq_logic_group_0_jumpx_ra_rb;
-	//__temp[pkg_temp_ind_0::JumpxRaRb_Dst] <= alu_out.out;
 	set_wbs_pc(alu_out.out);
+endtask
+
+
+
+// cpy rA, pc
+task exec_comb_logic_group_0_cpy_ra_pc;
+endtask
+
+task exec_seq_logic_group_0_cpy_ra_pc;
+	set_wbs_ra(__spec_regs.pc);
+endtask
+
+
+// cpy rA, rB
+task exec_comb_logic_group_0_cpy_ra_rb;
+endtask
+
+
+task exec_seq_logic_group_0_cpy_ra_rb;
+	set_wbs_ra(__gprs[__instr_dec_out_buf.rb_index]);
+endtask
+
+
+
+
+// Sign extend
+task exec_comb_logic_group_0_seh_ra_rb;
+endtask
+
+
+task exec_seq_logic_group_0_seh_ra_rb;
+	set_wbs_ra(ig0_seh_signext16_out);
+endtask
+
+
+
+task exec_comb_logic_group_0_seb_ra_rb;
+endtask
+
+task exec_seq_logic_group_0_seb_ra_rb;
+	set_wbs_ra(ig0_seb_signext8_out);
+endtask
+
+
+
+// Compare rA to rB
+task exec_comb_logic_group_0_cmp_ra_rb;
+	init_alu(__gprs[__instr_dec_out_buf.ra_index],
+		__gprs[__instr_dec_out_buf.rb_index],
+		pkg_cpu::Alu_Sub);
+endtask
+
+task exec_seq_logic_group_0_cmp_ra_rb;
+	set_wbs_flags(alu_out.flags);
 endtask
