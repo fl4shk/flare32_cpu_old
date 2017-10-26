@@ -20,10 +20,7 @@ module Cpu(input bit clk,
 
 	// Package imports
 	import pkg_cpu::*;
-	import pkg_temp_ind_0::*;
-	import pkg_temp_ind_1::*;
-	import pkg_temp_ind_2::*;
-	import pkg_temp_ind_3::*;
+
 
 	// Parameters
 	parameter counter_reset_val = -2;
@@ -179,13 +176,27 @@ module Cpu(input bit clk,
 
 
 	// Temporaries
-	bit [`CPU_WORD_MSB_POS:0] __temp[0:15];
+	//bit [`CPU_WORD_MSB_POS:0] __temp[0:15];
 
 	// Copies of module outputs
 	pkg_cpu::StrcOutAlu __alu_out_buf;
 	pkg_cpu::StrcOutSmallAlu __smal_alu_out_buf;
 	pkg_instr_enc::StrcOutInstrDecoder __instr_dec_out_buf;
 
+
+	//bit [`CPU_WORD_MSB_POS:0] 
+	//	__wbs_uimm16,
+	//	__wbs_alu_out, __wbs_alu_flags_out, 
+
+	//	__wbs_dst, __wbs_branch_taken,
+
+	//	__wbs_seh_out, __wbs_seb_out,
+
+
+	pkg_cpu::StrcCpuRegWriteBackStuff
+		__wbs_ra, __wbs_rb, __wbs_rc, __wbs_sp,
+
+		__wbs_pc, __wbs_ira, __wbs_flags, __wbs_ints_enabled;
 
 
 
@@ -335,28 +346,7 @@ module Cpu(input bit clk,
 				//{divmod32_in.enable, divmod64_in.enable} <= 0;
 				__state <= pkg_cpu::StDecodeInstr;
 				prep_load_instr();
-				
-				case (__instr_dec_out_buf.group)
-					2'b00:
-					begin
-						exec_seq_logic_group_0_instr_write_back_stage();
-					end
-
-					2'b01:
-					begin
-						exec_seq_logic_group_1_instr_write_back_stage();
-					end
-
-					2'b10:
-					begin
-						exec_seq_logic_group_2_instr_write_back_stage();
-					end
-
-					2'b11:
-					begin
-						exec_seq_logic_group_3_instr_write_back_stage();
-					end
-				endcase
+				exec_instr_write_back_stage();
 			end
 		end
 	end
@@ -388,31 +378,6 @@ module Cpu(input bit clk,
 					2'b11:
 					begin
 						exec_comb_logic_group_3_instr_exec_stage();
-					end
-				endcase
-			end
-
-			else if (__state == pkg_cpu::StWriteBack)
-			begin
-				case (__instr_dec_out_buf.group)
-					2'b00:
-					begin
-						exec_comb_logic_group_0_instr_write_back_stage();
-					end
-
-					2'b01:
-					begin
-						exec_comb_logic_group_1_instr_write_back_stage();
-					end
-
-					2'b10:
-					begin
-						exec_comb_logic_group_2_instr_write_back_stage();
-					end
-
-					2'b11:
-					begin
-						exec_comb_logic_group_3_instr_write_back_stage();
 					end
 				endcase
 			end

@@ -6,6 +6,18 @@
 
 package pkg_cpu;
 
+//typedef struct packed
+//{
+//	bit [`CPU_WORD_MSB_POS:0] data;
+//} StrcCpuWriteBackStuff;
+
+typedef struct packed
+{
+	bit can_write;
+	bit [`CPU_WORD_MSB_POS:0] index;
+	bit [`CPU_WORD_MSB_POS:0] data, n_data;
+} StrcCpuRegWriteBackStuff;
+
 //`define INSTR_STUFF(group, args, ident, str) \
 //	ident``_``args``_``group,
 //
