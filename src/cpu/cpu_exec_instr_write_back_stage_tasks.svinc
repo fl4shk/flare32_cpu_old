@@ -4,17 +4,44 @@
 
 task exec_instr_write_back_stage;
 
-//	__wbs_ra
-//	__wbs_rb
-//	__wbs_rc
-//	__wbs_lr
-//	__wbs_sp
-//
-//
-//	__wbs_pc
-//	__wbs_ira
-//	__wbs_flags
-//	__wbs_ints_enabled
+	if (__wbs_ra.can_write)
+	begin
+		__gprs[__wbs_ra] <= __wbs_ra.n_data;
+	end
+	if (__wbs_rb.can_write)
+	begin
+		__gprs[__wbs_rb] <= __wbs_rb.n_data;
+	end
+	if (__wbs_rc.can_write)
+	begin
+		__gprs[__wbs_rc] <= __wbs_rc.n_data;
+	end
+	if (__wbs_lr.can_write)
+	begin
+		__gprs[__wbs_lr] <= __wbs_lr.n_data;
+	end
+	if (__wbs_sp.can_write)
+	begin
+		__gprs[__wbs_sp] <= __wbs_sp.n_data;
+	end
+
+
+	if (__wbs_pc.can_write)
+	begin
+		__spec_regs.pc <= __wbs_pc.n_data;
+	end
+	if (__wbs_ira.can_write)
+	begin
+		__spec_regs.ira <= __wbs_ira.n_data;
+	end
+	if (__wbs_flags.can_write)
+	begin
+		__spec_regs.flags <= __wbs_flags.n_data;
+	end
+	if (__wbs_ints_enabled.can_write)
+	begin
+		__spec_regs.ints_enabled <= __wbs_ints_enabled.n_data;
+	end
 
 endtask
 
