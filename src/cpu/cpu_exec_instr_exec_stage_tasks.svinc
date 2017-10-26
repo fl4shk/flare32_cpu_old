@@ -142,10 +142,11 @@ task exec_comb_logic_group_0_instr_exec_stage;
 	// push/pop flags
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Push_Flags_0)
 	begin
-		// sp -= 1;
-		// [sp] = flags;
-		init_alu(__gprs[pkg_cpu::sp_reg_index], 1, pkg_cpu::Alu_Sub);
-		prep_write(pkg_cpu::ReqDataSz8, __spec_regs.flags, alu_out.out);
+		//// sp -= 1;
+		//// [sp] = flags;
+		//init_alu(__gprs[pkg_cpu::sp_reg_index], 1, pkg_cpu::Alu_Sub);
+		//prep_write(pkg_cpu::ReqDataSz8, __spec_regs.flags, alu_out.out);
+		exec_comb_logic_group_0_push_flags();
 	end
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Pop_Flags_0)
 	begin
@@ -153,6 +154,7 @@ task exec_comb_logic_group_0_instr_exec_stage;
 		// sp += 1;
 		init_alu(__gprs[pkg_cpu::sp_reg_index], 1, pkg_cpu::Alu_Add);
 		prep_read(pkg_cpu::ReqDataSz8, __gprs[pkg_cpu::sp_reg_index]);
+		exec_comb_logic_group_0_pop_flags();
 	end
 
 
@@ -299,12 +301,14 @@ task exec_seq_logic_group_0_instr_exec_stage;
 		// sp -= 1;
 		// [sp] = flags;
 		//__temp[pkg_temp_ind_0::PushFlags_NewSp] <= alu_out.out;
+		exec_seq_logic_group_0_push_flags();
 	end
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Pop_Flags_0)
 	begin
 		// flags = [sp];
 		// sp += 1;
 		//__temp[pkg_temp_ind_0::PopFlags_NewSp] <= alu_out.out;
+		exec_seq_logic_group_0_pop_flags();
 	end
 
 

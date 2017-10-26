@@ -123,3 +123,37 @@ task exec_seq_logic_group_0_cpy_ira_ra;
 	//	<= __gprs[__instr_dec_out_buf.ra_index];
 	set_wbs_ira(__gprs[__instr_dec_out_buf.ra_index]);
 endtask
+
+
+
+// push/pop flags
+task exec_comb_logic_group_0_push_flags;
+	// sp -= 1;
+	// [sp] = flags;
+	init_alu(__gprs[pkg_cpu::sp_reg_index], 1, pkg_cpu::Alu_Sub);
+	prep_write(pkg_cpu::ReqDataSz8, __spec_regs.flags, alu_out.out);
+endtask
+
+
+task exec_seq_logic_group_0_push_flags;
+	// sp -= 1;
+	// [sp] = flags;
+	//__temp[pkg_temp_ind_0::PushFlags_NewSp] <= alu_out.out;
+	set_wbs_sp(alu_out.out);
+endtask
+
+
+task exec_comb_logic_group_0_pop_flags;
+	// flags = [sp];
+	// sp += 1;
+	init_alu(__gprs[pkg_cpu::sp_reg_index], 1, pkg_cpu::Alu_Add);
+	prep_read(pkg_cpu::ReqDataSz8, __gprs[pkg_cpu::sp_reg_index]);
+endtask
+
+
+task exec_seq_logic_group_0_pop_flags;
+	// flags = [sp];
+	// sp += 1;
+	//__temp[pkg_temp_ind_0::PopFlags_NewSp] <= alu_out.out;
+	set_wbs_sp(alu_out.out);
+endtask
