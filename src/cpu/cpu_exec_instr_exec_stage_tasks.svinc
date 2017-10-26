@@ -2,124 +2,62 @@
 `define cpu_exec_instr_exec_stage_tasks_svinc
 
 task set_wbs_ra;
-	input can_write;
 	input [`CPU_WORD_MSB_POS:0] n_data;
 
-	__wbs_ra <= {can_write, __gprs[__instr_dec_out_buf.ra_index],
+	__wbs_ra <= {1'b1, __gprs[__instr_dec_out_buf.ra_index],
 		n_data, __instr_dec_out_buf.ra_index};
 endtask
 task set_wbs_rb;
-	input can_write;
 	input [`CPU_WORD_MSB_POS:0] n_data;
 
-	__wbs_rb <= {can_write, __gprs[__instr_dec_out_buf.rb_index],
+	__wbs_rb <= {1'b1, __gprs[__instr_dec_out_buf.rb_index],
 		n_data, __instr_dec_out_buf.rb_index};
 endtask
 task set_wbs_rc;
-	input can_write;
 	input [`CPU_WORD_MSB_POS:0] n_data;
 
-	__wbs_rc <= {can_write, __gprs[__instr_dec_out_buf.rc_index], n_data, 
+	__wbs_rc <= {1'b1, __gprs[__instr_dec_out_buf.rc_index], n_data, 
 		__instr_dec_out_buf.rc_index};
 endtask
 task set_wbs_sp;
-	input can_write;
 	input [`CPU_WORD_MSB_POS:0] n_data;
 
-	__wbs_sp <= {can_write, __gprs[pkg_cpu::sp_reg_index], n_data, 
+	__wbs_sp <= {1'b1, __gprs[pkg_cpu::sp_reg_index], n_data, 
 		pkg_cpu::sp_reg_index};
 endtask
 
 task set_wbs_pc;
-	input can_write;
 	input [`CPU_WORD_MSB_POS:0] n_data;
 
-	__wbs_pc <= {can_write, __spec_regs.pc, n_data, -32'd1};
+	__wbs_pc <= {1'b1, __spec_regs.pc, n_data, -32'd1};
 endtask
 
 task set_wbs_ira;
-	input can_write;
 	input [`CPU_WORD_MSB_POS:0] n_data;
 
-	__wbs_ira <= {can_write, __spec_regs.ira, n_data, -32'd1};
+	__wbs_ira <= {1'b1, __spec_regs.ira, n_data, -32'd1};
 endtask
 
 task set_wbs_flags;
-	input can_write;
 	input [`CPU_WORD_MSB_POS:0] n_data;
 
-	__wbs_flags <= {can_write, __spec_regs.flags, n_data, -32'd1};
+	__wbs_flags <= {1'b1, __spec_regs.flags, n_data, -32'd1};
 endtask
 
 task set_wbs_ints_enabled;
-	input can_write;
 	input [`CPU_WORD_MSB_POS:0] n_data;
 
 	__wbs_ints_enabled 
-		<= {can_write, __spec_regs.ints_enabled, n_data, -32'd1};
+		<= {1'b1, __spec_regs.ints_enabled, n_data, -32'd1};
 endtask
 
 
 
 
-// Load
-task exec_comb_logic_group_0_load;
-	prep_read(__instr_dec_out_buf.ldst_req_data_size, 
-		__gprs[__instr_dec_out_buf.rb_index]);
-endtask
-
-task exec_seq_logic_group_0_load;
-	///__temp[pkg_temp_ind_0::Ld_RaIndex] <= __instr_dec_out_buf.ra_index;
-	set_wbs_ra(1, 0);
-endtask
-
-
-// Store
-task exec_comb_logic_group_0_store;
-	// Don't need to keep track of anything for the next cycle
-	prep_write(__instr_dec_out_buf.ldst_req_data_size, 
-		__gprs[__instr_dec_out_buf.ra_index],
-		__gprs[__instr_dec_out_buf.rb_index]);
-endtask
-
-task exec_seq_logic_group_0_store;
-	// Do nothing
-endtask
-
-
-// Non flags affecting two-register ALU operation
-task exec_comb_logic_group_0_nf_alu_op;
-	init_alu(__gprs[__instr_dec_out_buf.ra_index],
-		__gprs[__instr_dec_out_buf.rb_index],
-		ig02_nf_alu_oc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
-endtask
-
-task exec_seq_logic_group_0_nf_alu_op;
-	//__temp[pkg_temp_ind_0::AluOp_RaIndex]
-	//	<= __instr_dec_out_buf.ra_index;
-	//__temp[pkg_temp_ind_0::AluOp_AluOut] <= alu_out.out;
-	set_wbs_ra(1, alu_out.out);
-endtask
-
-
-
-task exec_comb_logic_group_0_f_alu_op;
-	init_alu(__gprs[__instr_dec_out_buf.ra_index],
-		__gprs[__instr_dec_out_buf.rb_index],
-		ig02_f_alu_oc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
-endtask
-
-task exec_seq_logic_group_0_f_alu_op;
-	//__temp[pkg_temp_ind_0::AluDotFOp_RaIndex]
-	//	<= __instr_dec_out_buf.ra_index;
-	//__temp[pkg_temp_ind_0::AluDotFOp_AluOut] <= alu_out.out;
-	//__temp[pkg_temp_ind_0::AluDotFOp_FlagsOut] <= alu_out.flags;
-	set_wbs_ra(1, alu_out.out);
-	set_wbs_flags(1, alu_out.flags);
-endtask
-
-
-
+`include "src/cpu/cpu_exec_group_0_instr_exec_stage_tasks.svinc"
+`include "src/cpu/cpu_exec_group_1_instr_exec_stage_tasks.svinc"
+`include "src/cpu/cpu_exec_group_2_instr_exec_stage_tasks.svinc"
+`include "src/cpu/cpu_exec_group_3_instr_exec_stage_tasks.svinc"
 
 
 
@@ -163,36 +101,42 @@ task exec_comb_logic_group_0_instr_exec_stage;
 		exec_comb_logic_group_0_f_alu_op();
 	end
 
-	//// Enable/disable interrupts
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Eni_NoArgs_0)
-	//begin
-	//end
+	// Enable/disable interrupts
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Eni_NoArgs_0)
+	begin
+		exec_comb_logic_group_0_eni();
+	end
 
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Dii_NoArgs_0)
-	//begin
-	//end
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Dii_NoArgs_0)
+	begin
+		exec_comb_logic_group_0_dii();
+	end
 
 
-	//// Return from interrupt (enables interrupts in the process)
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Reti_NoArgs_0)
-	//begin
-	//end
+	// Return from interrupt (enables interrupts in the process)
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Reti_NoArgs_0)
+	begin
+		exec_comb_logic_group_0_reti();
+	end
 
-	//// Jump to the Interrupt Return Address without affecting the status of
-	//// whether interrupts are enabled
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Jump_Ira_0)
-	//begin
-	//end
+	// Jump to the Interrupt Return Address without affecting the status of
+	// whether interrupts are enabled
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Jump_Ira_0)
+	begin
+		exec_comb_logic_group_0_jump_ira();
+	end
 
-	//// cpy rA, ira
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaIra_0)
-	//begin
-	//end
+	// cpy rA, ira
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaIra_0)
+	begin
+		exec_comb_logic_group_0_cpy_ra_ira();
+	end
 
-	//// cpy ira, rA
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_IraRa_0)
-	//begin
-	//end
+	// cpy ira, rA
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_IraRa_0)
+	begin
+		exec_comb_logic_group_0_cpy_ira_ra();
+	end
 
 
 	// push/pop flags
@@ -305,26 +249,30 @@ task exec_seq_logic_group_0_instr_exec_stage;
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Eni_NoArgs_0)
 	begin
 		//__temp[pkg_temp_ind_0::Eni_Ie] <= 1;
+		exec_seq_logic_group_0_eni();
 	end
 
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Dii_NoArgs_0)
 	begin
 		//__temp[pkg_temp_ind_0::Dii_Ie] <= 0;
+		exec_seq_logic_group_0_dii();
 	end
 
 
 	// Return from interrupt (enables interrupts in the process)
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Reti_NoArgs_0)
 	begin
-		//__temp[pkg_temp_ind_0::Reti_Ira] <= __spec_regs.ira;
+		//__temp[pkg_temp_ind_0::Reti_Pc] <= __spec_regs.ira;
 		//__temp[pkg_temp_ind_0::Reti_Ie]<= 1;
+		exec_seq_logic_group_0_reti();
 	end
 
 	// Jump to the Interrupt Return Address without affecting the status of
 	// whether interrupts are enabled
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Jump_Ira_0)
 	begin
-		//__temp[pkg_temp_ind_0::JumpIra_Ira] <= __spec_regs.ira;
+		//__temp[pkg_temp_ind_0::JumpIra_Pc] <= __spec_regs.ira;
+		exec_seq_logic_group_0_jump_ira();
 	end
 
 	// cpy rA, ira
@@ -333,6 +281,7 @@ task exec_seq_logic_group_0_instr_exec_stage;
 		//__temp[pkg_temp_ind_0::CpyRaIra_RaIndex]
 		//	<= __instr_dec_out_buf.ra_index;
 		//__temp[pkg_temp_ind_0::CpyRaIra_Ira] <= __spec_regs.ira;
+		exec_seq_logic_group_0_cpy_ra_ira();
 	end
 
 	// cpy ira, rA
@@ -340,6 +289,7 @@ task exec_seq_logic_group_0_instr_exec_stage;
 	begin
 		//__temp[pkg_temp_ind_0::CpyIraRa_Ra] 
 		//	<= __gprs[__instr_dec_out_buf.ra_index];
+		exec_seq_logic_group_0_cpy_ira_ra();
 	end
 
 

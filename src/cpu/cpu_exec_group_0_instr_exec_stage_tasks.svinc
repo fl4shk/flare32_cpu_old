@@ -1,0 +1,125 @@
+
+// Load
+task exec_comb_logic_group_0_load;
+	prep_read(__instr_dec_out_buf.ldst_req_data_size, 
+		__gprs[__instr_dec_out_buf.rb_index]);
+endtask
+
+task exec_seq_logic_group_0_load;
+	///__temp[pkg_temp_ind_0::Ld_RaIndex] <= __instr_dec_out_buf.ra_index;
+	set_wbs_ra(0);
+endtask
+
+
+// Store
+task exec_comb_logic_group_0_store;
+	// Don't need to keep track of anything for the next cycle
+	prep_write(__instr_dec_out_buf.ldst_req_data_size, 
+		__gprs[__instr_dec_out_buf.ra_index],
+		__gprs[__instr_dec_out_buf.rb_index]);
+endtask
+
+task exec_seq_logic_group_0_store;
+	// Do nothing
+endtask
+
+
+// Non flags affecting two-register ALU operation
+task exec_comb_logic_group_0_nf_alu_op;
+	init_alu(__gprs[__instr_dec_out_buf.ra_index],
+		__gprs[__instr_dec_out_buf.rb_index],
+		ig02_nf_alu_oc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
+endtask
+
+task exec_seq_logic_group_0_nf_alu_op;
+	//__temp[pkg_temp_ind_0::AluOp_RaIndex]
+	//	<= __instr_dec_out_buf.ra_index;
+	//__temp[pkg_temp_ind_0::AluOp_AluOut] <= alu_out.out;
+	set_wbs_ra(alu_out.out);
+endtask
+
+
+
+task exec_comb_logic_group_0_f_alu_op;
+	init_alu(__gprs[__instr_dec_out_buf.ra_index],
+		__gprs[__instr_dec_out_buf.rb_index],
+		ig02_f_alu_oc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
+endtask
+
+task exec_seq_logic_group_0_f_alu_op;
+	//__temp[pkg_temp_ind_0::AluDotFOp_RaIndex]
+	//	<= __instr_dec_out_buf.ra_index;
+	//__temp[pkg_temp_ind_0::AluDotFOp_AluOut] <= alu_out.out;
+	//__temp[pkg_temp_ind_0::AluDotFOp_FlagsOut] <= alu_out.flags;
+	set_wbs_ra(alu_out.out);
+	set_wbs_flags(alu_out.flags);
+endtask
+
+
+
+// Enable/disable interrupts
+task exec_comb_logic_group_0_eni;
+endtask
+
+task exec_seq_logic_group_0_eni;
+	//__temp[pkg_temp_ind_0::Eni_Ie] <= 1;
+	set_wbs_ints_enabled(1);
+endtask
+
+
+task exec_comb_logic_group_0_dii;
+endtask
+
+task exec_seq_logic_group_0_dii;
+	//__temp[pkg_temp_ind_0::Dii_Ie] <= 0;
+	set_wbs_ints_enabled(0);
+endtask
+
+
+
+// Return from interrupt (enables interrupts in the process)
+task exec_comb_logic_group_0_reti;
+endtask
+
+
+task exec_seq_logic_group_0_reti;
+	//__temp[pkg_temp_ind_0::Reti_Pc] <= __spec_regs.ira;
+	//__temp[pkg_temp_ind_0::Reti_Ie]<= 1;
+	set_wbs_pc(__spec_regs.ira);
+	set_wbs_ints_enabled(1);
+endtask
+
+
+// Jump to the Interrupt Return Address without affecting the status of
+// whether interrupts are enabled
+task exec_comb_logic_group_0_jump_ira;
+endtask
+
+task exec_seq_logic_group_0_jump_ira;
+	//__temp[pkg_temp_ind_0::JumpIra_Pc] <= __spec_regs.ira;
+	set_wbs_pc(__spec_regs.ira);
+endtask
+
+
+// cpy rA, ira
+task exec_comb_logic_group_0_cpy_ra_ira;
+endtask
+
+task exec_seq_logic_group_0_cpy_ra_ira;
+	//__temp[pkg_temp_ind_0::CpyRaIra_RaIndex]
+	//	<= __instr_dec_out_buf.ra_index;
+	//__temp[pkg_temp_ind_0::CpyRaIra_Ira] <= __spec_regs.ira;
+	set_wbs_ra(__spec_regs.ira);
+endtask
+
+
+// cpy ira, rA
+task exec_comb_logic_group_0_cpy_ira_ra;
+endtask
+
+
+task exec_seq_logic_group_0_cpy_ira_ra;
+	//__temp[pkg_temp_ind_0::CpyIraRa_Ra] 
+	//	<= __gprs[__instr_dec_out_buf.ra_index];
+	set_wbs_ira(__gprs[__instr_dec_out_buf.ra_index]);
+endtask
