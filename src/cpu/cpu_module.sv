@@ -278,6 +278,25 @@ module Cpu(input bit clk,
 					__counter <= counter_reset_val;
 
 
+					// This is going to need a fix of some sort when I
+					// eventually switch to a pipeline!
+
+
+					// It might be of interest to use a circular buffer
+					// that each instruction in the pipeline is associated
+					// with.
+					__wbs_ra <= 0;
+					__wbs_rb <= 0;
+					__wbs_rc <= 0;
+					__wbs_lr <= 0;
+					__wbs_sp <= 0;
+
+					__wbs_pc <= 0;
+					__wbs_ira <= 0;
+					__wbs_flags <= 0;
+					__wbs_ints_enabled <= 0;
+
+
 					// Disable reading/writing
 					disab_rdwr();
 
