@@ -231,42 +231,68 @@ task exec_seq_logic_group_0_instr_exec_stage;
 	// cpy rA, flags
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaFlags_0)
 	begin
+		__temp[pkg_temp_ind_0::CpyRaFlags_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
+		__temp[pkg_temp_ind_0::CpyRaFlags_Flags]
+			<= __spec_regs.flags;
 	end
 
 	// cpy flags, rA
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_FlagsRa_0)
 	begin
+		__temp[pkg_temp_ind_0::CpyFlagsRa_Ra]
+			<= __gprs[__instr_dec_out_buf.ra_index];
 	end
+
+
 
 	// call/jump to address contained in (rA + rB)
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Callx_RaRb_0)
 	begin
+		__temp[pkg_temp_ind_0::CallxRaRb_Dst] <= alu_out.out;
 	end
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Jumpx_RaRb_0)
 	begin
+		__temp[pkg_temp_ind_0::JumpxRaRb_Dst] <= alu_out.out;
 	end
+
+
 
 	// cpy rA, pc
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaPc_0)
 	begin
+		__temp[pkg_temp_ind_0::CpyRaPc_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
+		__temp[pkg_temp_ind_0::CpyRaPc_Pc] <= __spec_regs.pc;
 	end
 
 	// cpy rA, rB
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaRb_0)
 	begin
+		__temp[pkg_temp_ind_0::CpyRaRb_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
+		__temp[pkg_temp_ind_0::CpyRaRb_Rb]
+			<= __gprs[__instr_dec_out_buf.rb_index];
 	end
 
 	// Sign extend
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Seh_RaRb_0)
 	begin
+		__temp[pkg_temp_ind_0::SehRaRb_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
+		__temp[pkg_temp_ind_0::SehRaRb_SehOut] <= ig0_seh_signext16_out;
 	end
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Seb_RaRb_0)
 	begin
+		__temp[pkg_temp_ind_0::SebRaRb_RaIndex]
+			<= __instr_dec_out_buf.ra_index;
+		__temp[pkg_temp_ind_0::SebRaRb_SebOut] <= ig0_seb_signext8_out;
 	end
 
 	// Compare rA to rB
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Cmp_RaRb_0)
 	begin
+		__temp[pkg_temp_ind_0::CmpRaRb_NewFlags] <= alu_out.flags;
 	end
 endtask
 

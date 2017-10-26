@@ -10,6 +10,8 @@ typedef enum bit [high:0]
 	Ld_RaIndex
 } Ld;
 
+
+
 typedef enum bit [high:0]
 {
 	AluOp_RaIndex,
@@ -22,6 +24,8 @@ typedef enum bit [high:0]
 	AluDotFOp_AluOut,
 	AluDotFOp_FlagsOut
 } AluDotFOp;
+
+
 
 typedef enum bit [high:0]
 {
@@ -58,6 +62,8 @@ typedef enum bit [high:0]
 	CpyIraRa_Ra
 } CpyIraRa;
 
+
+
 // push flags
 typedef enum bit [high:0]
 {
@@ -83,24 +89,29 @@ typedef enum bit [high:0]
 	CpyFlagsRa_Ra
 } CpyFlagsRa;
 
-// call rA, rB
-typedef enum bit [high:0]
-{
-	// Destination (rA + rB)
-	CallRaRb_Dst
-} CallRaRb;
 
-// jump rA, rB
+
+// callx rA, rB
 typedef enum bit [high:0]
 {
 	// Destination (rA + rB)
-	JumpRaRb_Dst
-} JumpRaRb;
+	CallxRaRb_Dst
+} CallxRaRb;
+
+// jumpx rA, rB
+typedef enum bit [high:0]
+{
+	// Destination (rA + rB)
+	JumpxRaRb_Dst
+} JumpxRaRb;
+
+
 
 // cpy rA, pc
 typedef enum bit [high:0]
 {
-	CpyRaPc_RaIndex
+	CpyRaPc_RaIndex,
+	CpyRaPc_Pc
 } CpyRaPc;
 
 // cpy rA, rB
@@ -109,6 +120,9 @@ typedef enum bit [high:0]
 	CpyRaRb_RaIndex,
 	CpyRaRb_Rb
 } CpyRaRb;
+
+
+
 
 // seh rA, rB
 typedef enum bit [high:0]
@@ -123,6 +137,9 @@ typedef enum bit [high:0]
 	SebRaRb_RaIndex,
 	SebRaRb_SebOut
 } SebRaRb;
+
+
+
 
 // cmp rA, rB
 typedef enum bit [high:0]
@@ -140,8 +157,18 @@ parameter high = 3;
 
 typedef enum bit [high:0]
 {
-	AluOp_RaIndex
+	AluOp_RaIndex,
+	AluOp_AluOut
 } AluOp;
+
+typedef enum bit [high:0]
+{
+	AluDotFOp_RaIndex,
+	AluDotFOp_AluOut,
+	AluDotFOp_FlagsOut
+} AluDotFOp;
+
+
 
 typedef enum bit [high:0]
 {
@@ -154,7 +181,8 @@ typedef enum bit [high:0]
 
 typedef enum bit [high:0]
 {
-	XorsiOp_RaIndex
+	XorsiOp_RaIndex,
+	XorsiOp_AluOut
 } XorsiOp;
 
 typedef enum bit [high:0]
