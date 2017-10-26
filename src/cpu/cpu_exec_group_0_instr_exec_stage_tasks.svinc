@@ -182,3 +182,28 @@ task exec_seq_logic_group_0_cpy_flags_ra;
 	//	<= __gprs[__instr_dec_out_buf.ra_index];
 	set_wbs_flags(__gprs[__instr_dec_out_buf.ra_index]);
 endtask
+
+
+// call/jump to address contained in (rA + rB)
+task exec_comb_logic_group_0_callx_ra_rb;
+	init_alu(__gprs[__instr_dec_out_buf.ra_index],
+		__gprs[__instr_dec_out_buf.rb_index], pkg_cpu::Alu_Add);
+endtask
+
+task exec_seq_logic_group_0_callx_ra_rb;
+	//__temp[pkg_temp_ind_0::CallxRaRb_Lr] <= __spec_regs.pc;
+	//__temp[pkg_temp_ind_0::CallxRaRb_Dst] <= alu_out.out;
+	set_wbs_lr(__spec_regs.pc);
+	set_wbs_pc(alu_out.out);
+endtask
+
+
+task exec_comb_logic_group_0_jumpx_ra_rb;
+	init_alu(__gprs[__instr_dec_out_buf.ra_index],
+		__gprs[__instr_dec_out_buf.rb_index], pkg_cpu::Alu_Add);
+endtask
+
+task exec_seq_logic_group_0_jumpx_ra_rb;
+	//__temp[pkg_temp_ind_0::JumpxRaRb_Dst] <= alu_out.out;
+	set_wbs_pc(alu_out.out);
+endtask

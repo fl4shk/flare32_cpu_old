@@ -19,6 +19,12 @@ task set_wbs_rc;
 	__wbs_rc <= {1'b1, __gprs[__instr_dec_out_buf.rc_index], n_data, 
 		__instr_dec_out_buf.rc_index};
 endtask
+task set_wbs_lr;
+	input [`CPU_WORD_MSB_POS:0] n_data;
+
+	__wbs_lr <= {1'b1, __gprs[pkg_cpu::lr_reg_index], n_data, 
+		pkg_cpu::lr_reg_index};
+endtask
 task set_wbs_sp;
 	input [`CPU_WORD_MSB_POS:0] n_data;
 
@@ -173,13 +179,15 @@ task exec_comb_logic_group_0_instr_exec_stage;
 	// call/jump to address contained in (rA + rB)
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Callx_RaRb_0)
 	begin
-		init_alu(__gprs[__instr_dec_out_buf.ra_index],
-			__gprs[__instr_dec_out_buf.rb_index], pkg_cpu::Alu_Add);
+		//init_alu(__gprs[__instr_dec_out_buf.ra_index],
+		//	__gprs[__instr_dec_out_buf.rb_index], pkg_cpu::Alu_Add);
+		exec_comb_logic_group_0_callx_ra_rb();
 	end
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Jumpx_RaRb_0)
 	begin
-		init_alu(__gprs[__instr_dec_out_buf.ra_index],
-			__gprs[__instr_dec_out_buf.rb_index], pkg_cpu::Alu_Add);
+		//init_alu(__gprs[__instr_dec_out_buf.ra_index],
+		//	__gprs[__instr_dec_out_buf.rb_index], pkg_cpu::Alu_Add);
+		exec_comb_logic_group_0_jumpx_ra_rb();
 	end
 
 	//// cpy rA, pc
@@ -337,11 +345,14 @@ task exec_seq_logic_group_0_instr_exec_stage;
 	// call/jump to address contained in (rA + rB)
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Callx_RaRb_0)
 	begin
+		//__temp[pkg_temp_ind_0::CallxRaRb_Lr] <= __spec_regs.pc;
 		//__temp[pkg_temp_ind_0::CallxRaRb_Dst] <= alu_out.out;
+		exec_seq_logic_group_0_callx_ra_rb();
 	end
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Jumpx_RaRb_0)
 	begin
 		//__temp[pkg_temp_ind_0::JumpxRaRb_Dst] <= alu_out.out;
+		exec_seq_logic_group_0_jumpx_ra_rb();
 	end
 
 

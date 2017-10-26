@@ -194,7 +194,7 @@ module Cpu(input bit clk,
 
 
 	pkg_cpu::StrcCpuRegWriteBackStuff
-		__wbs_ra, __wbs_rb, __wbs_rc, __wbs_sp,
+		__wbs_ra, __wbs_rb, __wbs_rc, __wbs_lr, __wbs_sp,
 
 		__wbs_pc, __wbs_ira, __wbs_flags, __wbs_ints_enabled;
 
