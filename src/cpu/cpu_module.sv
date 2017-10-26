@@ -25,7 +25,11 @@ module Cpu(input bit clk,
 	import pkg_temp_ind_2::*;
 	import pkg_temp_ind_3::*;
 
-	
+	// Parameters
+	parameter counter_reset_val = -2;
+	parameter counter_done_val = -1;
+
+
 
 	// Local vars (not connections to other modules)
 	// All the registers, as well as flags and whether interrupts are
@@ -39,6 +43,7 @@ module Cpu(input bit clk,
 	pkg_cpu::State __state;
 
 	bit __waiting_for_divmod;
+	bit [`CPU_WORD_MSB_POS:0] __counter;
 
 	//bit __instr_is_alu_op;
 
@@ -258,7 +263,8 @@ module Cpu(input bit clk,
 					long_mul_a <= __gprs[instr_dec_out.rc_index];
 					long_mul_b <= __gprs[instr_dec_out.rd_index];
 
-					__waiting_for_divmod = 0;
+					__waiting_for_divmod <= 0;
+					__counter <= counter_reset_val;
 
 
 					// Disable reading/writing

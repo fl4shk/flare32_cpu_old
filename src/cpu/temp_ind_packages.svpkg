@@ -12,8 +12,16 @@ typedef enum bit [high:0]
 
 typedef enum bit [high:0]
 {
-	AluOp_RaIndex
+	AluOp_RaIndex,
+	AluOp_AluOut
 } AluOp;
+
+typedef enum bit [high:0]
+{
+	AluDotFOp_RaIndex,
+	AluDotFOp_AluOut,
+	AluDotFOp_FlagsOut
+} AluDotFOp;
 
 typedef enum bit [high:0]
 {
@@ -53,14 +61,13 @@ typedef enum bit [high:0]
 // push flags
 typedef enum bit [high:0]
 {
-	PushFlags_Sp,
-	PushFlags_Flags
+	PushFlags_NewSp
 } PushFlags;
 
 // pop flags
 typedef enum bit [high:0]
 {
-	PopFlags_Sp
+	PopFlags_NewSp
 } PopFlags;
 
 // cpy rA, flags
@@ -93,8 +100,7 @@ typedef enum bit [high:0]
 // cpy rA, pc
 typedef enum bit [high:0]
 {
-	CpyRaPc_RaIndex,
-	CpyRaPc_Pc
+	CpyRaPc_RaIndex
 } CpyRaPc;
 
 // cpy rA, rB
@@ -108,21 +114,21 @@ typedef enum bit [high:0]
 typedef enum bit [high:0]
 {
 	SehRaRb_RaIndex,
-	SehRaRb_Output
+	SehRaRb_SehOut
 } SehRaRb;
 
 // seb rA, rB
 typedef enum bit [high:0]
 {
 	SebRaRb_RaIndex,
-	SebRaRb_Output
+	SebRaRb_SebOut
 } SebRaRb;
 
-//// cmp rA, rB
-//typedef enum bit [high:0]
-//{
-//} CmpRaRb;
-
+// cmp rA, rB
+typedef enum bit [high:0]
+{
+	CmpRaRb_NewFlags
+} CmpRaRb;
 
 endpackage
 

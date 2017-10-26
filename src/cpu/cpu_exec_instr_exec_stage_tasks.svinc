@@ -69,13 +69,21 @@ task exec_comb_logic_group_0_instr_exec_stage;
 	//end
 
 
-	//// push/pop flags
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Push_Flags_0)
-	//begin
-	//end
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Pop_Flags_0)
-	//begin
-	//end
+	// push/pop flags
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Push_Flags_0)
+	begin
+		// sp -= 1;
+		// [sp] = flags;
+		init_alu(__gprs[pkg_cpu::sp_reg_index], 1, pkg_cpu::Alu_Sub);
+		prep_write(pkg_cpu::ReqDataSz8, __spec_regs.flags, alu_out.out);
+	end
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Pop_Flags_0)
+	begin
+		// flags = [sp];
+		// sp += 1;
+		init_alu(__gprs[pkg_cpu::sp_reg_index], 1, pkg_cpu::Alu_Add);
+		prep_read(pkg_cpu::ReqDataSz8, __gprs[pkg_cpu::sp_reg_index]);
+	end
 
 
 	//// cpy rA, flags
@@ -88,13 +96,17 @@ task exec_comb_logic_group_0_instr_exec_stage;
 	//begin
 	//end
 
-	//// call/jump to address contained in (rA + rB)
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Callx_RaRb_0)
-	//begin
-	//end
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Jumpx_RaRb_0)
-	//begin
-	//end
+	// call/jump to address contained in (rA + rB)
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Callx_RaRb_0)
+	begin
+		init_alu(__gprs[__instr_dec_out_buf.ra_index],
+			__gprs[__instr_dec_out_buf.rb_index], pkg_cpu::Alu_Add);
+	end
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Jumpx_RaRb_0)
+	begin
+		init_alu(__gprs[__instr_dec_out_buf.ra_index],
+			__gprs[__instr_dec_out_buf.rb_index], pkg_cpu::Alu_Add);
+	end
 
 	//// cpy rA, pc
 	//else if (__instr_dec_out_buf.oper == pkg_cpu::Cpy_RaPc_0)
@@ -114,10 +126,14 @@ task exec_comb_logic_group_0_instr_exec_stage;
 	//begin
 	//end
 
-	//// Compare rA to rB
-	//else if (__instr_dec_out_buf.oper == pkg_cpu::Cmp_RaRb_0)
-	//begin
-	//end
+	// Compare rA to rB
+	else if (__instr_dec_out_buf.oper == pkg_cpu::Cmp_RaRb_0)
+	begin
+		init_alu(__gprs[__instr_dec_out_buf.ra_index],
+			__gprs[__instr_dec_out_buf.rb_index],
+			pkg_cpu::Alu_Sub);
+
+	end
 endtask
 
 task exec_seq_logic_group_0_instr_exec_stage;
@@ -128,8 +144,6 @@ task exec_seq_logic_group_0_instr_exec_stage;
 	if ((__instr_dec_out_buf.oper >= pkg_cpu::Ldr_LdStRaRb_0)
 		&& (__instr_dec_out_buf.oper <= pkg_cpu::Ldsb_LdStRaRb_0))
 	begin
-		prep_read(__instr_dec_out_buf.ldst_req_data_size, 
-			__gprs[__instr_dec_out_buf.rb_index]);
 		__temp[pkg_temp_ind_0::Ld_RaIndex] <= __instr_dec_out_buf.ra_index;
 	end
 
@@ -137,31 +151,24 @@ task exec_seq_logic_group_0_instr_exec_stage;
 	else if ((__instr_dec_out_buf.oper >= pkg_cpu::Str_LdStRaRb_0)
 		&& (__instr_dec_out_buf.oper <= pkg_cpu::Stb_LdStRaRb_0))
 	begin
-		// Don't need to keep track of anything for the next cycle
-		prep_write(__instr_dec_out_buf.ldst_req_data_size, 
-			__gprs[__instr_dec_out_buf.ra_index],
-			__gprs[__instr_dec_out_buf.rb_index]);
 	end
 
 	// Non flags affecting two-register ALU operation
 	else if ((__instr_dec_out_buf.oper >= pkg_cpu::Add_RaRb_0)
 		&& (__instr_dec_out_buf.oper <= pkg_cpu::Ror_RaRb_0))
 	begin
-		init_alu(__gprs[__instr_dec_out_buf.ra_index],
-			__gprs[__instr_dec_out_buf.rb_index],
-			ig02_nf_alu_oc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
 		__temp[pkg_temp_ind_0::AluOp_RaIndex]
 			<= __instr_dec_out_buf.ra_index;
+		__temp[pkg_temp_ind_0::AluOp_AluOut] <= alu_out.out;
 	end
 
 	else if ((__instr_dec_out_buf.oper >= pkg_cpu::AddDotF_RaRb_0)
 		&& (__instr_dec_out_buf.oper <= pkg_cpu::Rrc_RaRb_0))
 	begin
-		init_alu(__gprs[__instr_dec_out_buf.ra_index],
-			__gprs[__instr_dec_out_buf.rb_index],
-			ig02_f_alu_oc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
-		__temp[pkg_temp_ind_0::AluOp_RaIndex]
+		__temp[pkg_temp_ind_0::AluDotFOp_RaIndex]
 			<= __instr_dec_out_buf.ra_index;
+		__temp[pkg_temp_ind_0::AluDotFOp_AluOut] <= alu_out.out;
+		__temp[pkg_temp_ind_0::AluDotFOp_FlagsOut] <= alu_out.flags;
 	end
 
 	// Enable/disable interrupts
@@ -187,9 +194,6 @@ task exec_seq_logic_group_0_instr_exec_stage;
 	// whether interrupts are enabled
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Jump_Ira_0)
 	begin
-		// Save doing this for the writeback stage
-		//__spec_regs.pc <= __spec_regs.ira;
-		//__temp[0] <= __spec_regs.ira;
 		__temp[pkg_temp_ind_0::JumpIra_Ira] <= __spec_regs.ira;
 	end
 
@@ -212,9 +216,15 @@ task exec_seq_logic_group_0_instr_exec_stage;
 	// push/pop flags
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Push_Flags_0)
 	begin
+		// sp -= 1;
+		// [sp] = flags;
+		__temp[pkg_temp_ind_0::PushFlags_NewSp] <= alu_out.out;
 	end
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Pop_Flags_0)
 	begin
+		// flags = [sp];
+		// sp += 1;
+		__temp[pkg_temp_ind_0::PopFlags_NewSp] <= alu_out.out;
 	end
 
 
@@ -270,21 +280,11 @@ task exec_seq_logic_group_1_instr_exec_stage;
 	if ((__instr_dec_out_buf.oper >= pkg_cpu::Addi_RaRbUImm16_1)
 		&& (__instr_dec_out_buf.oper <= pkg_cpu::Rori_RaRbUImm16_1))
 	begin
-		//init_alu(__gprs[__instr_dec_out_buf.rb_index],
-		//	__instr_dec_out_buf.imm_val_u16,
-		//	__instr_dec_out_buf.oper[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
-		//__temp[pkg_temp_ind_1::AluOp_RaIndex]
-		//	<= __instr_dec_out_buf.ra_index;
 	end
 
 	else if ((__instr_dec_out_buf.oper >= pkg_cpu::AddiDotF_RaRbUImm16_1)
 		&& (__instr_dec_out_buf.oper <= pkg_cpu::RoriDotF_RaRbUImm16_1))
 	begin
-		//init_alu(__gprs[__instr_dec_out_buf.rb_index],
-		//	__instr_dec_out_buf.imm_val_u16,
-		//	ig1_f_alu_oc_out[`CPU_ENUM_ALU_OPER_SIZE_MSB_POS:0]);
-		//__temp[pkg_temp_ind_1::AluOp_RaIndex]
-		//	<= __instr_dec_out_buf.ra_index;
 	end
 
 	else if ((__instr_dec_out_buf.oper >= pkg_cpu::Bra_Branch_1)
@@ -429,10 +429,6 @@ task exec_seq_logic_group_1_instr_exec_stage;
 	// rA <= rB ^ (sign-extended 16-bit immediate)
 	else if (__instr_dec_out_buf.oper == pkg_cpu::Xorsi_RaRbSImm16_1)
 	begin
-		//__temp[pkg_temp_ind_1::XorsiOp_RaIndex]
-		//	<= __instr_dec_out_buf.ra_index;
-		//__temp[pkg_temp_ind_1::XorsiOp_SImm16]
-		//	<= __instr_dec_out_buf.imm_val_s16;
 	end
 
 	// rA[31:16] <= (zero-extended 16-bit immediate)
