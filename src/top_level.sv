@@ -36,8 +36,8 @@ module TopLevel;
 		__half_clk = !__half_clk;
 	end
 
-	//CompareTester cmp_tester(.clk(__master_clk), 
-	//	.enable(__testers_enable));
+	CompareTester cmp_tester(.clk(__master_clk), 
+		.enable(__testers_enable));
 
 	//RotateTester rotate_tester(.clk(__master_clk),
 	//	.enable(__testers_enable));

@@ -234,6 +234,7 @@ module CompareTester(input bit clk, enable);
 				display_alu_signed();
 			end
 		end
+		//display_alu_signed();
 	
 	
 	endtask
@@ -250,8 +251,8 @@ module CompareTester(input bit clk, enable);
 				begin
 					tester_a = i;
 					tester_b = j;
-					test_eq_ne_compare(tester_a, tester_b);
-					test_unsigned_compare(tester_a, tester_b);
+					//test_eq_ne_compare(tester_a, tester_b);
+					//test_unsigned_compare(tester_a, tester_b);
 					test_signed_compare(tester_a, tester_b);
 				end
 			end

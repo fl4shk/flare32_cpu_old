@@ -13,6 +13,7 @@ VC=iverilog
 
 #BUILD=$(VC) -o $(PROJ).vvp
 #BUILD=$(VC) -g2005-sv -o $(PROJ).vvp
+#BUILD=$(VC) -pfileline=1 -g2009 -o $(PROJ).vvp
 BUILD=$(VC) -g2009 -o $(PROJ).vvp
 PREPROCESS=$(VC) -g2009 -E -o $(PROJ).E
 

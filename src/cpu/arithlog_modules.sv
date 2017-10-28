@@ -20,6 +20,7 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 	// This task is used by both adding and subtracting to update the V
 	// flag.
 	task update_v_flag;
+		input [`CPU_WORD_MSB_POS:0] some_a_in, some_b_in, some_result_in;
 		//input some_a_in_msb, some_b_in_msb, some_result_in_msb;
 		//output some_proc_flag_v_out;
 		//
@@ -29,12 +30,34 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 		//	= !((in.a[`CPU_WORD_MSB_POS] ^ in.b[`CPU_WORD_MSB_POS])
 		//	& (in.a[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
 
-		out.flags[pkg_cpu::FlagV]
-			= ((in.a[`CPU_WORD_MSB_POS] ^ in.b[`CPU_WORD_MSB_POS])
-			& (in.a[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
 		//out.flags[pkg_cpu::FlagV]
+		//	= ((in.a[`CPU_WORD_MSB_POS] ^ in.b[`CPU_WORD_MSB_POS])
+		//	& (in.a[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
+		//out.flags[pkg_cpu::FlagV]
+
 		//	= ((in.a[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS])
 		//	& (in.b[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
+
+
+		//flags_out.v = (((~(temp_a ^ temp_b)) & (temp_a ^ temp_out)) & 0x80);
+		//out.flags[pkg_cpu::FlagV]
+		//	= ((((~(in.a ^ in.b)) & (in.a ^ out.out)) 
+		//	& (1 << `CPU_WORD_MSB_POS))) >> `CPU_WORD_MSB_POS;
+
+		//out.flags[pkg_cpu::FlagV]
+		//	= ((~(in.a[`CPU_WORD_MSB_POS] ^ in.b[`CPU_WORD_MSB_POS])) 
+		//	& (in.a[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
+
+		//out.flags[pkg_cpu::FlagV]
+		//	= ((((~(in.a ^ (~in.b))) & (in.a ^ some_out)) 
+		//	& (1 << `CPU_WORD_MSB_POS))) >> `CPU_WORD_MSB_POS;
+
+		out.flags[pkg_cpu::FlagV]
+			= ((~(some_a_in[`CPU_WORD_MSB_POS] 
+			^ some_b_in[`CPU_WORD_MSB_POS])) 
+			& (some_a_in[`CPU_WORD_MSB_POS] 
+			^ some_result_in[`CPU_WORD_MSB_POS]));
+
 	endtask
 	task update_n_and_z_flags;
 		{out.flags[pkg_cpu::FlagN], out.flags[pkg_cpu::FlagZ]}
@@ -50,7 +73,7 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 				{out.flags[pkg_cpu::FlagC], out.out} = {1'b0, in.a} 
 					+ {1'b0, in.b};
 				update_n_and_z_flags();
-				update_v_flag();
+				update_v_flag(in.a, in.b, out.out);
 			end
 			pkg_cpu::Alu_Adc:
 			begin
@@ -58,7 +81,7 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 					+ {1'b0, in.b}
 					+ {`CPU_WORD_WIDTH'b0, in.flags[pkg_cpu::FlagC]};
 				update_n_and_z_flags();
-				update_v_flag();
+				update_v_flag(in.a, in.b, out.out);
 			end
 			pkg_cpu::Alu_Sub:
 			begin
@@ -66,7 +89,7 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 					+ {1'b0, (~in.b)} 
 					+ {`CPU_WORD_WIDTH'b0, 1'b1};
 				update_n_and_z_flags();
-				update_v_flag();
+				update_v_flag(in.a, ~in.b, out.out);
 			end
 			pkg_cpu::Alu_Sbc:
 			begin
@@ -77,7 +100,7 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 					+ {1'b0, (~in.b)} 
 					+ {`CPU_WORD_WIDTH'b0, in.flags[pkg_cpu::FlagC]};
 				update_n_and_z_flags();
-				update_v_flag();
+				update_v_flag(in.a, ~in.b, out.out);
 			end
 			pkg_cpu::Alu_Rsb:
 			begin
@@ -85,7 +108,7 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 					+ {1'b0, (~in.a)} 
 					+ {`CPU_WORD_WIDTH'b0, 1'b1};
 				update_n_and_z_flags();
-				update_v_flag();
+				update_v_flag((~in.a), in.b, out.out);
 			end
 			pkg_cpu::Alu_Mul:
 			begin
