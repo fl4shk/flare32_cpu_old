@@ -21,36 +21,6 @@ module Alu(input pkg_cpu::StrcInAlu in, output pkg_cpu::StrcOutAlu out);
 	// flag.
 	task update_v_flag;
 		input [`CPU_WORD_MSB_POS:0] some_a_in, some_b_in, some_result_in;
-		//input some_a_in_msb, some_b_in_msb, some_result_in_msb;
-		//output some_proc_flag_v_out;
-		//
-		//some_proc_flag_v_out = ((some_a_in_msb ^ some_b_in_msb)
-		//	& (some_a_in_msb ^ some_result_in_msb));
-		//out.flags[pkg_cpu::FlagV]
-		//	= !((in.a[`CPU_WORD_MSB_POS] ^ in.b[`CPU_WORD_MSB_POS])
-		//	& (in.a[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
-
-		//out.flags[pkg_cpu::FlagV]
-		//	= ((in.a[`CPU_WORD_MSB_POS] ^ in.b[`CPU_WORD_MSB_POS])
-		//	& (in.a[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
-		//out.flags[pkg_cpu::FlagV]
-
-		//	= ((in.a[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS])
-		//	& (in.b[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
-
-
-		//flags_out.v = (((~(temp_a ^ temp_b)) & (temp_a ^ temp_out)) & 0x80);
-		//out.flags[pkg_cpu::FlagV]
-		//	= ((((~(in.a ^ in.b)) & (in.a ^ out.out)) 
-		//	& (1 << `CPU_WORD_MSB_POS))) >> `CPU_WORD_MSB_POS;
-
-		//out.flags[pkg_cpu::FlagV]
-		//	= ((~(in.a[`CPU_WORD_MSB_POS] ^ in.b[`CPU_WORD_MSB_POS])) 
-		//	& (in.a[`CPU_WORD_MSB_POS] ^ out.out[`CPU_WORD_MSB_POS]));
-
-		//out.flags[pkg_cpu::FlagV]
-		//	= ((((~(in.a ^ (~in.b))) & (in.a ^ some_out)) 
-		//	& (1 << `CPU_WORD_MSB_POS))) >> `CPU_WORD_MSB_POS;
 
 		out.flags[pkg_cpu::FlagV]
 			= ((~(some_a_in[`CPU_WORD_MSB_POS] 
