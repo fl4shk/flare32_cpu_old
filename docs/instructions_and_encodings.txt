@@ -7,11 +7,26 @@ Group 0 Instructions, for example, use 00 as their group identifier.
 
 
 Group 0 Instructions
+Two Registers Version:
 00oo oooo aaaa bbbb
 
 	o:  opcode
 	a: rA (destination register usually)
 	b: rB
+
+Two Registers, but with Special Register as rB Version:
+	00oo oooo aaaa ssss
+
+	o:  opcode
+	a: rA (destination register usually)
+	s:  special purpose register
+
+Only Register is Special Register Version:
+	00oo oooo 0000 ssss
+
+	o:  opcode
+	s:  special purpose register
+
 
 	Instructions:
 		// Load 32-bit value from address rB into rA.
@@ -184,29 +199,32 @@ Group 0 Instructions
 		// interrupts
 		jump ira
 
-		// Copy the Interrupt Return Address to rA
-		cpy rA, ira
+		// Push special register onto the stack
+		Form 0:  push pc
+		Form 1:  push flags
+		Form 2:  push ira
+		Form 3:  push ie
 
-		// Copy rA to the Interrupt Return Address
-		cpy ira, rA
+		// Pop special register off the stack
+		Form 0:  pop pc
+		Form 1:  pop flags
+		Form 2:  pop ira
+		Form 3:  pop ie
 
 
 
 
-		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
-		// value are set to zero before the push)
-		push flags
+		// Copy special register to rA
+		Form 0:  cpy rA, pc
+		Form 1:  cpy rA, flags
+		Form 2:  cpy rA, ira
+		Form 3:  cpy rA, ie
 
-		// Pop 8-bit value from the stack and store low 4 bits to flags
-		pop flags
-
-		// Clear rA, then CoPY FRom Flags to rA
-		cpy rA, flags
-
-		// Copy to flags from rA
-		// This instruction can affect N, V, Z, and C flags.
-		cpy flags, rA
-
+		// Copy rA to special register
+		Form 0:  cpy pc, rA
+		Form 1:  cpy flags, rA
+		Form 2:  cpy ira, rA
+		Form 3:  cpy ie, rA
 
 
 		// Subroutine call using (rA + rB) as destination address. 
@@ -216,13 +234,6 @@ Group 0 Instructions
 		// Set pc to destination address in (rA + rB).
 		jumpx rA, rB
 
-		// Copy (pc when instructions starts + 2) to rA (this can
-		// be used for pc-relative loads and stores)
-		cpy rA, pc
-
-		// Copy
-		// rA = rB
-		cpy rA, rB
 
 
 
@@ -237,6 +248,15 @@ Group 0 Instructions
 		// This instruction can affect N, V, Z, and C flags.
 		cmp rA, rB
 
+		// Reserved for future expansion.
+
+
+
+
+		// Reserved for future expansion.
+		// Reserved for future expansion.
+
+		// Reserved for future expansion.
 		// Reserved for future expansion.
 
 
@@ -262,11 +282,6 @@ Group 0 Instructions
 		//// Set pc to destination address in rB.
 		//// Encoded like this:  jumpx r0, rB
 		//jump rB
-
-		// Pseudo instruction:
-		//// Set pc to destination address in rB.
-		//// Encoded like this:  jumpx r0, rB
-		//cpy pc, rB
 
 
 Group 1 Instructions
@@ -1094,6 +1109,13 @@ Two Registers Version:
 	b: rB
 	i:  32-bit immediate value
 
+Special Register as rB Version:
+	11oo oooo 0000 ssss  iiii iiii iiii iiii  iiii iiii iiii iiii
+
+	o:  opcode
+	s:  special purpose register
+	i:  32-bit immediate value
+
 Block Moves Version (stmdb, ldmia, stmia, push, pop):  
 	11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 00ii
 
@@ -1364,7 +1386,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//
 		// If rA and rB are the same register, only the low 32 bits of
 		// result are stored
-		umul rA:rB, rC, rD
+		umull rA:rB, rC, rD
 
 		// Signed 32-bit by 32-bit Multiplication -> Signed 64-bit result,
 		// where rA is high 32 bits of result, rB is low 32 bits of result
@@ -1372,7 +1394,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//
 		// If rA and rB are the same register, only the low 32 bits of
 		// result are stored
-		smul rA:rB, rC, rD
+		smull rA:rB, rC, rD
 
 
 		// Unsigned 64-bit by 64-bit Division -> Unsigned 64-bit Quotient
@@ -1457,7 +1479,13 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// result will be stored
 		asr rA:rB, rC:rD, rE:rF
 
-		// Reserved for future expansion.
+
+		// Copy a 32-bit immediate value into a special register (can be
+		// used for the program counter, but is technically not necessary)
+		Form 0:  cpyi pc, imm
+		Form 1:  cpyi flags, imm
+		Form 2:  cpyi ira, imm
+		Form 3:  cpyi ie, imm
 
 
 

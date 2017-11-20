@@ -17,7 +17,6 @@
 #define DESCRIBE_RC DESCRIBE_REG(c,C)
 #define DESCRIBE_RD DESCRIBE_REG(d,D)
 #define DESCRIBE_RX DESCRIBE_REG(x,X)
-#define DESCRIBE_SPECIAL_REG s:  special purpose register
 #define DESCRIBE_IMM(x) i:  x-bit immediate value
 #define DESCRIBE_IMM_UNSIGNED(x) DESCRIBE_IMM(zero-extended x)
 #define DESCRIBE_IMM_SIGNED(x) DESCRIBE_IMM(sign-extended x)
@@ -76,11 +75,10 @@
 
 #endif
 #define ARG_REG(x) concat(r,x)
+#define ARG_IRA ira
 #define ARG_SP sp
 #define ARG_PC pc
 #define ARG_FLAGS flags
-#define ARG_IRA ira
-#define ARG_IE ie
 #define ARG_TEMP temp
 #define ARG_IMM imm
 #define IMM_ZERO_EXTENDED (zero-extended ARG_IMM)
@@ -115,24 +113,12 @@
 #define INSTR_LDST_RA_IMM(instr, immediate) INSTR_RA(instr), [immediate]
 #define INSTR_LDST_GENERIC_RA_RB_RC_IMM(instr, rB, rC, immediate) INSTR_RA(instr), [rB, rC, immediate]
 #define INSTR_IRA(instr) INSTR_ONE_ARG(instr,ARG_IRA)
-#if 0
-
-
-#endif
-#define INSTR_SPECIAL_TEXT_2(form_num, text_left, special_reg) Form form_num:  concat(text_left,concat(special_reg))
-#define INSTR_SPECIAL_TEXT_2_PC(text_left) INSTR_SPECIAL_TEXT_2(0,text_left,ARG_PC)
-#define INSTR_SPECIAL_TEXT_2_FLAGS(text_left) INSTR_SPECIAL_TEXT_2(1,text_left,ARG_FLAGS)
-#define INSTR_SPECIAL_TEXT_2_IRA(text_left) INSTR_SPECIAL_TEXT_2(2,text_left,ARG_IRA)
-#define INSTR_SPECIAL_TEXT_2_IE(text_left) INSTR_SPECIAL_TEXT_2(3,text_left,ARG_IE)
-#define INSTR_SPECIAL_TEXT_3(form_num, text_left, special_reg, text_right) Form form_num:  concat(text_left,concat(special_reg,text_right))
-#define INSTR_SPECIAL_TEXT_3_PC(text_left, text_right) INSTR_SPECIAL_TEXT_3(0,text_left,ARG_PC,text_right)
-#define INSTR_SPECIAL_TEXT_3_FLAGS(text_left, text_right) INSTR_SPECIAL_TEXT_3(1,text_left,ARG_FLAGS,text_right)
-#define INSTR_SPECIAL_TEXT_3_IRA(text_left, text_right) INSTR_SPECIAL_TEXT_3(2,text_left,ARG_IRA,text_right)
-#define INSTR_SPECIAL_TEXT_3_IE(text_left, text_right) INSTR_SPECIAL_TEXT_3(3,text_left,ARG_IE,text_right)
-#if 0
-
-
-#endif
+#define INSTR_RA_IRA(instr) INSTR_RA(instr), ARG_IRA
+#define INSTR_RA_FLAGS(instr) INSTR_RA(instr), ARG_FLAGS
+#define INSTR_FLAGS(instr) INSTR_ONE_ARG(instr,ARG_FLAGS)
+#define INSTR_FLAGS_RA(instr) INSTR_FLAGS(instr), ARG_REG(A)
+#define INSTR_RA_PC(instr) INSTR_RA(instr), ARG_PC
+#define INSTR_IRA_RA(instr) INSTR_IRA(instr), ARG_REG(A)
 #define PSEUDO_INSTR_RB(instr) INSTR_WITH_REG(instr,B)
 #define PSEUDO_INSTR_RB_IMM(instr, immediate) PSEUDO_INSTR_RB(instr), immediate
 #define PSEUDO_INSTR_RB_RC(instr) PSEUDO_INSTR_RB(instr), ARG_REG(C)
@@ -351,26 +337,11 @@ Example:  "add" becomes "add.f"
 #endif
 
 GROUP_HEADER(0)
-Two Registers Version:
 00oo oooo aaaa bbbb
 
 	DESCRIBE_OP
 	DESCRIBE_RA (destination register usually)
 	DESCRIBE_RB
-
-Two Registers, but with Special Register as rB Version:
-	00oo oooo aaaa ssss
-
-	DESCRIBE_OP
-	DESCRIBE_RA (destination register usually)
-	DESCRIBE_SPECIAL_REG
-
-Only Register is Special Register Version:
-	00oo oooo 0000 ssss
-
-	DESCRIBE_OP
-	DESCRIBE_SPECIAL_REG
-
 
 	DESCRIBE_INSTRUCTIONS
 #define __TEMP_LDST_INSTR_TYPE INSTR_LDST_RA_RB
@@ -413,32 +384,29 @@ Only Register is Special Register Version:
 		// interrupts
 		INSTR_IRA(jump)
 
-		// Push special register onto the stack
-		INSTR_SPECIAL_TEXT_2_PC(push )
-		INSTR_SPECIAL_TEXT_2_FLAGS(push )
-		INSTR_SPECIAL_TEXT_2_IRA(push )
-		INSTR_SPECIAL_TEXT_2_IE(push )
+		// Copy the Interrupt Return Address to ARG_REG(A)
+		INSTR_RA_IRA(cpy)
 
-		// Pop special register off the stack
-		INSTR_SPECIAL_TEXT_2_PC(pop )
-		INSTR_SPECIAL_TEXT_2_FLAGS(pop )
-		INSTR_SPECIAL_TEXT_2_IRA(pop )
-		INSTR_SPECIAL_TEXT_2_IE(pop )
+		// Copy ARG_REG(A) to the Interrupt Return Address
+		INSTR_IRA_RA(cpy)
 
 
 
 
-		// Copy special register to ARG_REG(A)
-		INSTR_SPECIAL_TEXT_2_PC(cpy ARG_REG(A)\, )
-		INSTR_SPECIAL_TEXT_2_FLAGS(cpy ARG_REG(A)\, )
-		INSTR_SPECIAL_TEXT_2_IRA(cpy ARG_REG(A)\, )
-		INSTR_SPECIAL_TEXT_2_IE(cpy ARG_REG(A)\, )
+		// Push flags as 8-bit value onto the stack (high 4 bits of pushed
+		// value are set to zero before the push)
+		INSTR_FLAGS(push)
 
-		// Copy ARG_REG(A) to special register
-		INSTR_SPECIAL_TEXT_3_PC(cpy ,\, ARG_REG(A))
-		INSTR_SPECIAL_TEXT_3_FLAGS(cpy ,\, ARG_REG(A))
-		INSTR_SPECIAL_TEXT_3_IRA(cpy ,\, ARG_REG(A))
-		INSTR_SPECIAL_TEXT_3_IE(cpy ,\, ARG_REG(A))
+		// Pop 8-bit value from the stack and store low 4 bits to flags
+		INSTR_FLAGS(pop)
+
+		// Clear ARG_REG(A), then CoPY FRom Flags to ARG_REG(A)
+		INSTR_RA_FLAGS(cpy)
+
+		// Copy to flags from ARG_REG(A)
+		FLAGS_ALL
+		INSTR_FLAGS_RA(cpy)
+
 
 
 		DESCRIBE_CALL_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
@@ -448,6 +416,13 @@ Only Register is Special Register Version:
 		DESCRIBE_JUMP_DESTINATION_ADDRESS((ARG_REG(A) + ARG_REG(B)))
 		INSTR_RA_RB(jumpx)
 
+		// Copy (pc when instructions starts + 2) to ARG_REG(A) (this can
+		// be used for pc-relative loads and stores)
+		INSTR_RA_PC(cpy)
+
+		// Copy
+		// ARG_REG(A) = ARG_REG(B)
+		INSTR_RA_RB(cpy)
 
 
 
@@ -462,15 +437,6 @@ Only Register is Special Register Version:
 		FLAGS_ALL
 		INSTR_RA_RB(cmp)
 
-		RESERVED
-
-
-
-
-		RESERVED
-		RESERVED
-
-		RESERVED
 		RESERVED
 
 
@@ -496,6 +462,11 @@ Only Register is Special Register Version:
 		//DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(B))
 		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(jumpx,ARG_REG(B))
 		//PSEUDO_INSTR_RB(jump)
+
+		DESCRIBE_PSEUDO_INSTRUCTION
+		//DESCRIBE_JUMP_DESTINATION_ADDRESS(ARG_REG(B))
+		DESCRIBE_PSEUDO_INSTR_R0_EQ_RA_ENCODING(jumpx,ARG_REG(B))
+		//PSEUDO_INSTR_PC_RB(cpy)
 
 
 GROUP_HEADER(1)
@@ -999,13 +970,6 @@ Two Registers Version:
 	DESCRIBE_RB
 	DESCRIBE_IMM(32)
 
-Special Register as rB Version:
-	11oo oooo 0000 ssss  iiii iiii iiii iiii  iiii iiii iiii iiii
-
-	DESCRIBE_OP
-	DESCRIBE_SPECIAL_REG
-	DESCRIBE_IMM(32)
-
 Block Moves Version (stmdb, ldmia, stmia, push, pop):  
 	11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 00ii
 
@@ -1250,7 +1214,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//
 		// If rA and rB are the same register, only the low 32 bits of
 		// result are stored
-		umull rA:rB, rC, rD
+		umul rA:rB, rC, rD
 
 		// Signed 32-bit by 32-bit Multiplication -> Signed 64-bit result,
 		// where rA is high 32 bits of result, rB is low 32 bits of result
@@ -1258,7 +1222,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//
 		// If rA and rB are the same register, only the low 32 bits of
 		// result are stored
-		smull rA:rB, rC, rD
+		smul rA:rB, rC, rD
 
 
 		// Unsigned 64-bit by 64-bit Division -> Unsigned 64-bit Quotient
@@ -1343,13 +1307,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		// result will be stored
 		asr rA:rB, rC:rD, rE:rF
 
-
-		// Copy a 32-bit immediate value into a special register (can be
-		// used for the program counter, but is technically not necessary)
-		INSTR_SPECIAL_TEXT_3_PC(cpyi ,\, ARG_IMM)
-		INSTR_SPECIAL_TEXT_3_FLAGS(cpyi ,\, ARG_IMM)
-		INSTR_SPECIAL_TEXT_3_IRA(cpyi ,\, ARG_IMM)
-		INSTR_SPECIAL_TEXT_3_IE(cpyi ,\, ARG_IMM)
+		RESERVED
 
 
 
