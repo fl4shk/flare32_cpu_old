@@ -1,6 +1,6 @@
 #define concat #1#2
 -- Registers --
-r0 is hardwired to the value zero.
+r0 is hardwired to the constant value zero.
 
 There will be 32 general purpose registers, each 32-bit, though the stack
 pointer is not as general purpose as r1-r30.
@@ -45,10 +45,9 @@ Scratch Registers (these must be preserved by the callee if used):
 
 -- Special Registers --
 Special Reg 0:  Program counter:  pc (32-bit)
-Special Reg 1:  Flags:  flags (32-bit)
+Special Reg 1:  ALU Flags:  alu_flags (32-bit)
 Special Reg 2:  Interrupt Return Address:  ira (32-bit)
-Special Reg 3:  Maskable Interrupt Enable:  ie (32-bit, but only lowest 1
-				bit used)
+Special Reg 3:  Interrupt Flags:  int_flags (32-bit)
 Special Reg 4:  Long Multiplication Product High 32 bits:  mhi
 Special Reg 5:  Long Multiplication Product Low 32 bits: mlo
 Special Reg 6:  32-bit DivMod Quotient:  quot
@@ -77,6 +76,32 @@ Special Reg 28:  Reserved for future expansion
 Special Reg 29:  Reserved for future expansion
 Special Reg 30:  Reserved for future expansion
 Special Reg 31:  Reserved for future expansion
+
+
+Format of alu_flags:
+	???? ???? ???? ????  ???? ???? ???? nvzc
+
+	?:  No assigned feature
+	n:  N Flag (1 if result was negative, 0 otherwise)
+	v:  V Flag (1 if addition or subtraction result produced signed 
+		overflow, 0 otherwise)
+	z:  Z Flag (1 if result was zero, 0 otherwise)
+	c:  Carry Flag (1 if addition or subtraction result produced unsigned
+		overflow, 0 otherwise)
+
+Form of int_flags:
+	???? ???? ???? ????  ???? ???e 7654 3210
+
+	?:  No assigned feature
+	e:  Global interrupts enabled/disabled flag
+	7:  Interrupt with priority 7 enabled/disabled flag
+	6:  Interrupt with priority 6 enabled/disabled flag
+	5:  Interrupt with priority 5 enabled/disabled flag
+	4:  Interrupt with priority 4 enabled/disabled flag
+	3:  Interrupt with priority 3 enabled/disabled flag
+	2:  Interrupt with priority 2 enabled/disabled flag
+	1:  Interrupt with priority 1 enabled/disabled flag
+	0:  Interrupt with priority 0 enabled/disabled flag
 
 
 #if 0
