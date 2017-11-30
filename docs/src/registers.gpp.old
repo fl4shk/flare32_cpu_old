@@ -1,0 +1,54 @@
+#define concat #1#2
+-- Registers --
+r0 is hardwired to the value zero.
+
+There will be 15 general purpose registers, each 32-bit, though the stack
+pointer is not as general purpose as r1-r14.
+
+
+-- General Purpose Registers --
+Function argument registers (Don't need to be preserved by callees, though
+interrupts should preserve them):  r1-r4
+r1 is used for return values <= 32 bits
+r1:r2 is used for return values == 64 bits, with r1 as high 32 bits and r2
+as low 32 bits
+
+Scratch registers:  r5-r13.  They need to be preserved by the callee.
+
+Link register (call instructions store the return address here):  lr, aka
+r14.  This register should be preserved by the callee if the callee uses
+it.
+
+Stack pointer:  sp, aka r15
+
+The stack pointer is used for the explicit push/pop instructions, but those
+only exist for -- Special Registers --
+
+
+
+-- Special Registers --
+Special Reg 0:  Program counter:  pc (32-bit)
+Special Reg 1:  Flags:  flags (32-bit, but only lowest 8 bits used)
+Special Reg 2:  Interrupt Return Address:  ira (32-bit)
+Special Reg 3:  Maskable Interrupt Enable:  ie (32-bit, but only lowest 1
+				bit used)
+Special Reg 4:  Reserved for future expansion
+Special Reg 5:  Reserved for future expansion
+Special Reg 6:  Reserved for future expansion
+Special Reg 7:  Reserved for future expansion
+Special Reg 8:  Reserved for future expansion
+Special Reg 9:  Reserved for future expansion
+Special Reg 10:  Reserved for future expansion
+Special Reg 11:  Reserved for future expansion
+Special Reg 12:  Reserved for future expansion
+Special Reg 13:  Reserved for future expansion
+Special Reg 14:  Reserved for future expansion
+Special Reg 15:  Reserved for future expansion
+
+
+#if 0
+PC-relative operations are possible via "cpy rA, pc"
+However, PC-relative operations are typically unnecessary due to the
+existence of 32-bit immediate values.  Position independent code is the main
+reason to use cpy rA, pc.
+#endif
